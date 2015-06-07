@@ -16,8 +16,10 @@ namespace CNC_Drill_Controller1
         private FTDI USB_Interface = new FTDI();
 
         private byte[] OutputBuffer = new byte[32000];
+
         private byte[] InputBuffer = new byte[32000];
         private DateTime lastUpdate = DateTime.Now;
+
 
         private byte[] stepBytes = {51, 102, 204, 153};
         //51 = 0x33 = b'00110011'
@@ -25,17 +27,19 @@ namespace CNC_Drill_Controller1
         //204 = 0xCC = b'11001100'
         //153 = 0x99 = b'10011001'
 
-        private int X_Axis_Location, Y_Axis_Location;
+        private int X_Axis_Location, Y_Axis_Location, AxisOffsetCount;
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
 
         public Form1()
         {
             InitializeComponent();
+            AxisOffsetCount = 1;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            comboBox2.SelectedIndex = 0;
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
@@ -205,29 +209,41 @@ namespace CNC_Drill_Controller1
         private void button3_Click(object sender, EventArgs e)
         {
             // X +
-            X_Axis_Location++;
-            Transfert();
+            for (var i = 0; i < AxisOffsetCount; i++)
+            {
+                X_Axis_Location++;
+                Transfert();                
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             // X - 
-            X_Axis_Location--;
-            Transfert();
+            for (var i = 0; i < AxisOffsetCount; i++)
+            {
+                X_Axis_Location--;
+                Transfert();
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             // Y -
-            Y_Axis_Location--;
-            Transfert();
+            for (var i = 0; i < AxisOffsetCount; i++)
+            {
+                Y_Axis_Location--;
+                Transfert();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             // Y +
-            Y_Axis_Location++;
-            Transfert();
+            for (var i = 0; i < AxisOffsetCount; i++)
+            {
+                Y_Axis_Location++;
+                Transfert();
+            }
         }
 
         private void Sendbutton_Click(object sender, EventArgs e)
@@ -313,6 +329,20 @@ namespace CNC_Drill_Controller1
                     logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
                     logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
                 }
+            }
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var toParse = (string)comboBox2.SelectedItem;
+            toParse = toParse.Split(new [] {' '})[0];
+            try
+            {
+                AxisOffsetCount = Convert.ToInt32(toParse);
+            }
+            catch
+            {
+                AxisOffsetCount = 1;
             }
         }
 

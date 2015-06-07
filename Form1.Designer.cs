@@ -54,11 +54,11 @@
             this.checkBoxY = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.checkBoxB = new System.Windows.Forms.CheckBox();
-            this.Sendbutton = new System.Windows.Forms.Button();
+            this.forcePullButton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.bevel1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button5 = new System.Windows.Forms.Button();
+            this.loadFileButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -105,7 +105,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(87, 147);
+            this.button1.Location = new System.Drawing.Point(92, 185);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(40, 76);
             this.button1.TabIndex = 3;
@@ -115,7 +115,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(87, 275);
+            this.button2.Location = new System.Drawing.Point(92, 313);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(40, 76);
             this.button2.TabIndex = 4;
@@ -125,7 +125,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(134, 229);
+            this.button3.Location = new System.Drawing.Point(139, 267);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(76, 40);
             this.button3.TabIndex = 5;
@@ -135,7 +135,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(5, 229);
+            this.button4.Location = new System.Drawing.Point(10, 267);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(76, 40);
             this.button4.TabIndex = 6;
@@ -265,7 +265,7 @@
             // checkBoxX
             // 
             this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Location = new System.Drawing.Point(15, 39);
+            this.checkBoxX.Location = new System.Drawing.Point(20, 77);
             this.checkBoxX.Name = "checkBoxX";
             this.checkBoxX.Size = new System.Drawing.Size(143, 21);
             this.checkBoxX.TabIndex = 8;
@@ -276,7 +276,7 @@
             // checkBoxY
             // 
             this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Location = new System.Drawing.Point(15, 66);
+            this.checkBoxY.Location = new System.Drawing.Point(20, 104);
             this.checkBoxY.Name = "checkBoxY";
             this.checkBoxY.Size = new System.Drawing.Size(143, 21);
             this.checkBoxY.TabIndex = 9;
@@ -287,7 +287,7 @@
             // checkBoxT
             // 
             this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Location = new System.Drawing.Point(15, 93);
+            this.checkBoxT.Location = new System.Drawing.Point(20, 131);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(157, 21);
             this.checkBoxT.TabIndex = 10;
@@ -298,7 +298,7 @@
             // checkBoxB
             // 
             this.checkBoxB.AutoSize = true;
-            this.checkBoxB.Location = new System.Drawing.Point(15, 120);
+            this.checkBoxB.Location = new System.Drawing.Point(20, 158);
             this.checkBoxB.Name = "checkBoxB";
             this.checkBoxB.Size = new System.Drawing.Size(172, 21);
             this.checkBoxB.TabIndex = 11;
@@ -306,18 +306,19 @@
             this.checkBoxB.UseVisualStyleBackColor = true;
             this.checkBoxB.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
-            // Sendbutton
+            // forcePullButton
             // 
-            this.Sendbutton.Location = new System.Drawing.Point(1214, 39);
-            this.Sendbutton.Name = "Sendbutton";
-            this.Sendbutton.Size = new System.Drawing.Size(88, 23);
-            this.Sendbutton.TabIndex = 12;
-            this.Sendbutton.Text = "Force Pool";
-            this.Sendbutton.UseVisualStyleBackColor = true;
-            this.Sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
+            this.forcePullButton.Location = new System.Drawing.Point(125, 36);
+            this.forcePullButton.Name = "forcePullButton";
+            this.forcePullButton.Size = new System.Drawing.Size(98, 23);
+            this.forcePullButton.TabIndex = 12;
+            this.forcePullButton.Text = "Force Pool";
+            this.forcePullButton.UseVisualStyleBackColor = true;
+            this.forcePullButton.Click += new System.EventHandler(this.Sendbutton_Click);
             // 
             // comboBox2
             // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
             "1",
@@ -331,16 +332,16 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.comboBox2.Location = new System.Drawing.Point(6, 357);
+            this.comboBox2.Location = new System.Drawing.Point(11, 395);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(204, 24);
             this.comboBox2.TabIndex = 13;
-            this.comboBox2.Text = "1";
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // bevel1
             // 
             this.bevel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.bevel1.Location = new System.Drawing.Point(0, 33);
+            this.bevel1.Location = new System.Drawing.Point(5, 71);
             this.bevel1.Name = "bevel1";
             this.bevel1.Size = new System.Drawing.Size(218, 355);
             this.bevel1.TabIndex = 14;
@@ -351,15 +352,15 @@
             this.timer1.Interval = 125;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // button5
+            // loadFileButton
             // 
-            this.button5.Location = new System.Drawing.Point(295, 71);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 15;
-            this.button5.Text = "button5";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.loadFileButton.Location = new System.Drawing.Point(5, 36);
+            this.loadFileButton.Name = "loadFileButton";
+            this.loadFileButton.Size = new System.Drawing.Size(102, 23);
+            this.loadFileButton.TabIndex = 15;
+            this.loadFileButton.Text = "Load File";
+            this.loadFileButton.UseVisualStyleBackColor = true;
+            this.loadFileButton.Click += new System.EventHandler(this.button5_Click);
             // 
             // openFileDialog1
             // 
@@ -370,9 +371,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 723);
-            this.Controls.Add(this.button5);
+            this.Controls.Add(this.loadFileButton);
             this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.Sendbutton);
+            this.Controls.Add(this.forcePullButton);
             this.Controls.Add(this.checkBoxB);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.checkBoxY);
@@ -420,14 +421,14 @@
         private System.Windows.Forms.CheckBox checkBoxB;
         private System.Windows.Forms.ToolStripStatusLabel XStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YStatusLabel;
-        private System.Windows.Forms.Button Sendbutton;
+        private System.Windows.Forms.Button forcePullButton;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label bevel1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
