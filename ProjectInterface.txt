@@ -1,0 +1,124 @@
+﻿7.5 deg / step = 48 steps / turn
+1/4-20 = 20 turns / inch
+960 steps / inch
+
+
+InBuffer: 74LS166
+StepBuffer: 74LS164 -> 74LS574
+CtrlBuffer: 74LS164 -> 74LS574
+
+
+Inbuffer:
+0 X min limit switch
+1 X max limit switch
+2 Y min limit switch
+3 Y max limit switch
+
+4 Drill top switch (0 active | bottom, 1 Top position reached)
+5 Drill bottom switch (0 active | top, 1 Bottom position reached)
+6 N/C
+7 N/C //Pause?
+
+
+StepBuffer:
+0 X axis phase 1 
+1 X axis phase 2
+2 X axis phase 3
+3 X axis phase 4
+
+4 Y axis phase 1
+5 Y axis phase 2
+6 Y axis phase 3
+7 Y axis phase 4
+
+
+CtrlBuffer:
+0 Activate X Axis Step Controller
+1 Activate Y Axis Step Controller
+2 Activate Drill From Top
+3 Activate Drill From Bottom
+
+
+USB interface:
+0 Out Clock
+1 In Inbuffer
+2 Out StepBuffer
+3 Out CtrlBuffer
+
+4 Out Latch USB to Outputs
+5 Out Latch Input to USB
+6 N/C
+7 N/C
+
+
+Data:
+	Clock : 
+		from B0, 74LS166(in) on clock UP, 74LS164(out) on clock UP
+		______|¯|_|¯|_|¯|_|¯|_____
+		idle  0   1   2   3   idle
+		default state : 0;
+
+		set bit
+		clock up
+		clock down
+
+		set bit
+		clock up
+		clock down
+
+	In : 
+		Data is read from usb port before clocking new data from internal buffer
+		shift/!load, default HIGH
+		load data into shift register
+		 
+	StepBuffer/CtrlBuffer :
+		on clock up, data is shifted to D-latches
+
+
+		Latch : 574 on UP, data is latched to output buffers.
+
+
+Default State :
+0 Out Clock					Down
+1 In Inbuffer				N/A
+2 Out StepBuffer			N/A
+3 Out CtrlBuffer			N/A
+
+4 Out Latch USB to Outputs	Down
+5 Out Latch Input to USB	Down
+6 N/C
+7 N/C
+all down, set byte to 0 at the end of transfert
+
+Transfert Sequence:
+Latch input to input-shift-register
+
+B5 Up
+B5 Down
+
+cycle clock 8 times
+
+set B2 and B3 to Bit 7 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 6 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 5 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 4 of Step and Ctrl
+B0 up down
+
+set B2 and B3 to Bit 3 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 2 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 1 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 0 of Step and Ctrl
+B0 up down
+
+Latch output to 574 D-latches
+B4 Up
+B4 Down
+(also reads the last bit of input shift-register
+
+about 20 bytes to transfert.
