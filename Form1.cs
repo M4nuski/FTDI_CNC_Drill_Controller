@@ -14,16 +14,9 @@ namespace CNC_Drill_Controller1
     public partial class Form1 : Form
     {
         private FTDI USB_Interface = new FTDI();
-        private byte[] OutputBuffer = new byte[64000];
-        private int OutputBufferIndex = 0;
-        private byte[] InputBuffer = new byte[64000];
+        private byte[] OutputBuffer = new byte[4000];
 
-        private struct usbData
-        {
-            public ushort Steps;
-            public ushort Ctrl;
-            public ushort In;
-        }
+        private byte[] InputBuffer = new byte[4000];
 
         private byte[] stepBytes = {51, 102, 204, 153};
         //51 = 0x33 = b'00110011'
@@ -97,27 +90,48 @@ namespace CNC_Drill_Controller1
             }
         }
 
-        private usbData Transfert()
+        private void Transfert()
         {
             XStatusLabel.Text = X_Axis_Location.ToString("D8");
             YStatusLabel.Text = Y_Axis_Location.ToString("D8");
-
-            ClearData();
 
             var stepData = CreateStepByte(X_Axis_Location, Y_Axis_Location);
             var ctrlData = CreateControlByte(checkBoxX.Checked, checkBoxY.Checked, checkBoxT.Checked, checkBoxB.Checked);
 
             //serialize
             Serialize(stepData, ctrlData);
-            //read
+            //send/read
+            
+            uint res = 0;
+            var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
+            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+            {
+                logger1.AddLine("Failed to write data (error " + ftStatus + ") ("+res+"/20)");
+            }
             //de-serialize
 
-            logger1.AddLine("Sending Data:");
-            for (var i = 0; i < 20; i++)
+            ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
+            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
             {
-                logger1.AddLine(Convert.ToString(OutputBuffer[i], 2).PadLeft(8, '0'));
+                logger1.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
             }
-            return new usbData();
+            else
+            {
+                logger1.AddLine("Received Data:");
+                for (var i = 0; i < 20; i++)
+                {
+                    logger1.AddLine(Convert.ToString(InputBuffer[i], 2).PadLeft(8, '0'));
+                }
+
+                // byte 3 5 7 9   11 13 15 17
+                //     b7 6 5 4    3  2  1  0   in b1
+                XMinStatusLabel.BackColor = getBit(InputBuffer[17], 1) ? Color.Lime : Color.Red;
+                XMaxStatusLabel.BackColor = getBit(InputBuffer[15], 1) ? Color.Lime : Color.Red;
+                YMinStatusLabel.BackColor = getBit(InputBuffer[13], 1) ? Color.Lime : Color.Red;
+                YMaxStatusLabel.BackColor = getBit(InputBuffer[11], 1) ? Color.Lime : Color.Red;
+                TopStatusLabel.BackColor = getBit(InputBuffer[9], 1) ? Color.Lime : Color.Red;
+                BottomStatusLabel.BackColor = getBit(InputBuffer[7], 1) ? Color.Lime : Color.Red;
+            }
         }
 
         private byte CreateStepByte(int X_Location, int Y_Location)
@@ -137,18 +151,18 @@ namespace CNC_Drill_Controller1
             //clear buffer
             for (var i = 0; i < 20; i++)
             {
-                OutputBuffer[i] = 0;
+                OutputBuffer[i] = 0x20;
             }
 
             //create clock
-            for (var i = 2; i < 18; i++)
+            for (var i = 0; i < 18; i++)
             {
-                OutputBuffer[i] = (byte)(i % 2);
+                OutputBuffer[i] = (byte)((i % 2)  + 0x20);
             }
 
             //strobe b5 // 32 = 0x20 = b'00100000'
-            OutputBuffer[0] = 0x20;
-            OutputBuffer[1] = 0x00;
+            OutputBuffer[0] = 0x00;
+            OutputBuffer[1] = 0x01;
 
             //msb first
             //bit2 steps
@@ -166,8 +180,8 @@ namespace CNC_Drill_Controller1
             }
 
             //strobe b4 // 16 = 0x10 = b'00010000'
-            OutputBuffer[18] = 0x10;
-            OutputBuffer[19] = 0x00;
+            OutputBuffer[18] = 0x10 + 0x20;
+            OutputBuffer[19] = 0x00 + 0x20;
         }
 
         private bool getBit(byte data, int bit)
@@ -192,20 +206,6 @@ namespace CNC_Drill_Controller1
             if (ActivateTop) output = (byte)(output | 4);
             if (ActivateBottom) output = (byte)(output | 8);
             return output;
-        }
-
-        private void ClearData()
-        {
-            OutputBufferIndex = 0;
-            CreateClock();
-        }
-
-        private void CreateClock()
-        {
-            for (var i = 2; i < 18; i++)
-            {
-                OutputBuffer[i] = (byte)(i%2);
-            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -255,6 +255,12 @@ namespace CNC_Drill_Controller1
             logfile.Close();
             logger1.AddLine("Log Saved to CNC_Drill_CTRL.log");
         }
+
+        private void checkBoxB_CheckedChanged(object sender, EventArgs e)
+        {
+            Transfert();
+        }
+
 
     }
 }

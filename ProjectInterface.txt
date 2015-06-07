@@ -85,7 +85,7 @@ Default State :
 3 Out CtrlBuffer			N/A
 
 4 Out Latch USB to Outputs	Down
-5 Out Latch Input to USB	Down
+5 Out Latch Input to USB	Up
 6 N/C
 7 N/C
 all down, set byte to 0 at the end of transfert
@@ -93,8 +93,8 @@ all down, set byte to 0 at the end of transfert
 Transfert Sequence:
 Latch input to input-shift-register
 
-B5 Up
 B5 Down
+B5 Up
 
 cycle clock 8 times
 

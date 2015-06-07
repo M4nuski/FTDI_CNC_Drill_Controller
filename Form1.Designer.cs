@@ -44,16 +44,17 @@
             this.YMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TopStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.BottomStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.saveLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkBoxX = new System.Windows.Forms.CheckBox();
             this.checkBoxY = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.checkBoxB = new System.Windows.Forms.CheckBox();
-            this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.Sendbutton = new System.Windows.Forms.Button();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -158,6 +159,7 @@
             // 
             // toolStripProgressBar1
             // 
+            this.toolStripProgressBar1.Maximum = 4096;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(200, 19);
             // 
@@ -215,46 +217,6 @@
             this.BottomStatusLabel.Size = new System.Drawing.Size(100, 20);
             this.BottomStatusLabel.Text = "Bottom";
             // 
-            // checkBoxX
-            // 
-            this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Location = new System.Drawing.Point(279, 36);
-            this.checkBoxX.Name = "checkBoxX";
-            this.checkBoxX.Size = new System.Drawing.Size(143, 21);
-            this.checkBoxX.TabIndex = 8;
-            this.checkBoxX.Text = "X Axis Step Driver";
-            this.checkBoxX.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxY
-            // 
-            this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Location = new System.Drawing.Point(279, 63);
-            this.checkBoxY.Name = "checkBoxY";
-            this.checkBoxY.Size = new System.Drawing.Size(143, 21);
-            this.checkBoxY.TabIndex = 9;
-            this.checkBoxY.Text = "Y Axis Step Driver";
-            this.checkBoxY.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxT
-            // 
-            this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Location = new System.Drawing.Point(279, 90);
-            this.checkBoxT.Name = "checkBoxT";
-            this.checkBoxT.Size = new System.Drawing.Size(157, 21);
-            this.checkBoxT.TabIndex = 10;
-            this.checkBoxT.Text = "Drill Cycle From Top";
-            this.checkBoxT.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxB
-            // 
-            this.checkBoxB.AutoSize = true;
-            this.checkBoxB.Location = new System.Drawing.Point(279, 117);
-            this.checkBoxB.Name = "checkBoxB";
-            this.checkBoxB.Size = new System.Drawing.Size(172, 21);
-            this.checkBoxB.TabIndex = 11;
-            this.checkBoxB.Text = "Drill Cycle from Bottom";
-            this.checkBoxB.UseVisualStyleBackColor = true;
-            // 
             // XStatusLabel
             // 
             this.XStatusLabel.AutoSize = false;
@@ -269,16 +231,6 @@
             this.YStatusLabel.Size = new System.Drawing.Size(100, 20);
             this.YStatusLabel.Text = "00000000";
             // 
-            // Sendbutton
-            // 
-            this.Sendbutton.Location = new System.Drawing.Point(279, 161);
-            this.Sendbutton.Name = "Sendbutton";
-            this.Sendbutton.Size = new System.Drawing.Size(75, 23);
-            this.Sendbutton.TabIndex = 12;
-            this.Sendbutton.Text = "Resend";
-            this.Sendbutton.UseVisualStyleBackColor = true;
-            this.Sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
-            // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -291,25 +243,101 @@
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(29, 23);
             this.toolStripDropDownButton1.Text = "toolStripDropDownButton1";
             // 
-            // clearLogToolStripMenuItem
-            // 
-            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
-            this.clearLogToolStripMenuItem.Text = "Clear Log";
-            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
-            // 
             // saveLogToolStripMenuItem
             // 
             this.saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
-            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(141, 24);
             this.saveLogToolStripMenuItem.Text = "Save Log";
             this.saveLogToolStripMenuItem.Click += new System.EventHandler(this.saveLogToolStripMenuItem_Click);
+            // 
+            // clearLogToolStripMenuItem
+            // 
+            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(141, 24);
+            this.clearLogToolStripMenuItem.Text = "Clear Log";
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
+            // checkBoxX
+            // 
+            this.checkBoxX.AutoSize = true;
+            this.checkBoxX.Location = new System.Drawing.Point(279, 36);
+            this.checkBoxX.Name = "checkBoxX";
+            this.checkBoxX.Size = new System.Drawing.Size(143, 21);
+            this.checkBoxX.TabIndex = 8;
+            this.checkBoxX.Text = "X Axis Step Driver";
+            this.checkBoxX.UseVisualStyleBackColor = true;
+            this.checkBoxX.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // checkBoxY
+            // 
+            this.checkBoxY.AutoSize = true;
+            this.checkBoxY.Location = new System.Drawing.Point(279, 63);
+            this.checkBoxY.Name = "checkBoxY";
+            this.checkBoxY.Size = new System.Drawing.Size(143, 21);
+            this.checkBoxY.TabIndex = 9;
+            this.checkBoxY.Text = "Y Axis Step Driver";
+            this.checkBoxY.UseVisualStyleBackColor = true;
+            this.checkBoxY.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // checkBoxT
+            // 
+            this.checkBoxT.AutoSize = true;
+            this.checkBoxT.Location = new System.Drawing.Point(279, 90);
+            this.checkBoxT.Name = "checkBoxT";
+            this.checkBoxT.Size = new System.Drawing.Size(157, 21);
+            this.checkBoxT.TabIndex = 10;
+            this.checkBoxT.Text = "Drill Cycle From Top";
+            this.checkBoxT.UseVisualStyleBackColor = true;
+            this.checkBoxT.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // checkBoxB
+            // 
+            this.checkBoxB.AutoSize = true;
+            this.checkBoxB.Location = new System.Drawing.Point(279, 117);
+            this.checkBoxB.Name = "checkBoxB";
+            this.checkBoxB.Size = new System.Drawing.Size(172, 21);
+            this.checkBoxB.TabIndex = 11;
+            this.checkBoxB.Text = "Drill Cycle from Bottom";
+            this.checkBoxB.UseVisualStyleBackColor = true;
+            this.checkBoxB.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // Sendbutton
+            // 
+            this.Sendbutton.Location = new System.Drawing.Point(84, 84);
+            this.Sendbutton.Name = "Sendbutton";
+            this.Sendbutton.Size = new System.Drawing.Size(75, 23);
+            this.Sendbutton.TabIndex = 12;
+            this.Sendbutton.Text = "Resend";
+            this.Sendbutton.UseVisualStyleBackColor = true;
+            this.Sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "1",
+            "3",
+            "6",
+            "12",
+            "24 (0.025 / 0.5T)",
+            "48 (0.050 / 1T) ",
+            "96 (0.100 / 2T)",
+            "120 (0.125 2.5T)",
+            "240 (0.250 / 5T)",
+            "480 (0.500 / 10T)",
+            "960 (1.000 / 20T)"});
+            this.comboBox2.Location = new System.Drawing.Point(61, 137);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 24);
+            this.comboBox2.TabIndex = 13;
+            this.comboBox2.Text = "1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1314, 855);
+            this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.Sendbutton);
             this.Controls.Add(this.checkBoxB);
             this.Controls.Add(this.checkBoxT);
@@ -324,6 +352,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.statusStrip1.ResumeLayout(false);
@@ -360,6 +389,7 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
+        private System.Windows.Forms.ComboBox comboBox2;
     }
 }
 
