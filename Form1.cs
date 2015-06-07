@@ -270,10 +270,28 @@ namespace CNC_Drill_Controller1
                 XMaxStatusLabel.BackColor = getBit(InputBuffer[15], 1) ? Color.Lime : Color.Red;
                 YMinStatusLabel.BackColor = getBit(InputBuffer[13], 1) ? Color.Lime : Color.Red;
                 YMaxStatusLabel.BackColor = getBit(InputBuffer[11], 1) ? Color.Lime : Color.Red;
-                TopStatusLabel.BackColor = getBit(InputBuffer[9], 1) ? SystemColors.Control : Color.Lime;
-                BottomStatusLabel.BackColor = getBit(InputBuffer[7], 1) ? SystemColors.Control : Color.Lime;
 
+                //top drill limit switch
+                if (getBit(InputBuffer[9], 1))
+                {
+                    if (checkBoxT.Checked)
+                    {
+                        checkBoxT.Checked = false;
+                    }
+                    TopStatusLabel.BackColor = SystemColors.Control;
+                }
+                else TopStatusLabel.BackColor = Color.Lime;
 
+                //bottom drill limit switch
+                if (getBit(InputBuffer[7], 1))
+                {
+                    if (checkBoxB.Checked)
+                    {
+                        checkBoxB.Checked = false;
+                    }
+                    BottomStatusLabel.BackColor = SystemColors.Control;
+                }
+                else BottomStatusLabel.BackColor = Color.Lime;
                 // byte 3 5 7 9   11 13 15 17
             }
 
