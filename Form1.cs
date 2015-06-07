@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -110,13 +111,19 @@ namespace CNC_Drill_Controller1
             Serialize(stepData, ctrlData);
             //read
             //de-serialize
+
+            logger1.AddLine("Sending Data:");
+            for (var i = 0; i < 20; i++)
+            {
+                logger1.AddLine(Convert.ToString(OutputBuffer[i], 2).PadLeft(8, '0'));
+            }
             return new usbData();
         }
 
-        private byte CreateStepByte(int X_Axis_Location, int Y_Axis_Location)
+        private byte CreateStepByte(int X_Location, int Y_Location)
         {
-            var x = (byte) (X_Axis_Location & 4);
-            var y = (byte) (Y_Axis_Location & 4);
+            var x = (byte) (X_Location & 0x03);
+            var y = (byte) (Y_Location & 0x03);
             return (byte) ((stepBytes[x] & 0x0F) | (stepBytes[y] & 0xF0)) ;
         }
 
@@ -139,8 +146,8 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[i] = (byte)(i % 2);
             }
 
-            //strobe b5
-            OutputBuffer[0] = 0x10;
+            //strobe b5 // 32 = 0x20 = b'00100000'
+            OutputBuffer[0] = 0x20;
             OutputBuffer[1] = 0x00;
 
             //msb first
@@ -158,8 +165,8 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 3, getBit(Ctrl, i));
             }
 
-            //strobe b4
-            OutputBuffer[18] = 0x08;
+            //strobe b4 // 16 = 0x10 = b'00010000'
+            OutputBuffer[18] = 0x10;
             OutputBuffer[19] = 0x00;
         }
 
@@ -227,6 +234,26 @@ namespace CNC_Drill_Controller1
             // Y +
             Y_Axis_Location++;
             Transfert();
+        }
+
+        private void Sendbutton_Click(object sender, EventArgs e)
+        {
+            Transfert();
+        }
+
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger1.Clear();
+        }
+
+        private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var logfile = File.AppendText("CNC_Drill_CTRL.log");
+            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F")+"]");
+            logfile.Write(logger1.Text);
+            logfile.WriteLine("");
+            logfile.Close();
+            logger1.AddLine("Log Saved to CNC_Drill_CTRL.log");
         }
 
     }

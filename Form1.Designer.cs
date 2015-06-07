@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.logger1 = new M4nuskomponents.Logger();
@@ -49,6 +50,10 @@
             this.checkBoxB = new System.Windows.Forms.CheckBox();
             this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Sendbutton = new System.Windows.Forms.Button();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,7 +148,8 @@
             this.TopStatusLabel,
             this.BottomStatusLabel,
             this.XStatusLabel,
-            this.YStatusLabel});
+            this.YStatusLabel,
+            this.toolStripDropDownButton1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 830);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1314, 25);
@@ -251,21 +257,60 @@
             // 
             // XStatusLabel
             // 
+            this.XStatusLabel.AutoSize = false;
             this.XStatusLabel.Name = "XStatusLabel";
-            this.XStatusLabel.Size = new System.Drawing.Size(94, 20);
-            this.XStatusLabel.Text = "XStatusLabel";
+            this.XStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.XStatusLabel.Text = "00000000";
             // 
             // YStatusLabel
             // 
+            this.YStatusLabel.AutoSize = false;
             this.YStatusLabel.Name = "YStatusLabel";
-            this.YStatusLabel.Size = new System.Drawing.Size(93, 20);
-            this.YStatusLabel.Text = "YStatusLabel";
+            this.YStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.YStatusLabel.Text = "00000000";
+            // 
+            // Sendbutton
+            // 
+            this.Sendbutton.Location = new System.Drawing.Point(279, 161);
+            this.Sendbutton.Name = "Sendbutton";
+            this.Sendbutton.Size = new System.Drawing.Size(75, 23);
+            this.Sendbutton.TabIndex = 12;
+            this.Sendbutton.Text = "Resend";
+            this.Sendbutton.UseVisualStyleBackColor = true;
+            this.Sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveLogToolStripMenuItem,
+            this.clearLogToolStripMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(29, 23);
+            this.toolStripDropDownButton1.Text = "toolStripDropDownButton1";
+            // 
+            // clearLogToolStripMenuItem
+            // 
+            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.clearLogToolStripMenuItem.Text = "Clear Log";
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
+            // saveLogToolStripMenuItem
+            // 
+            this.saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
+            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.saveLogToolStripMenuItem.Text = "Save Log";
+            this.saveLogToolStripMenuItem.Click += new System.EventHandler(this.saveLogToolStripMenuItem_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1314, 855);
+            this.Controls.Add(this.Sendbutton);
             this.Controls.Add(this.checkBoxB);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.checkBoxY);
@@ -311,6 +356,10 @@
         private System.Windows.Forms.CheckBox checkBoxB;
         private System.Windows.Forms.ToolStripStatusLabel XStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YStatusLabel;
+        private System.Windows.Forms.Button Sendbutton;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
     }
 }
 
