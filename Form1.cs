@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,9 @@ namespace CNC_Drill_Controller1
         private DateTime lastUpdate = DateTime.Now;
 
 
-        private byte[] stepBytes = {51, 102, 204, 153};
+        private byte[] stepBytes = {0x11, 0x22, 0x44, 0x88};//single phase
+
+        //double phase
         //51 = 0x33 = b'00110011'
         //102 = 0x66 = b'01100110'
         //204 = 0xCC = b'11001100'
@@ -346,6 +349,36 @@ namespace CNC_Drill_Controller1
             }
         }
 
+        private void moveBy(int X, int Y)
+        {
+            var numMoves = (Math.Abs(X) >= Math.Abs(Y)) ? Math.Abs(X) : Math.Abs(Y);
+            var offsetX = 0;
+            if (X > 0)
+            {
+                offsetX = 1;
+            }
+            else if (X < 0)
+            {
+                offsetX = -1;
+            }
+
+            var offsetY = 0;
+            if (Y > 0)
+            {
+                offsetY = 1;
+            }
+            else if (Y < 0)
+            {
+                offsetY = -1;
+            }
+
+            for (var i = 0; i < numMoves; i++)
+            {
+                //X_Axis_Location += offsetX;
+                //Y_Axis_Location += offsetY;
+                //Transfert();
+            }
+        }
 
     }
 }
