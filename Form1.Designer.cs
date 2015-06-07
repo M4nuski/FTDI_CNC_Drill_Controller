@@ -58,6 +58,8 @@
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.bevel1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button5 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +70,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(113, 6);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(1198, 24);
+            this.comboBox1.Size = new System.Drawing.Size(890, 24);
             this.comboBox1.TabIndex = 0;
             this.comboBox1.Text = "[None]";
             // 
@@ -91,12 +93,12 @@
             this.logger1.DateStamp = false;
             this.logger1.DateStampFormat = "yyyy-MM-dd";
             this.logger1.Font = new System.Drawing.Font("Lucida Console", 9F);
-            this.logger1.Location = new System.Drawing.Point(5, 651);
+            this.logger1.Location = new System.Drawing.Point(5, 519);
             this.logger1.Multiline = true;
             this.logger1.Name = "logger1";
             this.logger1.ReadOnly = true;
             this.logger1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.logger1.Size = new System.Drawing.Size(1309, 179);
+            this.logger1.Size = new System.Drawing.Size(1001, 179);
             this.logger1.TabIndex = 2;
             this.logger1.TimeStamp = true;
             this.logger1.TimeStampFormat = "HH-mm-ss";
@@ -154,9 +156,9 @@
             this.XStatusLabel,
             this.YStatusLabel,
             this.toolStripDropDownButton1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 830);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 698);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1314, 25);
+            this.statusStrip1.Size = new System.Drawing.Size(1006, 25);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -164,7 +166,7 @@
             // 
             this.toolStripProgressBar1.Maximum = 4096;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(200, 19);
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 19);
             // 
             // XMinStatusLabel
             // 
@@ -349,11 +351,26 @@
             this.timer1.Interval = 125;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(295, 71);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 15;
+            this.button5.Text = "button5";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1314, 855);
+            this.ClientSize = new System.Drawing.Size(1006, 723);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.Sendbutton);
             this.Controls.Add(this.checkBoxB);
@@ -410,6 +427,8 @@
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label bevel1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

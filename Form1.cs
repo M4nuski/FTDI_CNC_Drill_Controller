@@ -27,6 +27,7 @@ namespace CNC_Drill_Controller1
 
         private int X_Axis_Location, Y_Axis_Location;
 
+        private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
 
         public Form1()
         {
@@ -281,6 +282,20 @@ namespace CNC_Drill_Controller1
                 XStatusLabel.Text = X_Axis_Location.ToString("D8");
                 YStatusLabel.Text = Y_Axis_Location.ToString("D8");
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                if (dtypeDialog.ShowDialog() == DialogResult.OK)
+                {
+                    logger1.AddLine("Opening File: " + openFileDialog1.FileName);
+                    logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
+                    logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
+                }
+            }
         }
 
 
