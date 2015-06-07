@@ -14,9 +14,10 @@ namespace CNC_Drill_Controller1
     public partial class Form1 : Form
     {
         private FTDI USB_Interface = new FTDI();
-        private byte[] OutputBuffer = new byte[4000];
 
-        private byte[] InputBuffer = new byte[4000];
+        private byte[] OutputBuffer = new byte[32000];
+        private byte[] InputBuffer = new byte[32000];
+        private DateTime lastUpdate = DateTime.Now;
 
         private byte[] stepBytes = {51, 102, 204, 153};
         //51 = 0x33 = b'00110011'
@@ -38,51 +39,55 @@ namespace CNC_Drill_Controller1
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
             {
-                logger1.AddLine(numUI.ToString("D") + " Devices Found.");
-
-                var ftdiDeviceList = new FTDI.FT_DEVICE_INFO_NODE[numUI];
-                ftStatus = USB_Interface.GetDeviceList(ftdiDeviceList);
-
-                if (ftStatus == FTDI.FT_STATUS.FT_OK)
+                if (numUI > 0)
                 {
-                    for (var i = 0; i < numUI; i++)
+                    logger1.AddLine(numUI.ToString("D") + " Devices Found.");
+
+                    var ftdiDeviceList = new FTDI.FT_DEVICE_INFO_NODE[numUI];
+                    ftStatus = USB_Interface.GetDeviceList(ftdiDeviceList);
+
+                    if (ftStatus == FTDI.FT_STATUS.FT_OK)
                     {
-                        comboBox1.Items.Add(ftdiDeviceList[i].LocId + ":" + ftdiDeviceList[i].Description);
+                        for (var i = 0; i < numUI; i++)
+                        {
+                            comboBox1.Items.Add(ftdiDeviceList[i].LocId + ":" + ftdiDeviceList[i].Description);
+                        }
+
+
+                        comboBox1.Text = comboBox1.Items[0].ToString();
+
+
+                        logger1.AddLine("Opening first device");
+                        ftStatus = USB_Interface.OpenBySerialNumber(ftdiDeviceList[0].SerialNumber);
+                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+                        {
+                            logger1.AddLine("Failed to open device (error " + ftStatus + ")");
+                        }
+
+
+                        logger1.AddLine("Setting default bauld rate");
+                        ftStatus = USB_Interface.SetBaudRate(300);
+                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+                        {
+                            logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
+                        }
+
+                        logger1.AddLine("Setting BitMode");
+                        ftStatus = USB_Interface.SetBitMode(61, FTDI.FT_BIT_MODES.FT_BIT_MODE_SYNC_BITBANG);
+                            //61 = 0x3D = b'00111101'
+                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+                        {
+                            logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
+                        }
                     }
 
-
-                    comboBox1.Text = comboBox1.Items[0].ToString();
-
-
-                    logger1.AddLine("Opening first device");
-                    ftStatus = USB_Interface.OpenBySerialNumber(ftdiDeviceList[0].SerialNumber);
-                    if (ftStatus != FTDI.FT_STATUS.FT_OK)
+                    else
                     {
-                        logger1.AddLine("Failed to open device (error " + ftStatus + ")");
+                        logger1.AddLine("Failed to list devices (error " + ftStatus + ")");
                     }
 
-
-                    logger1.AddLine("Setting default bauld rate");
-                    ftStatus = USB_Interface.SetBaudRate(300);
-                    if (ftStatus != FTDI.FT_STATUS.FT_OK)
-                    {
-                        logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
-                    }
-
-                    logger1.AddLine("Setting BitMode");
-                    ftStatus = USB_Interface.SetBitMode(61, FTDI.FT_BIT_MODES.FT_BIT_MODE_SYNC_BITBANG); //61 = 0x3D = b'00111101'
-                    if (ftStatus != FTDI.FT_STATUS.FT_OK)
-                    {
-                        logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
-                    }
                 }
-
-                else
-                {
-                    logger1.AddLine("Failed to list devices (error " + ftStatus + ")");
-                }
-
-
+                else logger1.AddLine("No devices found.");
             }
             else
             {
@@ -92,45 +97,33 @@ namespace CNC_Drill_Controller1
 
         private void Transfert()
         {
-            XStatusLabel.Text = X_Axis_Location.ToString("D8");
-            YStatusLabel.Text = Y_Axis_Location.ToString("D8");
-
-            var stepData = CreateStepByte(X_Axis_Location, Y_Axis_Location);
-            var ctrlData = CreateControlByte(checkBoxX.Checked, checkBoxY.Checked, checkBoxT.Checked, checkBoxB.Checked);
-
-            //serialize
-            Serialize(stepData, ctrlData);
-            //send/read
-            
-            uint res = 0;
-            var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
-            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+            if (USB_Interface.IsOpen)
             {
-                logger1.AddLine("Failed to write data (error " + ftStatus + ") ("+res+"/20)");
-            }
-            //de-serialize
+                var stepData = CreateStepByte(X_Axis_Location, Y_Axis_Location);
+                var ctrlData = CreateControlByte(checkBoxX.Checked, checkBoxY.Checked, checkBoxT.Checked,
+                    checkBoxB.Checked);
 
-            ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
-            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
-            {
-                logger1.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
-            }
-            else
-            {
-                logger1.AddLine("Received Data:");
-                for (var i = 0; i < 20; i++)
+                //serialize
+                Serialize(stepData, ctrlData);
+                //send/read
+
+                uint res = 0;
+                var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
+                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
                 {
-                    logger1.AddLine(Convert.ToString(InputBuffer[i], 2).PadLeft(8, '0'));
+                    logger1.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/20)");
                 }
+                //de-serialize
 
-                // byte 3 5 7 9   11 13 15 17
-                //     b7 6 5 4    3  2  1  0   in b1
-                XMinStatusLabel.BackColor = getBit(InputBuffer[17], 1) ? Color.Lime : Color.Red;
-                XMaxStatusLabel.BackColor = getBit(InputBuffer[15], 1) ? Color.Lime : Color.Red;
-                YMinStatusLabel.BackColor = getBit(InputBuffer[13], 1) ? Color.Lime : Color.Red;
-                YMaxStatusLabel.BackColor = getBit(InputBuffer[11], 1) ? Color.Lime : Color.Red;
-                TopStatusLabel.BackColor = getBit(InputBuffer[9], 1) ? Color.Lime : Color.Red;
-                BottomStatusLabel.BackColor = getBit(InputBuffer[7], 1) ? Color.Lime : Color.Red;
+                ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
+                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+                {
+                    logger1.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
+                }
+                else
+                {
+                    lastUpdate = DateTime.Now;
+                }
             }
         }
 
@@ -160,7 +153,7 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[i] = (byte)((i % 2)  + 0x20);
             }
 
-            //strobe b5 // 32 = 0x20 = b'00100000'
+            //strobe b5 down with clock cycle to load data
             OutputBuffer[0] = 0x00;
             OutputBuffer[1] = 0x01;
 
@@ -179,7 +172,7 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 3, getBit(Ctrl, i));
             }
 
-            //strobe b4 // 16 = 0x10 = b'00010000'
+            //strobe b4
             OutputBuffer[18] = 0x10 + 0x20;
             OutputBuffer[19] = 0x00 + 0x20;
         }
@@ -259,6 +252,35 @@ namespace CNC_Drill_Controller1
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
             Transfert();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (USB_Interface.IsOpen)
+            {
+                //fetch data if too old
+                if ((DateTime.Now.Subtract(lastUpdate)).Milliseconds > 250)
+                {
+                    Transfert();
+                }
+
+                //Update UI with usb data
+                XMinStatusLabel.BackColor = getBit(InputBuffer[17], 1) ? Color.Lime : Color.Red;
+                XMaxStatusLabel.BackColor = getBit(InputBuffer[15], 1) ? Color.Lime : Color.Red;
+                YMinStatusLabel.BackColor = getBit(InputBuffer[13], 1) ? Color.Lime : Color.Red;
+                YMaxStatusLabel.BackColor = getBit(InputBuffer[11], 1) ? Color.Lime : Color.Red;
+                TopStatusLabel.BackColor = getBit(InputBuffer[9], 1) ? SystemColors.Control : Color.Lime;
+                BottomStatusLabel.BackColor = getBit(InputBuffer[7], 1) ? SystemColors.Control : Color.Lime;
+
+
+                // byte 3 5 7 9   11 13 15 17
+            }
+
+            //update UI with internal stuff
+
+                XStatusLabel.Text = X_Axis_Location.ToString("D8");
+                YStatusLabel.Text = Y_Axis_Location.ToString("D8");
+
         }
 
 

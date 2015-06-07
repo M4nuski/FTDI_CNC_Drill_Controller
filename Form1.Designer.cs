@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -55,6 +56,8 @@
             this.checkBoxB = new System.Windows.Forms.CheckBox();
             this.Sendbutton = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.bevel1 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -100,9 +103,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(84, 55);
+            this.button1.Location = new System.Drawing.Point(87, 147);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(40, 76);
             this.button1.TabIndex = 3;
             this.button1.Text = "Y -";
             this.button1.UseVisualStyleBackColor = true;
@@ -110,9 +113,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(84, 161);
+            this.button2.Location = new System.Drawing.Point(87, 275);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(40, 76);
             this.button2.TabIndex = 4;
             this.button2.Text = "Y +";
             this.button2.UseVisualStyleBackColor = true;
@@ -120,9 +123,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(169, 108);
+            this.button3.Location = new System.Drawing.Point(134, 229);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(76, 40);
             this.button3.TabIndex = 5;
             this.button3.Text = "X +";
             this.button3.UseVisualStyleBackColor = true;
@@ -130,9 +133,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(2, 108);
+            this.button4.Location = new System.Drawing.Point(5, 229);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(76, 40);
             this.button4.TabIndex = 6;
             this.button4.Text = "X -";
             this.button4.UseVisualStyleBackColor = true;
@@ -260,7 +263,7 @@
             // checkBoxX
             // 
             this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Location = new System.Drawing.Point(279, 36);
+            this.checkBoxX.Location = new System.Drawing.Point(15, 39);
             this.checkBoxX.Name = "checkBoxX";
             this.checkBoxX.Size = new System.Drawing.Size(143, 21);
             this.checkBoxX.TabIndex = 8;
@@ -271,7 +274,7 @@
             // checkBoxY
             // 
             this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Location = new System.Drawing.Point(279, 63);
+            this.checkBoxY.Location = new System.Drawing.Point(15, 66);
             this.checkBoxY.Name = "checkBoxY";
             this.checkBoxY.Size = new System.Drawing.Size(143, 21);
             this.checkBoxY.TabIndex = 9;
@@ -282,7 +285,7 @@
             // checkBoxT
             // 
             this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Location = new System.Drawing.Point(279, 90);
+            this.checkBoxT.Location = new System.Drawing.Point(15, 93);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(157, 21);
             this.checkBoxT.TabIndex = 10;
@@ -293,7 +296,7 @@
             // checkBoxB
             // 
             this.checkBoxB.AutoSize = true;
-            this.checkBoxB.Location = new System.Drawing.Point(279, 117);
+            this.checkBoxB.Location = new System.Drawing.Point(15, 120);
             this.checkBoxB.Name = "checkBoxB";
             this.checkBoxB.Size = new System.Drawing.Size(172, 21);
             this.checkBoxB.TabIndex = 11;
@@ -303,11 +306,11 @@
             // 
             // Sendbutton
             // 
-            this.Sendbutton.Location = new System.Drawing.Point(84, 84);
+            this.Sendbutton.Location = new System.Drawing.Point(1214, 39);
             this.Sendbutton.Name = "Sendbutton";
-            this.Sendbutton.Size = new System.Drawing.Size(75, 23);
+            this.Sendbutton.Size = new System.Drawing.Size(88, 23);
             this.Sendbutton.TabIndex = 12;
-            this.Sendbutton.Text = "Resend";
+            this.Sendbutton.Text = "Force Pool";
             this.Sendbutton.UseVisualStyleBackColor = true;
             this.Sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
             // 
@@ -326,11 +329,25 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.comboBox2.Location = new System.Drawing.Point(61, 137);
+            this.comboBox2.Location = new System.Drawing.Point(6, 357);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 24);
+            this.comboBox2.Size = new System.Drawing.Size(204, 24);
             this.comboBox2.TabIndex = 13;
             this.comboBox2.Text = "1";
+            // 
+            // bevel1
+            // 
+            this.bevel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.bevel1.Location = new System.Drawing.Point(0, 33);
+            this.bevel1.Name = "bevel1";
+            this.bevel1.Size = new System.Drawing.Size(218, 355);
+            this.bevel1.TabIndex = 14;
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 125;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -351,6 +368,7 @@
             this.Controls.Add(this.logger1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.bevel1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
@@ -390,6 +408,8 @@
         private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Label bevel1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
