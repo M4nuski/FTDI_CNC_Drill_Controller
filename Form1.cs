@@ -17,12 +17,22 @@ namespace CNC_Drill_Controller1
         private FTDI USB_Interface = new FTDI();
 
         private byte[] OutputBuffer = new byte[32000];
-
         private byte[] InputBuffer = new byte[32000];
+
+        private const int max_steps_per_transfert = 48; //1 turn
+
         private DateTime lastUpdate = DateTime.Now;
 
+        private bool CheckBoxInhibit;
+        private bool seekingLimits;
 
-        private byte[] stepBytes = {0x11, 0x22, 0x44, 0x88};//single phase
+        public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
+        public bool TopSwitch, BottomSwitch;
+
+        public int X_Scale = 960;
+        public int Y_Scale = 960;
+
+        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };//{0x11, 0x22, 0x44, 0x88};//single phase
 
         //double phase
         //51 = 0x33 = b'00110011'
@@ -31,6 +41,7 @@ namespace CNC_Drill_Controller1
         //153 = 0x99 = b'10011001'
 
         private int X_Axis_Location, Y_Axis_Location, AxisOffsetCount;
+        public int X_Axis_Delta, Y_Axis_Delta;
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
 
@@ -82,7 +93,7 @@ namespace CNC_Drill_Controller1
 
                         logger1.AddLine("Setting BitMode");
                         ftStatus = USB_Interface.SetBitMode(61, FTDI.FT_BIT_MODES.FT_BIT_MODE_SYNC_BITBANG);
-                            //61 = 0x3D = b'00111101'
+                        //61 = 0x3D = b'00111101'
                         if (ftStatus != FTDI.FT_STATUS.FT_OK)
                         {
                             logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
@@ -130,6 +141,7 @@ namespace CNC_Drill_Controller1
                 }
                 else
                 {
+                    readSwitches();
                     lastUpdate = DateTime.Now;
                 }
             }
@@ -137,9 +149,9 @@ namespace CNC_Drill_Controller1
 
         private byte CreateStepByte(int X_Location, int Y_Location)
         {
-            var x = (byte) (X_Location & 0x03);
-            var y = (byte) (Y_Location & 0x03);
-            return (byte) ((stepBytes[x] & 0x0F) | (stepBytes[y] & 0xF0)) ;
+            var x = (byte)(X_Location & 0x03);
+            var y = (byte)(Y_Location & 0x03);
+            return (byte)((stepBytes[x] & 0x0F) | (stepBytes[y] & 0xF0));
         }
 
         private void Serialize(byte Steps, byte Ctrl)
@@ -158,7 +170,7 @@ namespace CNC_Drill_Controller1
             //create clock
             for (var i = 0; i < 18; i++)
             {
-                OutputBuffer[i] = (byte)((i % 2)  + 0x20);
+                OutputBuffer[i] = (byte)((i % 2) + 0x20);
             }
 
             //strobe b5 down with clock cycle to load data
@@ -171,7 +183,7 @@ namespace CNC_Drill_Controller1
 
             for (var i = 7; i >= 0; i--)
             {
-                var offset = 2 + ((7 - i)*2);
+                var offset = 2 + ((7 - i) * 2);
 
                 OutputBuffer[offset] = setBit(OutputBuffer[offset], 2, getBit(Steps, i));
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 2, getBit(Steps, i));
@@ -192,7 +204,7 @@ namespace CNC_Drill_Controller1
 
         private byte setBit(byte input, byte bitToSet, bool set)
         {
-            return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0 ));
+            return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
         }
 
         private byte CreateControlByte(bool ActivateX, bool ActivateY, bool ActivateTop, bool ActivateBottom)
@@ -209,45 +221,42 @@ namespace CNC_Drill_Controller1
             return output;
         }
 
+        private void readSwitches()
+        {
+            //todo: re-wire header as of now max and min limit switches are swapped
+            MaxXswitch = !getBit(InputBuffer[15], 1);
+            MinXswitch = !getBit(InputBuffer[17], 1);
+
+            MaxYswitch = !getBit(InputBuffer[13], 1);
+            MinYswitch = !getBit(InputBuffer[11], 1);
+
+            TopSwitch = !getBit(InputBuffer[9], 1);
+            BottomSwitch = !getBit(InputBuffer[7], 1);
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
             // X +
-            for (var i = 0; i < AxisOffsetCount; i++)
-            {
-                X_Axis_Location++;
-                Transfert();                
-            }
+            moveBy(AxisOffsetCount, 0);
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             // X - 
-            for (var i = 0; i < AxisOffsetCount; i++)
-            {
-                X_Axis_Location--;
-                Transfert();
-            }
+            moveBy(-AxisOffsetCount, 0);
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // Y -
-            for (var i = 0; i < AxisOffsetCount; i++)
-            {
-                Y_Axis_Location--;
-                Transfert();
-            }
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             // Y +
-            for (var i = 0; i < AxisOffsetCount; i++)
-            {
-                Y_Axis_Location++;
-                Transfert();
-            }
+            moveBy(0, AxisOffsetCount);
+
+        }        
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Y -
+            moveBy(0, -AxisOffsetCount);
         }
+
+
 
         private void Sendbutton_Click(object sender, EventArgs e)
         {
@@ -262,7 +271,7 @@ namespace CNC_Drill_Controller1
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var logfile = File.AppendText("CNC_Drill_CTRL.log");
-            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F")+"]");
+            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F") + "]");
             logfile.Write(logger1.Text);
             logfile.WriteLine("");
             logfile.Close();
@@ -271,13 +280,14 @@ namespace CNC_Drill_Controller1
 
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
-            Transfert();
+            if (!CheckBoxInhibit) Transfert();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (USB_Interface.IsOpen)
             {
+                CheckBoxInhibit = true;
                 //fetch data if too old
                 if ((DateTime.Now.Subtract(lastUpdate)).Milliseconds > 250)
                 {
@@ -285,13 +295,13 @@ namespace CNC_Drill_Controller1
                 }
 
                 //Update UI with usb data
-                XMinStatusLabel.BackColor = getBit(InputBuffer[17], 1) ? Color.Lime : Color.Red;
-                XMaxStatusLabel.BackColor = getBit(InputBuffer[15], 1) ? Color.Lime : Color.Red;
-                YMinStatusLabel.BackColor = getBit(InputBuffer[13], 1) ? Color.Lime : Color.Red;
-                YMaxStatusLabel.BackColor = getBit(InputBuffer[11], 1) ? Color.Lime : Color.Red;
+                XMinStatusLabel.BackColor = MinXswitch ? Color.Lime : Color.Red;
+                XMaxStatusLabel.BackColor = MaxXswitch ? Color.Lime : Color.Red;
+                YMinStatusLabel.BackColor = MinYswitch ? Color.Lime : Color.Red;
+                YMaxStatusLabel.BackColor = MaxYswitch ? Color.Lime : Color.Red;
 
                 //top drill limit switch
-                if (getBit(InputBuffer[9], 1))
+                if (TopSwitch)
                 {
                     if (checkBoxT.Checked)
                     {
@@ -302,7 +312,7 @@ namespace CNC_Drill_Controller1
                 else TopStatusLabel.BackColor = Color.Lime;
 
                 //bottom drill limit switch
-                if (getBit(InputBuffer[7], 1))
+                if (BottomSwitch)
                 {
                     if (checkBoxB.Checked)
                     {
@@ -311,13 +321,17 @@ namespace CNC_Drill_Controller1
                     BottomStatusLabel.BackColor = SystemColors.Control;
                 }
                 else BottomStatusLabel.BackColor = Color.Lime;
-                // byte 3 5 7 9   11 13 15 17
+                CheckBoxInhibit = false;
             }
 
             //update UI with internal stuff
+            var current_X = (X_Axis_Location - X_Axis_Delta);
+            var current_Y = (Y_Axis_Location - Y_Axis_Delta);
+            XStatusLabel.Text = current_X.ToString("D5");
+            YStatusLabel.Text = current_Y.ToString("D5");
+            Xlabel.Text = ((float)current_X / X_Scale).ToString("F4");
+            Ylabel.Text = ((float)current_Y / Y_Scale).ToString("F4");
 
-                XStatusLabel.Text = X_Axis_Location.ToString("D8");
-                YStatusLabel.Text = Y_Axis_Location.ToString("D8");
 
         }
 
@@ -338,7 +352,7 @@ namespace CNC_Drill_Controller1
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             var toParse = (string)comboBox2.SelectedItem;
-            toParse = toParse.Split(new [] {' '})[0];
+            toParse = toParse.Split(new[] { ' ' })[0];
             try
             {
                 AxisOffsetCount = Convert.ToInt32(toParse);
@@ -351,6 +365,9 @@ namespace CNC_Drill_Controller1
 
         private void moveBy(int X, int Y)
         {
+            //todo max 1 turn (max_steps_per_transfert) before pooling for limit swwitches
+            //todo if limit reached before end of moveby, post error in logger1
+
             var numMoves = (Math.Abs(X) >= Math.Abs(Y)) ? Math.Abs(X) : Math.Abs(Y);
             var offsetX = 0;
             if (X > 0)
@@ -372,13 +389,77 @@ namespace CNC_Drill_Controller1
                 offsetY = -1;
             }
 
-            for (var i = 0; i < numMoves; i++)
+            var numCycle = numMoves/max_steps_per_transfert;
+            if (numCycle < 1) numCycle = 1;
+
+            for (var i = 0; i < numCycle; i++)
             {
-                //X_Axis_Location += offsetX;
-                //Y_Axis_Location += offsetY;
-                //Transfert();
+                var num_moves_for_this_cycle = (numMoves > max_steps_per_transfert) ? max_steps_per_transfert : numMoves;
+                for (var j = 0; j < num_moves_for_this_cycle; j++)
+                {
+                    if (Math.Abs(X) != 0)
+                    {
+                        X_Axis_Location += offsetX;
+                        X += offsetX;
+                    }
+                    if (Math.Abs(Y) != 0)
+                    {
+                        Y_Axis_Location += offsetY;
+                        Y += offsetY;
+                    }
+                    Transfert();
+                }
+                numMoves -= num_moves_for_this_cycle;
+                Refresh();
+                if (MaxXswitch | MinXswitch | MaxYswitch | MinYswitch)
+                {
+                    if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
+                    i = numCycle; //if limit reached exit loop
+                }
             }
         }
+
+        private void setXButton_Click(object sender, EventArgs e)
+        {
+            // (loc - delta) / scale = pos
+            // loc - delta = (pos * scale)
+            // loc - (pos * scale) = delta
+            X_Axis_Delta = (int)(X_Axis_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
+        }
+        private void SetYButton_Click(object sender, EventArgs e)
+        {
+            Y_Axis_Delta = (int)(Y_Axis_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
+        }
+
+        private float safeTextToFloat(string text)
+        {
+            float res;
+            if (float.TryParse(text, out res))
+            {
+                return res;
+            }
+            logger1.AddLine("Failed to convert value: " + text);
+            return 0.0f;
+        }
+
+        private void zeroXbutton_Click(object sender, EventArgs e)
+        {
+            XCurrentPosTextBox.Text = "0.0000";
+            setXButton_Click(this, e);
+        }
+
+        private void zeroYbutton_Click(object sender, EventArgs e)
+        {
+            YCurrentPosTextBox.Text = "0.0000";
+            SetYButton_Click(this, e);
+        }
+
+        private void zeroAllbutton_Click(object sender, EventArgs e)
+        {
+            zeroXbutton_Click(this, e);
+            zeroYbutton_Click(this, e);
+        }
+
 
     }
 }

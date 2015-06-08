@@ -60,6 +60,21 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.loadFileButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.XScaleTextBox = new System.Windows.Forms.TextBox();
+            this.YScaleTextBox = new System.Windows.Forms.TextBox();
+            this.XCurrentPosTextBox = new System.Windows.Forms.TextBox();
+            this.YCurrentPosTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.setXButton = new System.Windows.Forms.Button();
+            this.SetYButton = new System.Windows.Forms.Button();
+            this.zeroXbutton = new System.Windows.Forms.Button();
+            this.zeroYbutton = new System.Windows.Forms.Button();
+            this.zeroAllbutton = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.Xlabel = new System.Windows.Forms.Label();
+            this.Ylabel = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,21 +108,22 @@
             this.logger1.DateStamp = false;
             this.logger1.DateStampFormat = "yyyy-MM-dd";
             this.logger1.Font = new System.Drawing.Font("Lucida Console", 9F);
-            this.logger1.Location = new System.Drawing.Point(5, 519);
+            this.logger1.Location = new System.Drawing.Point(5, 564);
             this.logger1.Multiline = true;
             this.logger1.Name = "logger1";
             this.logger1.ReadOnly = true;
             this.logger1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.logger1.Size = new System.Drawing.Size(1001, 179);
+            this.logger1.Size = new System.Drawing.Size(1001, 134);
             this.logger1.TabIndex = 2;
             this.logger1.TimeStamp = true;
             this.logger1.TimeStampFormat = "HH-mm-ss";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(92, 185);
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(79, 185);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 76);
+            this.button1.Size = new System.Drawing.Size(40, 40);
             this.button1.TabIndex = 3;
             this.button1.Text = "Y -";
             this.button1.UseVisualStyleBackColor = true;
@@ -115,9 +131,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(92, 313);
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(79, 275);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(40, 76);
+            this.button2.Size = new System.Drawing.Size(40, 40);
             this.button2.TabIndex = 4;
             this.button2.Text = "Y +";
             this.button2.UseVisualStyleBackColor = true;
@@ -125,9 +142,10 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(139, 267);
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(137, 229);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(76, 40);
+            this.button3.Size = new System.Drawing.Size(40, 40);
             this.button3.TabIndex = 5;
             this.button3.Text = "X +";
             this.button3.UseVisualStyleBackColor = true;
@@ -135,9 +153,10 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(10, 267);
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.Location = new System.Drawing.Point(21, 229);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(76, 40);
+            this.button4.Size = new System.Drawing.Size(40, 40);
             this.button4.TabIndex = 6;
             this.button4.Text = "X -";
             this.button4.UseVisualStyleBackColor = true;
@@ -308,9 +327,9 @@
             // 
             // forcePullButton
             // 
-            this.forcePullButton.Location = new System.Drawing.Point(125, 36);
+            this.forcePullButton.Location = new System.Drawing.Point(107, 36);
             this.forcePullButton.Name = "forcePullButton";
-            this.forcePullButton.Size = new System.Drawing.Size(98, 23);
+            this.forcePullButton.Size = new System.Drawing.Size(85, 23);
             this.forcePullButton.TabIndex = 12;
             this.forcePullButton.Text = "Force Pool";
             this.forcePullButton.UseVisualStyleBackColor = true;
@@ -332,9 +351,10 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.comboBox2.Location = new System.Drawing.Point(11, 395);
+            this.comboBox2.Location = new System.Drawing.Point(15, 321);
+            this.comboBox2.MaxDropDownItems = 16;
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(204, 24);
+            this.comboBox2.Size = new System.Drawing.Size(177, 24);
             this.comboBox2.TabIndex = 13;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
@@ -343,7 +363,7 @@
             this.bevel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.bevel1.Location = new System.Drawing.Point(5, 71);
             this.bevel1.Name = "bevel1";
-            this.bevel1.Size = new System.Drawing.Size(218, 355);
+            this.bevel1.Size = new System.Drawing.Size(196, 358);
             this.bevel1.TabIndex = 14;
             // 
             // timer1
@@ -356,7 +376,7 @@
             // 
             this.loadFileButton.Location = new System.Drawing.Point(5, 36);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(102, 23);
+            this.loadFileButton.Size = new System.Drawing.Size(96, 23);
             this.loadFileButton.TabIndex = 15;
             this.loadFileButton.Text = "Load File";
             this.loadFileButton.UseVisualStyleBackColor = true;
@@ -366,11 +386,170 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // XScaleTextBox
+            // 
+            this.XScaleTextBox.Location = new System.Drawing.Point(291, 36);
+            this.XScaleTextBox.Name = "XScaleTextBox";
+            this.XScaleTextBox.ReadOnly = true;
+            this.XScaleTextBox.Size = new System.Drawing.Size(75, 22);
+            this.XScaleTextBox.TabIndex = 16;
+            this.XScaleTextBox.Text = "960";
+            // 
+            // YScaleTextBox
+            // 
+            this.YScaleTextBox.Location = new System.Drawing.Point(452, 39);
+            this.YScaleTextBox.Name = "YScaleTextBox";
+            this.YScaleTextBox.ReadOnly = true;
+            this.YScaleTextBox.Size = new System.Drawing.Size(75, 22);
+            this.YScaleTextBox.TabIndex = 17;
+            this.YScaleTextBox.Text = "960";
+            // 
+            // XCurrentPosTextBox
+            // 
+            this.XCurrentPosTextBox.Location = new System.Drawing.Point(291, 69);
+            this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
+            this.XCurrentPosTextBox.Size = new System.Drawing.Size(75, 22);
+            this.XCurrentPosTextBox.TabIndex = 18;
+            this.XCurrentPosTextBox.Text = "0.0000";
+            // 
+            // YCurrentPosTextBox
+            // 
+            this.YCurrentPosTextBox.Location = new System.Drawing.Point(453, 69);
+            this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
+            this.YCurrentPosTextBox.Size = new System.Drawing.Size(75, 22);
+            this.YCurrentPosTextBox.TabIndex = 19;
+            this.YCurrentPosTextBox.Text = "0.0000";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(229, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 17);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "X Scale";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(390, 41);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 17);
+            this.label3.TabIndex = 21;
+            this.label3.Text = "Y Scale";
+            // 
+            // setXButton
+            // 
+            this.setXButton.Location = new System.Drawing.Point(210, 69);
+            this.setXButton.Name = "setXButton";
+            this.setXButton.Size = new System.Drawing.Size(75, 23);
+            this.setXButton.TabIndex = 22;
+            this.setXButton.Text = "Set X";
+            this.setXButton.UseVisualStyleBackColor = true;
+            this.setXButton.Click += new System.EventHandler(this.setXButton_Click);
+            // 
+            // SetYButton
+            // 
+            this.SetYButton.Location = new System.Drawing.Point(372, 69);
+            this.SetYButton.Name = "SetYButton";
+            this.SetYButton.Size = new System.Drawing.Size(75, 23);
+            this.SetYButton.TabIndex = 23;
+            this.SetYButton.Text = "Set Y";
+            this.SetYButton.UseVisualStyleBackColor = true;
+            this.SetYButton.Click += new System.EventHandler(this.SetYButton_Click);
+            // 
+            // zeroXbutton
+            // 
+            this.zeroXbutton.Location = new System.Drawing.Point(210, 98);
+            this.zeroXbutton.Name = "zeroXbutton";
+            this.zeroXbutton.Size = new System.Drawing.Size(75, 23);
+            this.zeroXbutton.TabIndex = 24;
+            this.zeroXbutton.Text = "Zero  X";
+            this.zeroXbutton.UseVisualStyleBackColor = true;
+            this.zeroXbutton.Click += new System.EventHandler(this.zeroXbutton_Click);
+            // 
+            // zeroYbutton
+            // 
+            this.zeroYbutton.Location = new System.Drawing.Point(291, 98);
+            this.zeroYbutton.Name = "zeroYbutton";
+            this.zeroYbutton.Size = new System.Drawing.Size(75, 23);
+            this.zeroYbutton.TabIndex = 25;
+            this.zeroYbutton.Text = "Zero Y";
+            this.zeroYbutton.UseVisualStyleBackColor = true;
+            this.zeroYbutton.Click += new System.EventHandler(this.zeroYbutton_Click);
+            // 
+            // zeroAllbutton
+            // 
+            this.zeroAllbutton.Location = new System.Drawing.Point(372, 98);
+            this.zeroAllbutton.Name = "zeroAllbutton";
+            this.zeroAllbutton.Size = new System.Drawing.Size(75, 23);
+            this.zeroAllbutton.TabIndex = 26;
+            this.zeroAllbutton.Text = "Zero All";
+            this.zeroAllbutton.UseVisualStyleBackColor = true;
+            this.zeroAllbutton.Click += new System.EventHandler(this.zeroAllbutton_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(18, 359);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(29, 24);
+            this.label6.TabIndex = 33;
+            this.label6.Text = "X:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(18, 393);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(27, 24);
+            this.label7.TabIndex = 34;
+            this.label7.Text = "Y:";
+            // 
+            // Xlabel
+            // 
+            this.Xlabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Xlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Xlabel.Location = new System.Drawing.Point(53, 358);
+            this.Xlabel.Name = "Xlabel";
+            this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+            this.Xlabel.Size = new System.Drawing.Size(100, 25);
+            this.Xlabel.TabIndex = 35;
+            this.Xlabel.Text = "0.0000";
+            // 
+            // Ylabel
+            // 
+            this.Ylabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Ylabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Ylabel.Location = new System.Drawing.Point(53, 393);
+            this.Ylabel.Name = "Ylabel";
+            this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+            this.Ylabel.Size = new System.Drawing.Size(100, 25);
+            this.Ylabel.TabIndex = 36;
+            this.Ylabel.Text = "0.0000";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 723);
+            this.Controls.Add(this.Ylabel);
+            this.Controls.Add(this.Xlabel);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.zeroAllbutton);
+            this.Controls.Add(this.zeroYbutton);
+            this.Controls.Add(this.zeroXbutton);
+            this.Controls.Add(this.SetYButton);
+            this.Controls.Add(this.setXButton);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.YCurrentPosTextBox);
+            this.Controls.Add(this.XCurrentPosTextBox);
+            this.Controls.Add(this.YScaleTextBox);
+            this.Controls.Add(this.XScaleTextBox);
             this.Controls.Add(this.loadFileButton);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.forcePullButton);
@@ -430,6 +609,21 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox XScaleTextBox;
+        private System.Windows.Forms.TextBox YScaleTextBox;
+        private System.Windows.Forms.TextBox XCurrentPosTextBox;
+        private System.Windows.Forms.TextBox YCurrentPosTextBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button setXButton;
+        private System.Windows.Forms.Button SetYButton;
+        private System.Windows.Forms.Button zeroXbutton;
+        private System.Windows.Forms.Button zeroYbutton;
+        private System.Windows.Forms.Button zeroAllbutton;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label Xlabel;
+        private System.Windows.Forms.Label Ylabel;
     }
 }
 
