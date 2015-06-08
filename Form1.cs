@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace CNC_Drill_Controller1
         private DateTime lastUpdate = DateTime.Now;
 
         private bool CheckBoxInhibit;
-        private bool seekingLimits;
+        private bool seekingLimits; //TODO: add limit switch auto seeking, ask for approximate location and creep toward minX and minY
 
         public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
         public bool TopSwitch, BottomSwitch;
@@ -32,7 +33,8 @@ namespace CNC_Drill_Controller1
         public int X_Scale = 960;
         public int Y_Scale = 960;
 
-        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };//{0x11, 0x22, 0x44, 0x88};//single phase
+        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
+        //{0x11, 0x22, 0x44, 0x88};//single phase
 
         //double phase
         //51 = 0x33 = b'00110011'
@@ -53,7 +55,7 @@ namespace CNC_Drill_Controller1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox2.SelectedIndex = 0;
+            AxisOffsetComboBox.SelectedIndex = 0;
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
@@ -69,35 +71,13 @@ namespace CNC_Drill_Controller1
                     {
                         for (var i = 0; i < numUI; i++)
                         {
-                            comboBox1.Items.Add(ftdiDeviceList[i].LocId + ":" + ftdiDeviceList[i].Description);
+                            USBdevicesComboBox.Items.Add(ftdiDeviceList[i].LocId + ":" + ftdiDeviceList[i].Description);
                         }
 
 
-                        comboBox1.Text = comboBox1.Items[0].ToString();
+                        USBdevicesComboBox.Text = USBdevicesComboBox.Items[0].ToString();
 
-
-                        logger1.AddLine("Opening first device");
-                        ftStatus = USB_Interface.OpenBySerialNumber(ftdiDeviceList[0].SerialNumber);
-                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-                        {
-                            logger1.AddLine("Failed to open device (error " + ftStatus + ")");
-                        }
-
-
-                        logger1.AddLine("Setting default bauld rate");
-                        ftStatus = USB_Interface.SetBaudRate(300);
-                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-                        {
-                            logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
-                        }
-
-                        logger1.AddLine("Setting BitMode");
-                        ftStatus = USB_Interface.SetBitMode(61, FTDI.FT_BIT_MODES.FT_BIT_MODE_SYNC_BITBANG);
-                        //61 = 0x3D = b'00111101'
-                        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-                        {
-                            logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
-                        }
+                        OpenDeviceByLocation(ftdiDeviceList[0].LocId);
                     }
 
                     else
@@ -234,25 +214,21 @@ namespace CNC_Drill_Controller1
             BottomSwitch = !getBit(InputBuffer[7], 1);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void PlusXbutton_Click(object sender, EventArgs e)
         {
-            // X +
             moveBy(AxisOffsetCount, 0);
         }
-        private void button4_Click(object sender, EventArgs e)
+        private void MinusXbutton_Click(object sender, EventArgs e)
         {
-            // X - 
             moveBy(-AxisOffsetCount, 0);
         }
-        private void button2_Click(object sender, EventArgs e)
+        private void PlusYbutton_Click(object sender, EventArgs e)
         {
-            // Y +
             moveBy(0, AxisOffsetCount);
 
         }        
-        private void button1_Click(object sender, EventArgs e)
+        private void MinusYbutton_Click(object sender, EventArgs e)
         {
-            // Y -
             moveBy(0, -AxisOffsetCount);
         }
 
@@ -283,7 +259,7 @@ namespace CNC_Drill_Controller1
             if (!CheckBoxInhibit) Transfert();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void UIupdateTimer_Tick(object sender, EventArgs e)
         {
             if (USB_Interface.IsOpen)
             {
@@ -329,8 +305,8 @@ namespace CNC_Drill_Controller1
             var current_Y = (Y_Axis_Location - Y_Axis_Delta);
             XStatusLabel.Text = current_X.ToString("D5");
             YStatusLabel.Text = current_Y.ToString("D5");
-            Xlabel.Text = ((float)current_X / X_Scale).ToString("F4");
-            Ylabel.Text = ((float)current_Y / Y_Scale).ToString("F4");
+            Xlabel.Text = "X: "+((float)current_X / X_Scale).ToString("F4");
+            Ylabel.Text = "Y: "+((float)current_Y / Y_Scale).ToString("F4");
 
 
         }
@@ -349,9 +325,9 @@ namespace CNC_Drill_Controller1
             }
         }
 
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var toParse = (string)comboBox2.SelectedItem;
+            var toParse = (string)AxisOffsetComboBox.SelectedItem;
             toParse = toParse.Split(new[] { ' ' })[0];
             try
             {
@@ -363,60 +339,66 @@ namespace CNC_Drill_Controller1
             }
         }
 
-        private void moveBy(int X, int Y)
+        private void moveBy(int DeltaX, int DeltaY)
         {
-            //todo max 1 turn (max_steps_per_transfert) before pooling for limit swwitches
-            //todo if limit reached before end of moveby, post error in logger1
+            var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
 
-            var numMoves = (Math.Abs(X) >= Math.Abs(Y)) ? Math.Abs(X) : Math.Abs(Y);
-            var offsetX = 0;
-            if (X > 0)
+            var XStepDirection = 0;
+            if (DeltaX > 0)
             {
-                offsetX = 1;
+                XStepDirection = 1;
             }
-            else if (X < 0)
+            else if (DeltaX < 0)
             {
-                offsetX = -1;
+                XStepDirection = -1;
             }
 
-            var offsetY = 0;
-            if (Y > 0)
+            var YStepDirection = 0;
+            if (DeltaY > 0)
             {
-                offsetY = 1;
+                YStepDirection = 1;
             }
-            else if (Y < 0)
+            else if (DeltaY < 0)
             {
-                offsetY = -1;
+                YStepDirection = -1;
             }
 
             var numCycle = numMoves/max_steps_per_transfert;
             if (numCycle < 1) numCycle = 1;
+            if (numCycle > 1)
+            {
+            Cursor.Current = Cursors.WaitCursor;
+                toolStripProgressBar1.Maximum = numCycle-1;
+            }
 
             for (var i = 0; i < numCycle; i++)
             {
                 var num_moves_for_this_cycle = (numMoves > max_steps_per_transfert) ? max_steps_per_transfert : numMoves;
                 for (var j = 0; j < num_moves_for_this_cycle; j++)
                 {
-                    if (Math.Abs(X) != 0)
+                    if (Math.Abs(DeltaX) != 0)
                     {
-                        X_Axis_Location += offsetX;
-                        X += offsetX;
+                        X_Axis_Location += XStepDirection;
+                        DeltaX -= XStepDirection;
                     }
-                    if (Math.Abs(Y) != 0)
+                    if (Math.Abs(DeltaY) != 0)
                     {
-                        Y_Axis_Location += offsetY;
-                        Y += offsetY;
+                        Y_Axis_Location += YStepDirection;
+                        DeltaY -= YStepDirection;
                     }
                     Transfert();
                 }
+                toolStripProgressBar1.Value = i;
                 numMoves -= num_moves_for_this_cycle;
                 Refresh();
-                if (MaxXswitch | MinXswitch | MaxYswitch | MinYswitch)
+                if (MaxXswitch || MinXswitch || MaxYswitch || MinYswitch)
                 {
                     if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
                     i = numCycle; //if limit reached exit loop
                 }
             }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void setXButton_Click(object sender, EventArgs e)
@@ -460,6 +442,48 @@ namespace CNC_Drill_Controller1
             zeroYbutton_Click(this, e);
         }
 
+        private void ReloadUSBbutton_Click(object sender, EventArgs e)
+        {
+            Form1_Load(this, e);
+        }
+
+        private void USBdevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var locStr = (string)USBdevicesComboBox.SelectedItem;
+            locStr = locStr.Split(new [] {':'})[0];
+            uint loc;
+            if (uint.TryParse(locStr, out loc)) OpenDeviceByLocation(loc);
+            else
+            {
+                logger1.AddLine("Failed to parse Location Id of: "+ (string)USBdevicesComboBox.SelectedItem);
+            }
+        }
+
+        private void OpenDeviceByLocation(uint LocationID)
+        {
+            logger1.AddLine("Opening device");
+            var ftStatus = USB_Interface.OpenByLocation(LocationID);
+            if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            {
+                logger1.AddLine("Failed to open device (error " + ftStatus + ")");
+            }
+
+
+            logger1.AddLine("Setting default bauld rate");
+            ftStatus = USB_Interface.SetBaudRate(300);
+            if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            {
+                logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
+            }
+
+            logger1.AddLine("Setting BitMode");
+            ftStatus = USB_Interface.SetBitMode(61, FTDI.FT_BIT_MODES.FT_BIT_MODE_SYNC_BITBANG);
+            //61 = 0x3D = b'00111101'
+            if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            {
+                logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
+            }
+        }
 
     }
 }

@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.USBdevicesComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.logger1 = new M4nuskomponents.Logger();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.MinusYbutton = new System.Windows.Forms.Button();
+            this.PlusYbutton = new System.Windows.Forms.Button();
+            this.PlusXbutton = new System.Windows.Forms.Button();
+            this.MinusXbutton = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.XMinStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -55,39 +55,48 @@
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.checkBoxB = new System.Windows.Forms.CheckBox();
             this.forcePullButton = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.AxisOffsetComboBox = new System.Windows.Forms.ComboBox();
             this.bevel1 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.UIupdateTimer = new System.Windows.Forms.Timer(this.components);
             this.loadFileButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.XScaleTextBox = new System.Windows.Forms.TextBox();
             this.YScaleTextBox = new System.Windows.Forms.TextBox();
             this.XCurrentPosTextBox = new System.Windows.Forms.TextBox();
             this.YCurrentPosTextBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.setXButton = new System.Windows.Forms.Button();
             this.SetYButton = new System.Windows.Forms.Button();
             this.zeroXbutton = new System.Windows.Forms.Button();
             this.zeroYbutton = new System.Windows.Forms.Button();
             this.zeroAllbutton = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.Xlabel = new System.Windows.Forms.Label();
             this.Ylabel = new System.Windows.Forms.Label();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.MoveTobutton = new System.Windows.Forms.Button();
+            this.SetAsXYbutton = new System.Windows.Forms.Button();
+            this.OutputLabel = new System.Windows.Forms.Label();
+            this.XScalebutton = new System.Windows.Forms.Button();
+            this.YScalebutton = new System.Windows.Forms.Button();
+            this.ViewZoomLabel = new System.Windows.Forms.Label();
+            this.ViewXLabel = new System.Windows.Forms.Label();
+            this.ViewYLabel = new System.Windows.Forms.Label();
+            this.RunButton = new System.Windows.Forms.Button();
+            this.SeekZeroButton = new System.Windows.Forms.Button();
+            this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // comboBox1
+            // USBdevicesComboBox
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.USBdevicesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(113, 6);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(890, 24);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.Text = "[None]";
+            this.USBdevicesComboBox.FormattingEnabled = true;
+            this.USBdevicesComboBox.Location = new System.Drawing.Point(113, 6);
+            this.USBdevicesComboBox.Name = "USBdevicesComboBox";
+            this.USBdevicesComboBox.Size = new System.Drawing.Size(890, 24);
+            this.USBdevicesComboBox.TabIndex = 0;
+            this.USBdevicesComboBox.Text = "[None]";
+            this.USBdevicesComboBox.SelectedIndexChanged += new System.EventHandler(this.USBdevicesComboBox_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -118,49 +127,49 @@
             this.logger1.TimeStamp = true;
             this.logger1.TimeStampFormat = "HH-mm-ss";
             // 
-            // button1
+            // MinusYbutton
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(79, 185);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 40);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Y -";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.MinusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MinusYbutton.Location = new System.Drawing.Point(79, 185);
+            this.MinusYbutton.Name = "MinusYbutton";
+            this.MinusYbutton.Size = new System.Drawing.Size(40, 40);
+            this.MinusYbutton.TabIndex = 3;
+            this.MinusYbutton.Text = "Y -";
+            this.MinusYbutton.UseVisualStyleBackColor = true;
+            this.MinusYbutton.Click += new System.EventHandler(this.MinusYbutton_Click);
             // 
-            // button2
+            // PlusYbutton
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(79, 275);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(40, 40);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Y +";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.PlusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlusYbutton.Location = new System.Drawing.Point(79, 275);
+            this.PlusYbutton.Name = "PlusYbutton";
+            this.PlusYbutton.Size = new System.Drawing.Size(40, 40);
+            this.PlusYbutton.TabIndex = 4;
+            this.PlusYbutton.Text = "Y +";
+            this.PlusYbutton.UseVisualStyleBackColor = true;
+            this.PlusYbutton.Click += new System.EventHandler(this.PlusYbutton_Click);
             // 
-            // button3
+            // PlusXbutton
             // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(137, 229);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(40, 40);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "X +";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.PlusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlusXbutton.Location = new System.Drawing.Point(137, 229);
+            this.PlusXbutton.Name = "PlusXbutton";
+            this.PlusXbutton.Size = new System.Drawing.Size(40, 40);
+            this.PlusXbutton.TabIndex = 5;
+            this.PlusXbutton.Text = "X +";
+            this.PlusXbutton.UseVisualStyleBackColor = true;
+            this.PlusXbutton.Click += new System.EventHandler(this.PlusXbutton_Click);
             // 
-            // button4
+            // MinusXbutton
             // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(21, 229);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(40, 40);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "X -";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.MinusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MinusXbutton.Location = new System.Drawing.Point(21, 229);
+            this.MinusXbutton.Name = "MinusXbutton";
+            this.MinusXbutton.Size = new System.Drawing.Size(40, 40);
+            this.MinusXbutton.TabIndex = 6;
+            this.MinusXbutton.Text = "X -";
+            this.MinusXbutton.UseVisualStyleBackColor = true;
+            this.MinusXbutton.Click += new System.EventHandler(this.MinusXbutton_Click);
             // 
             // statusStrip1
             // 
@@ -327,19 +336,19 @@
             // 
             // forcePullButton
             // 
-            this.forcePullButton.Location = new System.Drawing.Point(107, 36);
+            this.forcePullButton.Location = new System.Drawing.Point(5, 39);
             this.forcePullButton.Name = "forcePullButton";
-            this.forcePullButton.Size = new System.Drawing.Size(85, 23);
+            this.forcePullButton.Size = new System.Drawing.Size(94, 23);
             this.forcePullButton.TabIndex = 12;
             this.forcePullButton.Text = "Force Pool";
             this.forcePullButton.UseVisualStyleBackColor = true;
             this.forcePullButton.Click += new System.EventHandler(this.Sendbutton_Click);
             // 
-            // comboBox2
+            // AxisOffsetComboBox
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
+            this.AxisOffsetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AxisOffsetComboBox.FormattingEnabled = true;
+            this.AxisOffsetComboBox.Items.AddRange(new object[] {
             "1",
             "3",
             "6",
@@ -351,12 +360,12 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.comboBox2.Location = new System.Drawing.Point(15, 321);
-            this.comboBox2.MaxDropDownItems = 16;
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(177, 24);
-            this.comboBox2.TabIndex = 13;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.AxisOffsetComboBox.Location = new System.Drawing.Point(15, 321);
+            this.AxisOffsetComboBox.MaxDropDownItems = 16;
+            this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
+            this.AxisOffsetComboBox.Size = new System.Drawing.Size(177, 24);
+            this.AxisOffsetComboBox.TabIndex = 13;
+            this.AxisOffsetComboBox.SelectedIndexChanged += new System.EventHandler(this.AxisOffsetComboBox_SelectedIndexChanged);
             // 
             // bevel1
             // 
@@ -366,17 +375,17 @@
             this.bevel1.Size = new System.Drawing.Size(196, 358);
             this.bevel1.TabIndex = 14;
             // 
-            // timer1
+            // UIupdateTimer
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 125;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.UIupdateTimer.Enabled = true;
+            this.UIupdateTimer.Interval = 125;
+            this.UIupdateTimer.Tick += new System.EventHandler(this.UIupdateTimer_Tick);
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(5, 36);
+            this.loadFileButton.Location = new System.Drawing.Point(556, 489);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(96, 23);
+            this.loadFileButton.Size = new System.Drawing.Size(75, 23);
             this.loadFileButton.TabIndex = 15;
             this.loadFileButton.Text = "Load File";
             this.loadFileButton.UseVisualStyleBackColor = true;
@@ -384,11 +393,11 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileName = "*.vdx";
             // 
             // XScaleTextBox
             // 
-            this.XScaleTextBox.Location = new System.Drawing.Point(291, 36);
+            this.XScaleTextBox.Location = new System.Drawing.Point(291, 40);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.ReadOnly = true;
             this.XScaleTextBox.Size = new System.Drawing.Size(75, 22);
@@ -397,7 +406,7 @@
             // 
             // YScaleTextBox
             // 
-            this.YScaleTextBox.Location = new System.Drawing.Point(452, 39);
+            this.YScaleTextBox.Location = new System.Drawing.Point(453, 40);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.ReadOnly = true;
             this.YScaleTextBox.Size = new System.Drawing.Size(75, 22);
@@ -406,7 +415,7 @@
             // 
             // XCurrentPosTextBox
             // 
-            this.XCurrentPosTextBox.Location = new System.Drawing.Point(291, 69);
+            this.XCurrentPosTextBox.Location = new System.Drawing.Point(291, 98);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(75, 22);
             this.XCurrentPosTextBox.TabIndex = 18;
@@ -414,33 +423,15 @@
             // 
             // YCurrentPosTextBox
             // 
-            this.YCurrentPosTextBox.Location = new System.Drawing.Point(453, 69);
+            this.YCurrentPosTextBox.Location = new System.Drawing.Point(291, 127);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(75, 22);
             this.YCurrentPosTextBox.TabIndex = 19;
             this.YCurrentPosTextBox.Text = "0.0000";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(229, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 17);
-            this.label2.TabIndex = 20;
-            this.label2.Text = "X Scale";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(390, 41);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 17);
-            this.label3.TabIndex = 21;
-            this.label3.Text = "Y Scale";
-            // 
             // setXButton
             // 
-            this.setXButton.Location = new System.Drawing.Point(210, 69);
+            this.setXButton.Location = new System.Drawing.Point(210, 98);
             this.setXButton.Name = "setXButton";
             this.setXButton.Size = new System.Drawing.Size(75, 23);
             this.setXButton.TabIndex = 22;
@@ -450,7 +441,7 @@
             // 
             // SetYButton
             // 
-            this.SetYButton.Location = new System.Drawing.Point(372, 69);
+            this.SetYButton.Location = new System.Drawing.Point(210, 127);
             this.SetYButton.Name = "SetYButton";
             this.SetYButton.Size = new System.Drawing.Size(75, 23);
             this.SetYButton.TabIndex = 23;
@@ -460,7 +451,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(210, 98);
+            this.zeroXbutton.Location = new System.Drawing.Point(210, 69);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(75, 23);
             this.zeroXbutton.TabIndex = 24;
@@ -470,7 +461,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(291, 98);
+            this.zeroYbutton.Location = new System.Drawing.Point(291, 69);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(75, 23);
             this.zeroYbutton.TabIndex = 25;
@@ -480,7 +471,7 @@
             // 
             // zeroAllbutton
             // 
-            this.zeroAllbutton.Location = new System.Drawing.Point(372, 98);
+            this.zeroAllbutton.Location = new System.Drawing.Point(372, 69);
             this.zeroAllbutton.Name = "zeroAllbutton";
             this.zeroAllbutton.Size = new System.Drawing.Size(75, 23);
             this.zeroAllbutton.TabIndex = 26;
@@ -488,84 +479,187 @@
             this.zeroAllbutton.UseVisualStyleBackColor = true;
             this.zeroAllbutton.Click += new System.EventHandler(this.zeroAllbutton_Click);
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(18, 359);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(29, 24);
-            this.label6.TabIndex = 33;
-            this.label6.Text = "X:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(18, 393);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(27, 24);
-            this.label7.TabIndex = 34;
-            this.label7.Text = "Y:";
-            // 
             // Xlabel
             // 
             this.Xlabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Xlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Xlabel.Location = new System.Drawing.Point(53, 358);
+            this.Xlabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Xlabel.Location = new System.Drawing.Point(31, 368);
             this.Xlabel.Name = "Xlabel";
-            this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-            this.Xlabel.Size = new System.Drawing.Size(100, 25);
+            this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 2);
+            this.Xlabel.Size = new System.Drawing.Size(132, 25);
             this.Xlabel.TabIndex = 35;
-            this.Xlabel.Text = "0.0000";
+            this.Xlabel.Text = "X: 0.0000";
             // 
             // Ylabel
             // 
             this.Ylabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Ylabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Ylabel.Location = new System.Drawing.Point(53, 393);
+            this.Ylabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Ylabel.Location = new System.Drawing.Point(31, 393);
             this.Ylabel.Name = "Ylabel";
-            this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-            this.Ylabel.Size = new System.Drawing.Size(100, 25);
+            this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 2);
+            this.Ylabel.Size = new System.Drawing.Size(132, 25);
             this.Ylabel.TabIndex = 36;
-            this.Ylabel.Text = "0.0000";
+            this.Ylabel.Text = "Y: 0.0000";
+            // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 16;
+            this.listBox1.Items.AddRange(new object[] {
+            "Load .vdx to populate list"});
+            this.listBox1.Location = new System.Drawing.Point(388, 175);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.ScrollAlwaysVisible = true;
+            this.listBox1.Size = new System.Drawing.Size(159, 308);
+            this.listBox1.TabIndex = 37;
+            // 
+            // MoveTobutton
+            // 
+            this.MoveTobutton.Location = new System.Drawing.Point(388, 489);
+            this.MoveTobutton.Name = "MoveTobutton";
+            this.MoveTobutton.Size = new System.Drawing.Size(75, 23);
+            this.MoveTobutton.TabIndex = 38;
+            this.MoveTobutton.Text = "MoveTo";
+            this.MoveTobutton.UseVisualStyleBackColor = true;
+            // 
+            // SetAsXYbutton
+            // 
+            this.SetAsXYbutton.Location = new System.Drawing.Point(472, 489);
+            this.SetAsXYbutton.Name = "SetAsXYbutton";
+            this.SetAsXYbutton.Size = new System.Drawing.Size(75, 23);
+            this.SetAsXYbutton.TabIndex = 39;
+            this.SetAsXYbutton.Text = "SetAsXY";
+            this.SetAsXYbutton.UseVisualStyleBackColor = true;
+            // 
+            // OutputLabel
+            // 
+            this.OutputLabel.BackColor = System.Drawing.Color.White;
+            this.OutputLabel.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.OutputLabel.Location = new System.Drawing.Point(553, 33);
+            this.OutputLabel.Name = "OutputLabel";
+            this.OutputLabel.Size = new System.Drawing.Size(450, 450);
+            this.OutputLabel.TabIndex = 40;
+            // 
+            // XScalebutton
+            // 
+            this.XScalebutton.Location = new System.Drawing.Point(210, 39);
+            this.XScalebutton.Name = "XScalebutton";
+            this.XScalebutton.Size = new System.Drawing.Size(75, 23);
+            this.XScalebutton.TabIndex = 41;
+            this.XScalebutton.Text = "X Scale";
+            this.XScalebutton.UseVisualStyleBackColor = true;
+            // 
+            // YScalebutton
+            // 
+            this.YScalebutton.Location = new System.Drawing.Point(372, 39);
+            this.YScalebutton.Name = "YScalebutton";
+            this.YScalebutton.Size = new System.Drawing.Size(75, 23);
+            this.YScalebutton.TabIndex = 42;
+            this.YScalebutton.Text = "Y Scale";
+            this.YScalebutton.UseVisualStyleBackColor = true;
+            // 
+            // ViewZoomLabel
+            // 
+            this.ViewZoomLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ViewZoomLabel.Location = new System.Drawing.Point(637, 489);
+            this.ViewZoomLabel.Name = "ViewZoomLabel";
+            this.ViewZoomLabel.Size = new System.Drawing.Size(100, 23);
+            this.ViewZoomLabel.TabIndex = 43;
+            this.ViewZoomLabel.Text = "Zoom: ";
+            // 
+            // ViewXLabel
+            // 
+            this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ViewXLabel.Location = new System.Drawing.Point(743, 489);
+            this.ViewXLabel.Name = "ViewXLabel";
+            this.ViewXLabel.Size = new System.Drawing.Size(100, 23);
+            this.ViewXLabel.TabIndex = 44;
+            this.ViewXLabel.Text = "X: ";
+            // 
+            // ViewYLabel
+            // 
+            this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ViewYLabel.Location = new System.Drawing.Point(849, 489);
+            this.ViewYLabel.Name = "ViewYLabel";
+            this.ViewYLabel.Size = new System.Drawing.Size(100, 23);
+            this.ViewYLabel.TabIndex = 45;
+            this.ViewYLabel.Text = "Y: ";
+            // 
+            // RunButton
+            // 
+            this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RunButton.Location = new System.Drawing.Point(388, 531);
+            this.RunButton.Name = "RunButton";
+            this.RunButton.Size = new System.Drawing.Size(243, 27);
+            this.RunButton.TabIndex = 46;
+            this.RunButton.Text = "[Run Drilling Program]";
+            this.RunButton.UseVisualStyleBackColor = true;
+            // 
+            // SeekZeroButton
+            // 
+            this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SeekZeroButton.Location = new System.Drawing.Point(5, 531);
+            this.SeekZeroButton.Name = "SeekZeroButton";
+            this.SeekZeroButton.Size = new System.Drawing.Size(243, 27);
+            this.SeekZeroButton.TabIndex = 47;
+            this.SeekZeroButton.Text = "[Find Axis Origins]";
+            this.SeekZeroButton.UseVisualStyleBackColor = true;
+            // 
+            // ReloadUSBbutton
+            // 
+            this.ReloadUSBbutton.Location = new System.Drawing.Point(107, 39);
+            this.ReloadUSBbutton.Name = "ReloadUSBbutton";
+            this.ReloadUSBbutton.Size = new System.Drawing.Size(94, 23);
+            this.ReloadUSBbutton.TabIndex = 48;
+            this.ReloadUSBbutton.Text = "Reload USB";
+            this.ReloadUSBbutton.UseVisualStyleBackColor = true;
+            this.ReloadUSBbutton.Click += new System.EventHandler(this.ReloadUSBbutton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1006, 723);
+            this.Controls.Add(this.ReloadUSBbutton);
+            this.Controls.Add(this.SeekZeroButton);
+            this.Controls.Add(this.RunButton);
+            this.Controls.Add(this.ViewYLabel);
+            this.Controls.Add(this.ViewXLabel);
+            this.Controls.Add(this.ViewZoomLabel);
+            this.Controls.Add(this.YScalebutton);
+            this.Controls.Add(this.XScalebutton);
+            this.Controls.Add(this.OutputLabel);
+            this.Controls.Add(this.SetAsXYbutton);
+            this.Controls.Add(this.MoveTobutton);
+            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.Ylabel);
             this.Controls.Add(this.Xlabel);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.zeroAllbutton);
             this.Controls.Add(this.zeroYbutton);
             this.Controls.Add(this.zeroXbutton);
             this.Controls.Add(this.SetYButton);
             this.Controls.Add(this.setXButton);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.YCurrentPosTextBox);
             this.Controls.Add(this.XCurrentPosTextBox);
             this.Controls.Add(this.YScaleTextBox);
             this.Controls.Add(this.XScaleTextBox);
             this.Controls.Add(this.loadFileButton);
-            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.AxisOffsetComboBox);
             this.Controls.Add(this.forcePullButton);
             this.Controls.Add(this.checkBoxB);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.checkBoxY);
             this.Controls.Add(this.checkBoxX);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.MinusXbutton);
+            this.Controls.Add(this.PlusXbutton);
+            this.Controls.Add(this.PlusYbutton);
+            this.Controls.Add(this.MinusYbutton);
             this.Controls.Add(this.logger1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.USBdevicesComboBox);
             this.Controls.Add(this.bevel1);
+            this.DoubleBuffered = true;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
@@ -579,13 +673,13 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox USBdevicesComboBox;
         private System.Windows.Forms.Label label1;
         private M4nuskomponents.Logger logger1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button MinusYbutton;
+        private System.Windows.Forms.Button PlusYbutton;
+        private System.Windows.Forms.Button PlusXbutton;
+        private System.Windows.Forms.Button MinusXbutton;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripStatusLabel XMinStatusLabel;
@@ -604,26 +698,34 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem saveLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox AxisOffsetComboBox;
         private System.Windows.Forms.Label bevel1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer UIupdateTimer;
         private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.TextBox XScaleTextBox;
         private System.Windows.Forms.TextBox YScaleTextBox;
         private System.Windows.Forms.TextBox XCurrentPosTextBox;
         private System.Windows.Forms.TextBox YCurrentPosTextBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button setXButton;
         private System.Windows.Forms.Button SetYButton;
         private System.Windows.Forms.Button zeroXbutton;
         private System.Windows.Forms.Button zeroYbutton;
         private System.Windows.Forms.Button zeroAllbutton;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label Xlabel;
         private System.Windows.Forms.Label Ylabel;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Button MoveTobutton;
+        private System.Windows.Forms.Button SetAsXYbutton;
+        private System.Windows.Forms.Label OutputLabel;
+        private System.Windows.Forms.Button XScalebutton;
+        private System.Windows.Forms.Button YScalebutton;
+        private System.Windows.Forms.Label ViewZoomLabel;
+        private System.Windows.Forms.Label ViewXLabel;
+        private System.Windows.Forms.Label ViewYLabel;
+        private System.Windows.Forms.Button RunButton;
+        private System.Windows.Forms.Button SeekZeroButton;
+        private System.Windows.Forms.Button ReloadUSBbutton;
     }
 }
 
