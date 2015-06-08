@@ -75,9 +75,9 @@ namespace CNC_Drill_Controller1
                         }
 
 
-                        USBdevicesComboBox.Text = USBdevicesComboBox.Items[0].ToString();
+                        USBdevicesComboBox.Select(0, 1);
 
-                        OpenDeviceByLocation(ftdiDeviceList[0].LocId);
+                        //OpenDeviceByLocation(ftdiDeviceList[0].LocId);
                     }
 
                     else
@@ -268,10 +268,10 @@ namespace CNC_Drill_Controller1
                 }
 
                 //Update UI with usb data
-                XMinStatusLabel.BackColor = MinXswitch ? Color.Lime : Color.Red;
-                XMaxStatusLabel.BackColor = MaxXswitch ? Color.Lime : Color.Red;
-                YMinStatusLabel.BackColor = MinYswitch ? Color.Lime : Color.Red;
-                YMaxStatusLabel.BackColor = MaxYswitch ? Color.Lime : Color.Red;
+                XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
+                XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
+                YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
+                YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;
 
                 //top drill limit switch
                 if (TopSwitch)
@@ -499,9 +499,13 @@ namespace CNC_Drill_Controller1
         {
             var current_X = ((float)X_Axis_Location - X_Axis_Delta) / X_Scale;
             var current_Y = ((float)Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
-            var deltaX = X - current_X;
-            var deltaY = Y - current_Y;
-            moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
+            if ((current_X < 5.900) && (current_Y < 5.900))
+            {
+                var deltaX = X - current_X;
+                var deltaY = Y - current_Y;
+                moveBy((int) (deltaX*X_Scale), (int) (deltaY*Y_Scale));
+            }
+            else logger1.AddLine("Move target out of range.");
         }
 
         private void SetAsXYbutton_Click(object sender, EventArgs e)
@@ -515,6 +519,14 @@ namespace CNC_Drill_Controller1
                 setXButton_Click(this, e);
                 SetYButton_Click(this, e);
             }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up) MinusYbutton_Click(this, e);
+            if (e.KeyCode == Keys.Down) PlusYbutton_Click(this, e);
+            if (e.KeyCode == Keys.Left) MinusXbutton_Click(this, e);
+            if (e.KeyCode == Keys.Right) PlusXbutton_Click(this, e);
         }
 
     }
