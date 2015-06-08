@@ -389,7 +389,7 @@
             this.loadFileButton.TabIndex = 15;
             this.loadFileButton.Text = "Load File";
             this.loadFileButton.UseVisualStyleBackColor = true;
-            this.loadFileButton.Click += new System.EventHandler(this.button5_Click);
+            this.loadFileButton.Click += new System.EventHandler(this.LoadFileButton_Click);
             // 
             // openFileDialog1
             // 

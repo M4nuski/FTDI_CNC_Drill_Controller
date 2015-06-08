@@ -232,8 +232,6 @@ namespace CNC_Drill_Controller1
             moveBy(0, -AxisOffsetCount);
         }
 
-
-
         private void Sendbutton_Click(object sender, EventArgs e)
         {
             Transfert();
@@ -243,7 +241,6 @@ namespace CNC_Drill_Controller1
         {
             logger1.Clear();
         }
-
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var logfile = File.AppendText("CNC_Drill_CTRL.log");
@@ -311,7 +308,7 @@ namespace CNC_Drill_Controller1
 
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void LoadFileButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -362,9 +359,9 @@ namespace CNC_Drill_Controller1
             {
                 YStepDirection = -1;
             }
-
-            var numCycle = numMoves/max_steps_per_transfert;
-            if (numCycle < 1) numCycle = 1;
+            //from StackOverflow http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
+            //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
+            var numCycle = (numMoves + max_steps_per_transfert -1) / max_steps_per_transfert;
             if (numCycle > 1)
             {
             Cursor.Current = Cursors.WaitCursor;
