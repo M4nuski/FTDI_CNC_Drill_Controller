@@ -359,7 +359,7 @@ namespace CNC_Drill_Controller1
             {
                 YStepDirection = -1;
             }
-            //from StackOverflow http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
+            //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
             var numCycle = (numMoves + max_steps_per_transfert -1) / max_steps_per_transfert;
             if (numCycle > 1)
@@ -479,6 +479,41 @@ namespace CNC_Drill_Controller1
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
+            }
+        }
+
+        private void MoveTobutton_Click(object sender, EventArgs e)
+        {
+            var movedata = (string) listBox1.SelectedItem;
+            var axisdata = movedata.Split(new [] {','});
+            if (axisdata.Length == 2)
+            {
+                var mx = safeTextToFloat(axisdata[0].Trim(new [] {' '}));
+                var my = safeTextToFloat(axisdata[1].Trim(new [] {' '}));
+                logger1.AddLine("Moving to: " + mx.ToString("F5") + ", " + my.ToString("F5"));
+                MoveTo(mx, my);
+            }
+        }
+
+        private void MoveTo(float X, float Y)
+        {
+            var current_X = ((float)X_Axis_Location - X_Axis_Delta) / X_Scale;
+            var current_Y = ((float)Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
+            var deltaX = X - current_X;
+            var deltaY = Y - current_Y;
+            moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
+        }
+
+        private void SetAsXYbutton_Click(object sender, EventArgs e)
+        {
+            var movedata = (string)listBox1.SelectedItem;
+            var axisdata = movedata.Split(new[] { ',' });
+            if (axisdata.Length == 2)
+            {
+                XCurrentPosTextBox.Text = axisdata[0].Trim(new[] { ' ' });
+                YCurrentPosTextBox.Text = axisdata[1].Trim(new[] { ' ' });
+                setXButton_Click(this, e);
+                SetYButton_Click(this, e);
             }
         }
 

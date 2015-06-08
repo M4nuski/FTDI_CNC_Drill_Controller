@@ -506,7 +506,12 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 16;
             this.listBox1.Items.AddRange(new object[] {
-            "Load .vdx to populate list"});
+            "Load .vdx to populate list",
+            "test data:",
+            "0.000, 0.000",
+            "1.000, 1.000",
+            "0.500, 0.000",
+            "1.000, 0.500"});
             this.listBox1.Location = new System.Drawing.Point(388, 175);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
@@ -521,6 +526,7 @@
             this.MoveTobutton.TabIndex = 38;
             this.MoveTobutton.Text = "MoveTo";
             this.MoveTobutton.UseVisualStyleBackColor = true;
+            this.MoveTobutton.Click += new System.EventHandler(this.MoveTobutton_Click);
             // 
             // SetAsXYbutton
             // 
@@ -530,6 +536,7 @@
             this.SetAsXYbutton.TabIndex = 39;
             this.SetAsXYbutton.Text = "SetAsXY";
             this.SetAsXYbutton.UseVisualStyleBackColor = true;
+            this.SetAsXYbutton.Click += new System.EventHandler(this.SetAsXYbutton_Click);
             // 
             // OutputLabel
             // 
@@ -660,6 +667,7 @@
             this.Controls.Add(this.USBdevicesComboBox);
             this.Controls.Add(this.bevel1);
             this.DoubleBuffered = true;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
