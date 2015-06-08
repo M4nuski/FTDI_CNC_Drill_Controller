@@ -74,9 +74,7 @@ namespace CNC_Drill_Controller1
                             USBdevicesComboBox.Items.Add(ftdiDeviceList[i].LocId + ":" + ftdiDeviceList[i].Description);
                         }
 
-
-                        USBdevicesComboBox.Select(0, 1);
-
+                        USBdevicesComboBox.SelectedIndex = 0;
                         //OpenDeviceByLocation(ftdiDeviceList[0].LocId);
                     }
 
@@ -274,7 +272,7 @@ namespace CNC_Drill_Controller1
                 YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;
 
                 //top drill limit switch
-                if (TopSwitch)
+                if (!TopSwitch)
                 {
                     if (checkBoxT.Checked)
                     {
@@ -285,7 +283,7 @@ namespace CNC_Drill_Controller1
                 else TopStatusLabel.BackColor = Color.Lime;
 
                 //bottom drill limit switch
-                if (BottomSwitch)
+                if (!BottomSwitch)
                 {
                     if (checkBoxB.Checked)
                     {
@@ -458,6 +456,8 @@ namespace CNC_Drill_Controller1
 
         private void OpenDeviceByLocation(uint LocationID)
         {
+            if (USB_Interface.IsOpen) USB_Interface.Close();
+
             logger1.AddLine("Opening device");
             var ftStatus = USB_Interface.OpenByLocation(LocationID);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
@@ -520,14 +520,5 @@ namespace CNC_Drill_Controller1
                 SetYButton_Click(this, e);
             }
         }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Up) MinusYbutton_Click(this, e);
-            if (e.KeyCode == Keys.Down) PlusYbutton_Click(this, e);
-            if (e.KeyCode == Keys.Left) MinusXbutton_Click(this, e);
-            if (e.KeyCode == Keys.Right) PlusXbutton_Click(this, e);
-        }
-
     }
 }
