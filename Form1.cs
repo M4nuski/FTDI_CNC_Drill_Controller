@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using FTD2XX_NET;
 
@@ -46,6 +40,8 @@ namespace CNC_Drill_Controller1
         public int X_Axis_Delta, Y_Axis_Delta;
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
+
+        private List<DrillNode> Nodes; 
 
         public Form1()
         {
@@ -266,10 +262,28 @@ namespace CNC_Drill_Controller1
                 }
 
                 //Update UI with usb data
-                XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
-                XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
-                YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
-                YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;
+                if (MinXswitch && MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
+                {
+                    XMinStatusLabel.BackColor = Color.DodgerBlue;
+                    XMaxStatusLabel.BackColor = Color.DodgerBlue;
+                }
+                else
+                {
+                    XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
+                    XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
+                }
+
+                if (MinYswitch && MaxYswitch)
+                {
+                    YMinStatusLabel.BackColor = Color.DodgerBlue;
+                    YMaxStatusLabel.BackColor = Color.DodgerBlue;
+                }
+                else
+                {
+                    YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
+                    YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;                    
+                }
+
 
                 //top drill limit switch
                 if (!TopSwitch)
@@ -316,6 +330,10 @@ namespace CNC_Drill_Controller1
                     logger1.AddLine("Opening File: " + openFileDialog1.FileName);
                     logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
                     logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
+
+                    Nodes = new List<DrillNode>();
+
+
                 }
             }
         }
@@ -519,6 +537,23 @@ namespace CNC_Drill_Controller1
                 setXButton_Click(this, e);
                 SetYButton_Click(this, e);
             }
+        }
+
+        private void OutputLabel_Paint(object sender, PaintEventArgs e)
+        {
+            //todo override to draw nodes and current location of drill head
+            //cross loc of drill head
+            //cross loc of pointer
+            //nodes
+            //rectangle 6x6 table limits
+            //rectangle page from drawing
+
+        }
+
+        private void OutputLabel_MouseMove(object sender, MouseEventArgs e)
+        {
+            ViewXLabel.Text = e.X.ToString("D4");
+            ViewYLabel.Text = e.Y.ToString("D4");
         }
     }
 }

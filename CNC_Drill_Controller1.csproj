@@ -71,6 +71,7 @@
     <Compile Include="DrawingTypeDialog.Designer.cs">
       <DependentUpon>DrawingTypeDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="DrillNode.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -83,6 +83,7 @@
             this.RunButton = new System.Windows.Forms.Button();
             this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
+            this.DrillButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,7 +93,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.USBdevicesComboBox.FormattingEnabled = true;
             this.USBdevicesComboBox.Location = new System.Drawing.Point(85, 5);
-            this.USBdevicesComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.USBdevicesComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.USBdevicesComboBox.Name = "USBdevicesComboBox";
             this.USBdevicesComboBox.Size = new System.Drawing.Size(912, 21);
             this.USBdevicesComboBox.TabIndex = 0;
@@ -120,7 +121,7 @@
             this.logger1.DateStampFormat = "yyyy-MM-dd";
             this.logger1.Font = new System.Drawing.Font("Lucida Console", 9F);
             this.logger1.Location = new System.Drawing.Point(4, 573);
-            this.logger1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logger1.Margin = new System.Windows.Forms.Padding(2);
             this.logger1.Multiline = true;
             this.logger1.Name = "logger1";
             this.logger1.ReadOnly = true;
@@ -134,7 +135,7 @@
             // 
             this.MinusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinusYbutton.Location = new System.Drawing.Point(59, 150);
-            this.MinusYbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinusYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.MinusYbutton.Name = "MinusYbutton";
             this.MinusYbutton.Size = new System.Drawing.Size(30, 32);
             this.MinusYbutton.TabIndex = 3;
@@ -146,7 +147,7 @@
             // 
             this.PlusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PlusYbutton.Location = new System.Drawing.Point(59, 223);
-            this.PlusYbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PlusYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.PlusYbutton.Name = "PlusYbutton";
             this.PlusYbutton.Size = new System.Drawing.Size(30, 32);
             this.PlusYbutton.TabIndex = 4;
@@ -158,7 +159,7 @@
             // 
             this.PlusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PlusXbutton.Location = new System.Drawing.Point(103, 186);
-            this.PlusXbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PlusXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.PlusXbutton.Name = "PlusXbutton";
             this.PlusXbutton.Size = new System.Drawing.Size(30, 32);
             this.PlusXbutton.TabIndex = 5;
@@ -170,7 +171,7 @@
             // 
             this.MinusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinusXbutton.Location = new System.Drawing.Point(16, 186);
-            this.MinusXbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinusXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.MinusXbutton.Name = "MinusXbutton";
             this.MinusXbutton.Size = new System.Drawing.Size(30, 32);
             this.MinusXbutton.TabIndex = 6;
@@ -302,7 +303,7 @@
             // 
             this.checkBoxX.AutoSize = true;
             this.checkBoxX.Location = new System.Drawing.Point(15, 63);
-            this.checkBoxX.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxX.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxX.Name = "checkBoxX";
             this.checkBoxX.Size = new System.Drawing.Size(111, 17);
             this.checkBoxX.TabIndex = 8;
@@ -314,7 +315,7 @@
             // 
             this.checkBoxY.AutoSize = true;
             this.checkBoxY.Location = new System.Drawing.Point(15, 84);
-            this.checkBoxY.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxY.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxY.Name = "checkBoxY";
             this.checkBoxY.Size = new System.Drawing.Size(111, 17);
             this.checkBoxY.TabIndex = 9;
@@ -326,7 +327,7 @@
             // 
             this.checkBoxT.AutoSize = true;
             this.checkBoxT.Location = new System.Drawing.Point(15, 106);
-            this.checkBoxT.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxT.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(120, 17);
             this.checkBoxT.TabIndex = 10;
@@ -338,7 +339,7 @@
             // 
             this.checkBoxB.AutoSize = true;
             this.checkBoxB.Location = new System.Drawing.Point(15, 128);
-            this.checkBoxB.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxB.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxB.Name = "checkBoxB";
             this.checkBoxB.Size = new System.Drawing.Size(131, 17);
             this.checkBoxB.TabIndex = 11;
@@ -349,7 +350,7 @@
             // forcePullButton
             // 
             this.forcePullButton.Location = new System.Drawing.Point(4, 32);
-            this.forcePullButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.forcePullButton.Margin = new System.Windows.Forms.Padding(2);
             this.forcePullButton.Name = "forcePullButton";
             this.forcePullButton.Size = new System.Drawing.Size(70, 19);
             this.forcePullButton.TabIndex = 12;
@@ -374,7 +375,7 @@
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
             this.AxisOffsetComboBox.Location = new System.Drawing.Point(11, 261);
-            this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.AxisOffsetComboBox.MaxDropDownItems = 16;
             this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
             this.AxisOffsetComboBox.Size = new System.Drawing.Size(134, 21);
@@ -398,8 +399,8 @@
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(483, 461);
-            this.loadFileButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.loadFileButton.Location = new System.Drawing.Point(437, 110);
+            this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(56, 19);
             this.loadFileButton.TabIndex = 15;
@@ -414,7 +415,7 @@
             // XScaleTextBox
             // 
             this.XScaleTextBox.Location = new System.Drawing.Point(218, 32);
-            this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.ReadOnly = true;
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -423,8 +424,8 @@
             // 
             // YScaleTextBox
             // 
-            this.YScaleTextBox.Location = new System.Drawing.Point(340, 32);
-            this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.YScaleTextBox.Location = new System.Drawing.Point(342, 33);
+            this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.ReadOnly = true;
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -434,7 +435,7 @@
             // XCurrentPosTextBox
             // 
             this.XCurrentPosTextBox.Location = new System.Drawing.Point(218, 80);
-            this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
             this.XCurrentPosTextBox.TabIndex = 18;
@@ -443,7 +444,7 @@
             // YCurrentPosTextBox
             // 
             this.YCurrentPosTextBox.Location = new System.Drawing.Point(218, 103);
-            this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
             this.YCurrentPosTextBox.TabIndex = 19;
@@ -452,7 +453,7 @@
             // setXButton
             // 
             this.setXButton.Location = new System.Drawing.Point(158, 80);
-            this.setXButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.setXButton.Margin = new System.Windows.Forms.Padding(2);
             this.setXButton.Name = "setXButton";
             this.setXButton.Size = new System.Drawing.Size(56, 19);
             this.setXButton.TabIndex = 22;
@@ -463,7 +464,7 @@
             // SetYButton
             // 
             this.SetYButton.Location = new System.Drawing.Point(158, 103);
-            this.SetYButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SetYButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetYButton.Name = "SetYButton";
             this.SetYButton.Size = new System.Drawing.Size(56, 19);
             this.SetYButton.TabIndex = 23;
@@ -474,7 +475,7 @@
             // zeroXbutton
             // 
             this.zeroXbutton.Location = new System.Drawing.Point(158, 56);
-            this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
             this.zeroXbutton.TabIndex = 24;
@@ -485,7 +486,7 @@
             // zeroYbutton
             // 
             this.zeroYbutton.Location = new System.Drawing.Point(218, 56);
-            this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
             this.zeroYbutton.TabIndex = 25;
@@ -495,8 +496,8 @@
             // 
             // zeroAllbutton
             // 
-            this.zeroAllbutton.Location = new System.Drawing.Point(279, 56);
-            this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.zeroAllbutton.Location = new System.Drawing.Point(281, 57);
+            this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
             this.zeroAllbutton.Size = new System.Drawing.Size(56, 19);
             this.zeroAllbutton.TabIndex = 26;
@@ -541,17 +542,17 @@
             "0.250, 0.250",
             "0.250, 0.000",
             "0.000, 0.250"});
-            this.listBox1.Location = new System.Drawing.Point(419, 205);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listBox1.Location = new System.Drawing.Point(313, 110);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(120, 251);
+            this.listBox1.Size = new System.Drawing.Size(120, 394);
             this.listBox1.TabIndex = 37;
             // 
             // MoveTobutton
             // 
-            this.MoveTobutton.Location = new System.Drawing.Point(357, 461);
-            this.MoveTobutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MoveTobutton.Location = new System.Drawing.Point(436, 156);
+            this.MoveTobutton.Margin = new System.Windows.Forms.Padding(2);
             this.MoveTobutton.Name = "MoveTobutton";
             this.MoveTobutton.Size = new System.Drawing.Size(56, 19);
             this.MoveTobutton.TabIndex = 38;
@@ -561,8 +562,8 @@
             // 
             // SetAsXYbutton
             // 
-            this.SetAsXYbutton.Location = new System.Drawing.Point(419, 461);
-            this.SetAsXYbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SetAsXYbutton.Location = new System.Drawing.Point(436, 133);
+            this.SetAsXYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.SetAsXYbutton.Name = "SetAsXYbutton";
             this.SetAsXYbutton.Size = new System.Drawing.Size(56, 19);
             this.SetAsXYbutton.TabIndex = 39;
@@ -574,16 +575,18 @@
             // 
             this.OutputLabel.BackColor = System.Drawing.Color.White;
             this.OutputLabel.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.OutputLabel.Location = new System.Drawing.Point(547, 32);
+            this.OutputLabel.Location = new System.Drawing.Point(499, 32);
             this.OutputLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OutputLabel.Name = "OutputLabel";
-            this.OutputLabel.Size = new System.Drawing.Size(450, 450);
+            this.OutputLabel.Size = new System.Drawing.Size(500, 500);
             this.OutputLabel.TabIndex = 40;
+            this.OutputLabel.Paint += new System.Windows.Forms.PaintEventHandler(this.OutputLabel_Paint);
+            this.OutputLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OutputLabel_MouseMove);
             // 
             // XScalebutton
             // 
             this.XScalebutton.Location = new System.Drawing.Point(158, 32);
-            this.XScalebutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.XScalebutton.Margin = new System.Windows.Forms.Padding(2);
             this.XScalebutton.Name = "XScalebutton";
             this.XScalebutton.Size = new System.Drawing.Size(56, 19);
             this.XScalebutton.TabIndex = 41;
@@ -592,8 +595,8 @@
             // 
             // YScalebutton
             // 
-            this.YScalebutton.Location = new System.Drawing.Point(279, 32);
-            this.YScalebutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.YScalebutton.Location = new System.Drawing.Point(281, 33);
+            this.YScalebutton.Margin = new System.Windows.Forms.Padding(2);
             this.YScalebutton.Name = "YScalebutton";
             this.YScalebutton.Size = new System.Drawing.Size(56, 19);
             this.YScalebutton.TabIndex = 42;
@@ -603,7 +606,7 @@
             // ViewZoomLabel
             // 
             this.ViewZoomLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewZoomLabel.Location = new System.Drawing.Point(543, 491);
+            this.ViewZoomLabel.Location = new System.Drawing.Point(417, 35);
             this.ViewZoomLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewZoomLabel.Name = "ViewZoomLabel";
             this.ViewZoomLabel.Size = new System.Drawing.Size(76, 19);
@@ -613,7 +616,7 @@
             // ViewXLabel
             // 
             this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewXLabel.Location = new System.Drawing.Point(623, 491);
+            this.ViewXLabel.Location = new System.Drawing.Point(417, 60);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
             this.ViewXLabel.Size = new System.Drawing.Size(76, 19);
@@ -623,7 +626,7 @@
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(703, 491);
+            this.ViewYLabel.Location = new System.Drawing.Point(417, 85);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
             this.ViewYLabel.Size = new System.Drawing.Size(76, 19);
@@ -633,8 +636,8 @@
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(357, 491);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.RunButton.Location = new System.Drawing.Point(313, 510);
+            this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(182, 22);
             this.RunButton.TabIndex = 46;
@@ -644,10 +647,10 @@
             // SeekZeroButton
             // 
             this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(4, 431);
-            this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SeekZeroButton.Location = new System.Drawing.Point(4, 351);
+            this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
             this.SeekZeroButton.Name = "SeekZeroButton";
-            this.SeekZeroButton.Size = new System.Drawing.Size(182, 22);
+            this.SeekZeroButton.Size = new System.Drawing.Size(147, 22);
             this.SeekZeroButton.TabIndex = 47;
             this.SeekZeroButton.Text = "[Find Axis Origins]";
             this.SeekZeroButton.UseVisualStyleBackColor = true;
@@ -655,7 +658,7 @@
             // ReloadUSBbutton
             // 
             this.ReloadUSBbutton.Location = new System.Drawing.Point(80, 32);
-            this.ReloadUSBbutton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ReloadUSBbutton.Margin = new System.Windows.Forms.Padding(2);
             this.ReloadUSBbutton.Name = "ReloadUSBbutton";
             this.ReloadUSBbutton.Size = new System.Drawing.Size(70, 19);
             this.ReloadUSBbutton.TabIndex = 48;
@@ -663,11 +666,21 @@
             this.ReloadUSBbutton.UseVisualStyleBackColor = true;
             this.ReloadUSBbutton.Click += new System.EventHandler(this.ReloadUSBbutton_Click);
             // 
+            // DrillButton
+            // 
+            this.DrillButton.Location = new System.Drawing.Point(436, 180);
+            this.DrillButton.Name = "DrillButton";
+            this.DrillButton.Size = new System.Drawing.Size(56, 19);
+            this.DrillButton.TabIndex = 49;
+            this.DrillButton.Text = "Drill";
+            this.DrillButton.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
             this.Controls.Add(this.SeekZeroButton);
             this.Controls.Add(this.RunButton);
@@ -708,7 +721,7 @@
             this.Controls.Add(this.USBdevicesComboBox);
             this.Controls.Add(this.bevel1);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
@@ -775,6 +788,7 @@
         private System.Windows.Forms.Button RunButton;
         private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
+        private System.Windows.Forms.Button DrillButton;
     }
 }
 
