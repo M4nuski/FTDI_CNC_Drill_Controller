@@ -15,13 +15,14 @@ namespace CNC_Drill_Controller1
             get { return ViewData.Size; }
         }
 
-        public float ZoomLevel;
-
-
-        //public Color BackColor;
+        //public Color BackColor; //superseeded by Rectangle element
         public List<IViewerElements> Elements;
 
         private Control _outputControl;
+
+        public float ZoomLevel;//todo add setter and getter
+        private float minZoomLevel, maxZoomLevel;
+        private int lastMouseX, lastMouseY;
 
         public struct viewData
         {
@@ -53,7 +54,7 @@ namespace CNC_Drill_Controller1
             _outputControl.MouseDown -= OutputControlOnMouseDown;
             _outputControl.MouseUp -= OutputControlOnMouseUp;
             _outputControl.DoubleClick -= OutputControlOnDoubleClick;
-            _outputControl.MouseWheel -= OutputControlOnMouseWheel;            
+            _outputControl.MouseWheel -= OutputControlOnMouseWheel;
         }
 
         public PointF GetPointFromPix(int x, int y)
@@ -104,15 +105,33 @@ namespace CNC_Drill_Controller1
 
     class CrossHair : IViewerElements
     {
-        public void Draw(Viewer.viewData data)
+        private Pen _color;
+        private float _x, _y;
+
+        public CrossHair(float X, float Y, Color color)
         {
-           //
+            _color = new Pen(color);
+            _x = X;
+            _y = Y;
         }
 
-        public void UpdatePosition(int x, int y)
+        public void Draw(Viewer.viewData data)
         {
-            //
+            data.OutputGraphic.DrawLine(_color, _x, 0, _x, data.Size.Y);
+            data.OutputGraphic.DrawLine(_color, 0, _y, data.Size.X, _y);
         }
+
+        public void UpdatePosition(int x, int y) //set new crosshard position from control's coordinates
+        {
+            //todo implement after get pointF from XY is done;
+        }
+
+        public void UpdatePosition(PointF newPosition)
+        {
+            _x = newPosition.X;
+            _y = newPosition.Y;
+        }
+
     }
 
     class Node : IViewerElements
@@ -124,7 +143,7 @@ namespace CNC_Drill_Controller1
         public Node(PointF position, float diameter, Color color)
         {
             _diameter = diameter;
-            _radius = diameter/2.0f;
+            _radius = diameter / 2.0f;
             _color = new Pen(color);
             _pos = position;
         }
@@ -132,6 +151,25 @@ namespace CNC_Drill_Controller1
         public void Draw(Viewer.viewData data)
         {
             data.OutputGraphic.DrawEllipse(_color, _pos.X - _radius, _pos.Y - _radius, _diameter, _diameter);
+        }
+    }
+
+    class Line : IViewerElements
+    {
+        private Pen _color;
+        private float _fx, _fy, _tx, _ty;
+        public Line(float fromX, float fromY, float toX, float toY, Color color)
+        {
+            _fx = fromX;
+            _fy = fromY;
+            _tx = toX;
+            _ty = toX;
+            _color = new Pen(color);
+
+        }
+        public void Draw(Viewer.viewData data)
+        {
+            data.OutputGraphic.DrawLine(_color, _fx, _fy, _tx, _ty);
         }
     }
 
