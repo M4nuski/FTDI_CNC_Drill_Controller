@@ -84,6 +84,7 @@
             this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.DrillButton = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -399,10 +400,10 @@
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(437, 110);
+            this.loadFileButton.Location = new System.Drawing.Point(417, 61);
             this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(56, 19);
+            this.loadFileButton.Size = new System.Drawing.Size(76, 19);
             this.loadFileButton.TabIndex = 15;
             this.loadFileButton.Text = "Load File";
             this.loadFileButton.UseVisualStyleBackColor = true;
@@ -542,16 +543,16 @@
             "0.250, 0.250",
             "0.250, 0.000",
             "0.000, 0.250"});
-            this.listBox1.Location = new System.Drawing.Point(313, 110);
+            this.listBox1.Location = new System.Drawing.Point(337, 112);
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(120, 394);
+            this.listBox1.Size = new System.Drawing.Size(156, 394);
             this.listBox1.TabIndex = 37;
             // 
             // MoveTobutton
             // 
-            this.MoveTobutton.Location = new System.Drawing.Point(436, 156);
+            this.MoveTobutton.Location = new System.Drawing.Point(276, 463);
             this.MoveTobutton.Margin = new System.Windows.Forms.Padding(2);
             this.MoveTobutton.Name = "MoveTobutton";
             this.MoveTobutton.Size = new System.Drawing.Size(56, 19);
@@ -562,7 +563,7 @@
             // 
             // SetAsXYbutton
             // 
-            this.SetAsXYbutton.Location = new System.Drawing.Point(436, 133);
+            this.SetAsXYbutton.Location = new System.Drawing.Point(276, 440);
             this.SetAsXYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.SetAsXYbutton.Name = "SetAsXYbutton";
             this.SetAsXYbutton.Size = new System.Drawing.Size(56, 19);
@@ -581,7 +582,6 @@
             this.OutputLabel.Size = new System.Drawing.Size(500, 500);
             this.OutputLabel.TabIndex = 40;
             this.OutputLabel.Paint += new System.Windows.Forms.PaintEventHandler(this.OutputLabel_Paint);
-            this.OutputLabel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OutputLabel_MouseMove);
             // 
             // XScalebutton
             // 
@@ -616,7 +616,7 @@
             // ViewXLabel
             // 
             this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewXLabel.Location = new System.Drawing.Point(417, 60);
+            this.ViewXLabel.Location = new System.Drawing.Point(337, 84);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
             this.ViewXLabel.Size = new System.Drawing.Size(76, 19);
@@ -626,7 +626,7 @@
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(417, 85);
+            this.ViewYLabel.Location = new System.Drawing.Point(417, 84);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
             this.ViewYLabel.Size = new System.Drawing.Size(76, 19);
@@ -636,10 +636,10 @@
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(313, 510);
+            this.RunButton.Location = new System.Drawing.Point(337, 510);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(182, 22);
+            this.RunButton.Size = new System.Drawing.Size(158, 22);
             this.RunButton.TabIndex = 46;
             this.RunButton.Text = "[Run Drilling Program]";
             this.RunButton.UseVisualStyleBackColor = true;
@@ -668,18 +668,27 @@
             // 
             // DrillButton
             // 
-            this.DrillButton.Location = new System.Drawing.Point(436, 180);
+            this.DrillButton.Location = new System.Drawing.Point(276, 487);
             this.DrillButton.Name = "DrillButton";
             this.DrillButton.Size = new System.Drawing.Size(56, 19);
             this.DrillButton.TabIndex = 49;
             this.DrillButton.Text = "Drill";
             this.DrillButton.UseVisualStyleBackColor = true;
             // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(41, 420);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(172, 141);
+            this.panel1.TabIndex = 50;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
             this.Controls.Add(this.SeekZeroButton);
@@ -789,6 +798,7 @@
         private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
         private System.Windows.Forms.Button DrillButton;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

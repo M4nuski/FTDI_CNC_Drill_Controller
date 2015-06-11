@@ -5,6 +5,8 @@ namespace CNC_Drill_Controller1
 {
     class DrillNode
     {
+        public Color Color { get { return nodeStatusColors[status]; }}
+
         public enum DrillNodeStatus
         {
             Idle,
@@ -37,9 +39,9 @@ namespace CNC_Drill_Controller1
             status = DrillNodeStatus.Idle;
         }
 
-        public Color color()
-        {
-            return nodeStatusColors[status];
-        }
+        //public Color color()
+        //{
+        //    return nodeStatusColors[status];
+        //}
     }
 }

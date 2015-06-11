@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using FTD2XX_NET;
 
 namespace CNC_Drill_Controller1
@@ -41,7 +42,9 @@ namespace CNC_Drill_Controller1
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
 
-        private List<DrillNode> Nodes; 
+        private List<DrillNode> Nodes;
+
+        private Viewer nodeViewer;
 
         public Form1()
         {
@@ -51,6 +54,16 @@ namespace CNC_Drill_Controller1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
+            nodeViewer.Elements = new List<IViewerElements>()
+            {
+                new Box(new PointF(4.5f, 4.5f), new PointF(2, 2), Color.Red),
+                new Box(new PointF(0.0f, 0.0f), new PointF(0.2f, 0.2f), Color.Green),
+                new Box(new PointF(10.8f, 10.8f), new PointF(0.2f, 0.2f), Color.Green),
+                new Box(new PointF(0.0f, 10.8f), new PointF(0.2f, 0.2f), Color.Green),
+                new Box(new PointF(10.8f, 0.0f), new PointF(0.2f, 0.2f), Color.Green),
+            };
+
             AxisOffsetComboBox.SelectedIndex = 0;
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
@@ -317,6 +330,10 @@ namespace CNC_Drill_Controller1
             Xlabel.Text = "X: "+((float)current_X / X_Scale).ToString("F4");
             Ylabel.Text = "Y: "+((float)current_Y / Y_Scale).ToString("F4");
 
+            ViewXLabel.Text = nodeViewer.MousePositionF.X.ToString("F4");
+            ViewYLabel.Text = nodeViewer.MousePositionF.Y.ToString("F4");
+            ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel*100) + "%";
+
 
         }
 
@@ -333,7 +350,8 @@ namespace CNC_Drill_Controller1
 
                     Nodes = new List<DrillNode>();
 
-
+                    //<PageWidth Unit='IN'>8.5</PageWidth>
+                    //<PageHeight Unit='IN'>11</PageHeight>
                 }
             }
         }
@@ -552,8 +570,6 @@ namespace CNC_Drill_Controller1
 
         private void OutputLabel_MouseMove(object sender, MouseEventArgs e)
         {
-            ViewXLabel.Text = e.X.ToString("D4");
-            ViewYLabel.Text = e.Y.ToString("D4");
         }
     }
 }
