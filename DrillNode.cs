@@ -15,6 +15,10 @@ namespace CNC_Drill_Controller1
             Selected
         }
 
+        public string Location {
+            get { return this.location.X.ToString("F4") + " " + this.location.Y.ToString("F4"); }
+        }
+
         public PointF location;
 
         public DrillNodeStatus status;

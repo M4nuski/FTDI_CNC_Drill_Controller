@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using FTD2XX_NET;
@@ -10,47 +11,47 @@ namespace CNC_Drill_Controller1
 {
     public partial class Form1 : Form
     {
-        private FTDI USB_Interface = new FTDI();
+        #region USB Interface Properties
 
+        private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[32000];
         private byte[] InputBuffer = new byte[32000];
-
         private const int max_steps_per_transfert = 48; //1 turn
-
-        private DateTime lastUpdate = DateTime.Now;
-
-        private bool CheckBoxInhibit;
-        private bool seekingLimits; //TODO: add limit switch auto seeking, ask for approximate location and creep toward minX and minY
-
-        public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
-        public bool TopSwitch, BottomSwitch;
-
         public int X_Scale = 960;
         public int Y_Scale = 960;
+        private byte[] stepBytes = {0x33, 0x66, 0xCC, 0x99};
 
-        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
-        //{0x11, 0x22, 0x44, 0x88};//single phase
+        #endregion
 
-        //double phase
-        //51 = 0x33 = b'00110011'
-        //102 = 0x66 = b'01100110'
-        //204 = 0xCC = b'11001100'
-        //153 = 0x99 = b'10011001'
 
+        #region USB to UI properties
+
+        private DateTime lastUpdate = DateTime.Now;
+        private bool CheckBoxInhibit;
+        public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
+        public bool TopSwitch, BottomSwitch;
         private int X_Axis_Location, Y_Axis_Location, AxisOffsetCount;
         public int X_Axis_Delta, Y_Axis_Delta;
 
-        private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
-
+        #endregion
         
-        private List<DrillNode> Nodes;//todo fill up Nodes from vdx file
 
+        #region View Properties
+
+        private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
+        private const float NodeDiameter = 0.05f;
+        private List<DrillNode> Nodes;
         private Viewer nodeViewer;
         private CrossHair cursorCrossHair;
         private CrossHair drillCrossHair;
         private Box CNCTableBox;
         private Box drawingPageBox;
 
+        #endregion
+
+        private bool seekingLimits; //TODO: add limit switch auto seeking, ask for approximate location and creep toward minX and minY
+
+        #region Form Initialization
         public Form1()
         {
             InitializeComponent();
@@ -59,29 +60,21 @@ namespace CNC_Drill_Controller1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            cursorCrossHair = new CrossHair(0,0, Color.Blue);
-            drillCrossHair = new CrossHair(0,0, Color.Red);
-            CNCTableBox = new Box(0,0,6,6, Color.LightGray);
-            drawingPageBox = new Box(0,0,8.5f,11,Color.GhostWhite);
 
-            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f))
-            {
-                Elements = new List<IViewerElements>
-                {
-                    drawingPageBox,
-                    CNCTableBox,
-                    drillCrossHair,
-                    cursorCrossHair
-                }
-            };
-            //nodeViewer = new Viewer(panel1, new PointF(11.0f, 11.0f));
-            //nodeViewer.Elements = new List<IViewerElements>()
-           // {
-           //     new Box(new PointF(0f, 0f), new PointF(11.0f, 11.0f), Color.Red)
-           // };
+            #region View initialization
 
+            cursorCrossHair = new CrossHair(0, 0, Color.Blue);
+            drillCrossHair = new CrossHair(0, 0, Color.Red);
+            CNCTableBox = new Box(0, 0, 6, 6, Color.LightGray);
+            drawingPageBox = new Box(0, 0, 8.5f, 11, Color.GhostWhite);
+            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
+            RebuildNodesDisplays();
+
+            #endregion
 
             AxisOffsetComboBox.SelectedIndex = 0;
+
+            #region USB interface initialization
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
@@ -116,9 +109,117 @@ namespace CNC_Drill_Controller1
             {
                 logger1.AddLine("Failed to get number of devices (error " + ftStatus + ")");
             }
+            #endregion
+        } 
+        #endregion
+        
+        #region Direct USB UI control methods
+        private void PlusXbutton_Click(object sender, EventArgs e)
+        {
+            moveBy(AxisOffsetCount, 0);
+        }
+        private void MinusXbutton_Click(object sender, EventArgs e)
+        {
+            moveBy(-AxisOffsetCount, 0);
+        }
+        private void PlusYbutton_Click(object sender, EventArgs e)
+        {
+            moveBy(0, AxisOffsetCount);
+
+        }
+        private void MinusYbutton_Click(object sender, EventArgs e)
+        {
+            moveBy(0, -AxisOffsetCount);
+        }
+        private void Sendbutton_Click(object sender, EventArgs e)
+        {
+            Transfer();
+        }
+        private void checkBoxB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!CheckBoxInhibit) Transfer();
         }
 
-        private void Transfert()
+        private float safeTextToFloat(string text)
+        {
+            float res;
+            if (float.TryParse(text, out res))
+            {
+                return res;
+            }
+            logger1.AddLine("Failed to convert value: " + text);
+            return 0.0f;
+        }
+
+        private void setXButton_Click(object sender, EventArgs e)
+        {
+            // (loc - delta) / scale = pos
+            // loc - delta = (pos * scale)
+            // loc - (pos * scale) = delta
+            X_Axis_Delta = (int)(X_Axis_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
+        }
+        private void SetYButton_Click(object sender, EventArgs e)
+        {
+            Y_Axis_Delta = (int)(Y_Axis_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
+        }
+
+
+        private void zeroXbutton_Click(object sender, EventArgs e)
+        {
+            XCurrentPosTextBox.Text = "0.0000";
+            setXButton_Click(this, e);
+        }
+
+        private void zeroYbutton_Click(object sender, EventArgs e)
+        {
+            YCurrentPosTextBox.Text = "0.0000";
+            SetYButton_Click(this, e);
+        }
+
+        private void zeroAllbutton_Click(object sender, EventArgs e)
+        {
+            zeroXbutton_Click(this, e);
+            zeroYbutton_Click(this, e);
+        }
+
+        private void ReloadUSBbutton_Click(object sender, EventArgs e)
+        {
+            Form1_Load(this, e);
+        }         
+        
+        private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var toParse = (string)AxisOffsetComboBox.SelectedItem;
+            toParse = toParse.Split(new[] { ' ' })[0];
+            try
+            {
+                AxisOffsetCount = Convert.ToInt32(toParse);
+            }
+            catch
+            {
+                AxisOffsetCount = 1;
+            }
+        }
+        #endregion
+
+        #region Log methods
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            logger1.Clear();
+        }
+        private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var logfile = File.AppendText("CNC_Drill_CTRL.log");
+            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F") + "]");
+            logfile.Write(logger1.Text);
+            logfile.WriteLine("");
+            logfile.Close();
+            logger1.AddLine("Log Saved to CNC_Drill_CTRL.log");
+        } 
+        #endregion
+        
+        #region USB transfer method and heleprs
+        private void Transfer()
         {
             if (USB_Interface.IsOpen)
             {
@@ -236,279 +337,19 @@ namespace CNC_Drill_Controller1
 
             TopSwitch = !getBit(InputBuffer[9], 1);
             BottomSwitch = !getBit(InputBuffer[7], 1);
-        }
-
-        private void PlusXbutton_Click(object sender, EventArgs e)
-        {
-            moveBy(AxisOffsetCount, 0);
-        }
-        private void MinusXbutton_Click(object sender, EventArgs e)
-        {
-            moveBy(-AxisOffsetCount, 0);
-        }
-        private void PlusYbutton_Click(object sender, EventArgs e)
-        {
-            moveBy(0, AxisOffsetCount);
-
-        }        
-        private void MinusYbutton_Click(object sender, EventArgs e)
-        {
-            moveBy(0, -AxisOffsetCount);
-        }
-
-        private void Sendbutton_Click(object sender, EventArgs e)
-        {
-            Transfert();
-        }
-
-        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            logger1.Clear();
-        }
-        private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var logfile = File.AppendText("CNC_Drill_CTRL.log");
-            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F") + "]");
-            logfile.Write(logger1.Text);
-            logfile.WriteLine("");
-            logfile.Close();
-            logger1.AddLine("Log Saved to CNC_Drill_CTRL.log");
-        }
-
-        private void checkBoxB_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!CheckBoxInhibit) Transfert();
-        }
-
-        private void UIupdateTimer_Tick(object sender, EventArgs e)
-        {
-            if (USB_Interface.IsOpen)
-            {
-                CheckBoxInhibit = true;
-                //fetch data if too old
-                if ((DateTime.Now.Subtract(lastUpdate)).Milliseconds > 250)
-                {
-                    Transfert();
-                }
-
-                //Update UI with usb data
-                if (MinXswitch && MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
-                {
-                    XMinStatusLabel.BackColor = Color.DodgerBlue;
-                    XMaxStatusLabel.BackColor = Color.DodgerBlue;
-                }
-                else
-                {
-                    XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
-                    XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
-                }
-
-                if (MinYswitch && MaxYswitch)
-                {
-                    YMinStatusLabel.BackColor = Color.DodgerBlue;
-                    YMaxStatusLabel.BackColor = Color.DodgerBlue;
-                }
-                else
-                {
-                    YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
-                    YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;                    
-                }
-
-
-                //top drill limit switch
-                if (!TopSwitch)
-                {
-                    if (checkBoxT.Checked)
-                    {
-                        checkBoxT.Checked = false;
-                    }
-                    TopStatusLabel.BackColor = SystemColors.Control;
-                }
-                else TopStatusLabel.BackColor = Color.Lime;
-
-                //bottom drill limit switch
-                if (!BottomSwitch)
-                {
-                    if (checkBoxB.Checked)
-                    {
-                        checkBoxB.Checked = false;
-                    }
-                    BottomStatusLabel.BackColor = SystemColors.Control;
-                }
-                else BottomStatusLabel.BackColor = Color.Lime;
-                CheckBoxInhibit = false;
-            }
-
-            //update UI with internal stuff
-            var current_X = (X_Axis_Location - X_Axis_Delta);
-            var current_Y = (Y_Axis_Location - Y_Axis_Delta);
-            XStatusLabel.Text = current_X.ToString("D5");
-            YStatusLabel.Text = current_Y.ToString("D5");
-            Xlabel.Text = "X: "+((float)current_X / X_Scale).ToString("F4");
-            Ylabel.Text = "Y: "+((float)current_Y / Y_Scale).ToString("F4");
-
-            ViewXLabel.Text = nodeViewer.MousePositionF.X.ToString("F4");
-            ViewYLabel.Text = nodeViewer.MousePositionF.Y.ToString("F4");
-            ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel*100) + "%";
-
-            cursorCrossHair.UpdatePosition(nodeViewer.MousePositionF);
-            drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
-            OutputLabel.Refresh();
-            
-
-
-        }
-
-        private void LoadFileButton_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-
-                if (dtypeDialog.ShowDialog() == DialogResult.OK)
-                {
-                    logger1.AddLine("Opening File: " + openFileDialog1.FileName);
-                    logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
-                    logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
-
-                    Nodes = new List<DrillNode>();
-
-                    //<PageWidth Unit='IN'>8.5</PageWidth>
-                    //<PageHeight Unit='IN'>11</PageHeight>
-                }
-            }
-        }
-
-        private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var toParse = (string)AxisOffsetComboBox.SelectedItem;
-            toParse = toParse.Split(new[] { ' ' })[0];
-            try
-            {
-                AxisOffsetCount = Convert.ToInt32(toParse);
-            }
-            catch
-            {
-                AxisOffsetCount = 1;
-            }
-        }
-
-        private void moveBy(int DeltaX, int DeltaY)
-        {
-            var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
-
-            var XStepDirection = 0;
-            if (DeltaX > 0)
-            {
-                XStepDirection = 1;
-            }
-            else if (DeltaX < 0)
-            {
-                XStepDirection = -1;
-            }
-
-            var YStepDirection = 0;
-            if (DeltaY > 0)
-            {
-                YStepDirection = 1;
-            }
-            else if (DeltaY < 0)
-            {
-                YStepDirection = -1;
-            }
-            //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
-            //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
-            var numCycle = (numMoves + max_steps_per_transfert -1) / max_steps_per_transfert;
-            if (numCycle > 1)
-            {
-            Cursor.Current = Cursors.WaitCursor;
-                toolStripProgressBar1.Maximum = numCycle-1;
-            }
-
-            for (var i = 0; i < numCycle; i++)
-            {
-                var num_moves_for_this_cycle = (numMoves > max_steps_per_transfert) ? max_steps_per_transfert : numMoves;
-                for (var j = 0; j < num_moves_for_this_cycle; j++)
-                {
-                    if (Math.Abs(DeltaX) != 0)
-                    {
-                        X_Axis_Location += XStepDirection;
-                        DeltaX -= XStepDirection;
-                    }
-                    if (Math.Abs(DeltaY) != 0)
-                    {
-                        Y_Axis_Location += YStepDirection;
-                        DeltaY -= YStepDirection;
-                    }
-                    Transfert();
-                }
-                toolStripProgressBar1.Value = i;
-                numMoves -= num_moves_for_this_cycle;
-                Refresh();
-                if (MaxXswitch || MinXswitch || MaxYswitch || MinYswitch)
-                {
-                    if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
-                    i = numCycle; //if limit reached exit loop
-                }
-            }
-
-            Cursor.Current = Cursors.Default;
-        }
-
-        private void setXButton_Click(object sender, EventArgs e)
-        {
-            // (loc - delta) / scale = pos
-            // loc - delta = (pos * scale)
-            // loc - (pos * scale) = delta
-            X_Axis_Delta = (int)(X_Axis_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
-        }
-        private void SetYButton_Click(object sender, EventArgs e)
-        {
-            Y_Axis_Delta = (int)(Y_Axis_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
-        }
-
-        private float safeTextToFloat(string text)
-        {
-            float res;
-            if (float.TryParse(text, out res))
-            {
-                return res;
-            }
-            logger1.AddLine("Failed to convert value: " + text);
-            return 0.0f;
-        }
-
-        private void zeroXbutton_Click(object sender, EventArgs e)
-        {
-            XCurrentPosTextBox.Text = "0.0000";
-            setXButton_Click(this, e);
-        }
-
-        private void zeroYbutton_Click(object sender, EventArgs e)
-        {
-            YCurrentPosTextBox.Text = "0.0000";
-            SetYButton_Click(this, e);
-        }
-
-        private void zeroAllbutton_Click(object sender, EventArgs e)
-        {
-            zeroXbutton_Click(this, e);
-            zeroYbutton_Click(this, e);
-        }
-
-        private void ReloadUSBbutton_Click(object sender, EventArgs e)
-        {
-            Form1_Load(this, e);
-        }
-
+        } 
+        #endregion
+        
+        #region USB controls methods
         private void USBdevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var locStr = (string)USBdevicesComboBox.SelectedItem;
-            locStr = locStr.Split(new [] {':'})[0];
+            locStr = locStr.Split(new[] { ':' })[0];
             uint loc;
             if (uint.TryParse(locStr, out loc)) OpenDeviceByLocation(loc);
             else
             {
-                logger1.AddLine("Failed to parse Location Id of: "+ (string)USBdevicesComboBox.SelectedItem);
+                logger1.AddLine("Failed to parse Location Id of: " + (string)USBdevicesComboBox.SelectedItem);
             }
         }
 
@@ -538,19 +379,148 @@ namespace CNC_Drill_Controller1
             {
                 logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
             }
-        }
+        } 
+        #endregion
 
-        private void MoveTobutton_Click(object sender, EventArgs e)
+        private void UIupdateTimer_Tick(object sender, EventArgs e)
         {
-            var movedata = (string) listBox1.SelectedItem;
-            var axisdata = movedata.Split(new [] {','});
-            if (axisdata.Length == 2)
+            #region UI update from USB data
+            if (USB_Interface.IsOpen)
             {
-                var mx = safeTextToFloat(axisdata[0].Trim(new [] {' '}));
-                var my = safeTextToFloat(axisdata[1].Trim(new [] {' '}));
-                logger1.AddLine("Moving to: " + mx.ToString("F5") + ", " + my.ToString("F5"));
-                MoveTo(mx, my);
+                CheckBoxInhibit = true;
+                //fetch data if too old
+                if ((DateTime.Now.Subtract(lastUpdate)).Milliseconds > 250)
+                {
+                    Transfer();
+                }
+
+                if (MinXswitch && MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
+                {
+                    XMinStatusLabel.BackColor = Color.DodgerBlue;
+                    XMaxStatusLabel.BackColor = Color.DodgerBlue;
+                }
+                else
+                {
+                    XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
+                    XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
+                }
+
+                if (MinYswitch && MaxYswitch)
+                {
+                    YMinStatusLabel.BackColor = Color.DodgerBlue;
+                    YMaxStatusLabel.BackColor = Color.DodgerBlue;
+                }
+                else
+                {
+                    YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
+                    YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;
+                }
+
+
+                //top drill limit switch
+                if (!TopSwitch)
+                {
+                    if (checkBoxT.Checked)
+                    {
+                        checkBoxT.Checked = false;
+                    }
+                    TopStatusLabel.BackColor = SystemColors.Control;
+                }
+                else TopStatusLabel.BackColor = Color.Lime;
+
+                //bottom drill limit switch
+                if (!BottomSwitch)
+                {
+                    if (checkBoxB.Checked)
+                    {
+                        checkBoxB.Checked = false;
+                    }
+                    BottomStatusLabel.BackColor = SystemColors.Control;
+                }
+                else BottomStatusLabel.BackColor = Color.Lime;
+                CheckBoxInhibit = false;
+            } 
+            #endregion
+
+            #region UI update from internal properties / view
+            var current_X = (X_Axis_Location - X_Axis_Delta);
+            var current_Y = (Y_Axis_Location - Y_Axis_Delta);
+            XStatusLabel.Text = current_X.ToString("D5");
+            YStatusLabel.Text = current_Y.ToString("D5");
+            Xlabel.Text = "X: " + ((float)current_X / X_Scale).ToString("F4");
+            Ylabel.Text = "Y: " + ((float)current_Y / Y_Scale).ToString("F4");
+
+            ViewXLabel.Text = nodeViewer.MousePositionF.X.ToString("F4");
+            ViewYLabel.Text = nodeViewer.MousePositionF.Y.ToString("F4");
+            ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel * 100) + "%";
+
+            cursorCrossHair.UpdatePosition(nodeViewer.MousePositionF);
+            drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
+            OutputLabel.Refresh(); 
+            #endregion
+        }
+        
+        #region Internal USB control methods
+        private void moveBy(int DeltaX, int DeltaY)
+        {
+            var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
+
+            var XStepDirection = 0;
+            if (DeltaX > 0)
+            {
+                XStepDirection = 1;
             }
+            else if (DeltaX < 0)
+            {
+                XStepDirection = -1;
+            }
+
+            var YStepDirection = 0;
+            if (DeltaY > 0)
+            {
+                YStepDirection = 1;
+            }
+            else if (DeltaY < 0)
+            {
+                YStepDirection = -1;
+            }
+            //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
+            //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
+            var numCycle = (numMoves + max_steps_per_transfert - 1) / max_steps_per_transfert;
+            if (numCycle > 1)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                toolStripProgressBar1.Maximum = numCycle - 1;
+            }
+
+            for (var i = 0; i < numCycle; i++)
+            {
+                var num_moves_for_this_cycle = (numMoves > max_steps_per_transfert) ? max_steps_per_transfert : numMoves;
+                for (var j = 0; j < num_moves_for_this_cycle; j++)
+                {
+                    if (Math.Abs(DeltaX) != 0)
+                    {
+                        X_Axis_Location += XStepDirection;
+                        DeltaX -= XStepDirection;
+                    }
+                    if (Math.Abs(DeltaY) != 0)
+                    {
+                        Y_Axis_Location += YStepDirection;
+                        DeltaY -= YStepDirection;
+                    }
+                    Transfer();
+                }
+                toolStripProgressBar1.Value = i;
+                numMoves -= num_moves_for_this_cycle;
+                Refresh();
+                if (MaxXswitch || MinXswitch || MaxYswitch || MinYswitch)
+                {
+                    if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
+                    i = numCycle; //if limit reached exit loop
+                }
+            }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void MoveTo(float X, float Y)
@@ -561,9 +531,48 @@ namespace CNC_Drill_Controller1
             {
                 var deltaX = X - current_X;
                 var deltaY = Y - current_Y;
-                moveBy((int) (deltaX*X_Scale), (int) (deltaY*Y_Scale));
+                moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
             }
             else logger1.AddLine("Move target out of range.");
+        } 
+        #endregion
+
+        #region View / Listbox UI controls
+        private void LoadFileButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = "*.vdx";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                if (dtypeDialog.ShowDialog() == DialogResult.OK)
+                {
+                    logger1.AddLine("Opening File: " + openFileDialog1.FileName);
+                    logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
+                    logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
+
+                    var loader = new VDXLoader(openFileDialog1.FileName, dtypeDialog.DrawingConfig.Inverted);
+                    logger1.AddLine(loader.log);
+                    Nodes = loader.DrillNodes;
+                    logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+
+                    drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
+
+                    RebuildNodesDisplays();
+                }
+            }
+        }
+
+        private void MoveTobutton_Click(object sender, EventArgs e)
+        {
+            var movedata = (string)listBox1.SelectedItem;
+            var axisdata = movedata.Split(new[] { ',' });
+            if (axisdata.Length == 2)
+            {
+                var mx = safeTextToFloat(axisdata[0].Trim(new[] { ' ' }));
+                var my = safeTextToFloat(axisdata[1].Trim(new[] { ' ' }));
+                logger1.AddLine("Moving to: " + mx.ToString("F5") + ", " + my.ToString("F5"));
+                MoveTo(mx, my);
+            }
         }
 
         private void SetAsXYbutton_Click(object sender, EventArgs e)
@@ -577,7 +586,8 @@ namespace CNC_Drill_Controller1
                 setXButton_Click(this, e);
                 SetYButton_Click(this, e);
             }
-        }
+        } 
+
 
         private void OutputLabel_MouseEnter(object sender, EventArgs e)
         {
@@ -593,5 +603,46 @@ namespace CNC_Drill_Controller1
         {
            NodesContextMenu.Show(listBox1,listBox1.PointToClient(Cursor.Position));
         }
+
+        private void NodeContextSELECTED_Click(object sender, EventArgs e)
+        {
+            var selectedNode = listBox1.SelectedItem as DrillNode;
+            if (selectedNode != null)
+            {
+               selectedNode.status = DrillNode.DrillNodeStatus.Selected;
+            }
+            RebuildNodesDisplays();
+        }
+
+        private void RebuildNodesDisplays()
+        {
+            listBox1.Items.Clear();
+            nodeViewer.Elements = new List<IViewerElements>
+            {
+                drawingPageBox,
+                CNCTableBox,
+                drillCrossHair,
+                cursorCrossHair
+            };
+
+            if ((Nodes != null) && (Nodes.Count > 0))
+            {
+                for (var i = 0; i < Nodes.Count; i++)
+                {
+                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color));
+                    listBox1.Items.Add(Nodes[i].Location);
+                }
+            }
+        }
+
+        private void OffsetOriginBtton_Click(object sender, EventArgs e)
+        {
+            var origOffset = new SizeF(safeTextToFloat(XoriginTextbox.Text), safeTextToFloat(YOriginTextbox.Text));
+            for (var i = 0; i < Nodes.Count; i++)
+                Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
+            RebuildNodesDisplays();
+        }
+        #endregion
+
     }
 }

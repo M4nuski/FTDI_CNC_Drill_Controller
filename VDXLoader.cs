@@ -29,7 +29,8 @@ namespace CNC_Drill_Controller1
 
         private void AddLine(string s)
         {
-            log = log + s + "\n";
+            if (log != "") log = log + " / " + s;
+            else log = s;
         }
 
         private void cleanList()
@@ -55,7 +56,7 @@ namespace CNC_Drill_Controller1
             if (File.Exists(FileName))
             {
                 //load and parse data;
-                log = "Opening: " + FileName;
+                log = "Loading:";
                 Shapes = new List<rawShapeData>();
                 PageWidth = 11.0f;
                 PageHeight = 11.0f; 
@@ -79,6 +80,9 @@ namespace CNC_Drill_Controller1
                 cleanList();
                 AddLine(Shapes.Sum(d => (d.isZero) ? 1 : 0).ToString("D") + " Zeros");
                 AddLine(Shapes.Sum(d => (d.isDuplicate) ? 1 : 0).ToString("D") + " Duplicates");
+
+                AddLine("Page Width: " + PageWidth.ToString("F1"));
+                AddLine("Page Height: " + PageHeight.ToString("F1"));
                 
                 foreach (var rawShape in Shapes)
                 {

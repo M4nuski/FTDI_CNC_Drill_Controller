@@ -90,6 +90,9 @@
             this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.DrillButton = new System.Windows.Forms.Button();
+            this.OffsetOriginBtton = new System.Windows.Forms.Button();
+            this.YOriginTextbox = new System.Windows.Forms.TextBox();
+            this.XoriginTextbox = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -540,14 +543,6 @@
             // 
             this.listBox1.ContextMenuStrip = this.NodesContextMenu;
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Items.AddRange(new object[] {
-            "0.000, 0.000",
-            "1.000, 1.000",
-            "0.500, 0.000",
-            "1.000, 0.500",
-            "0.250, 0.250",
-            "0.250, 0.000",
-            "0.000, 0.250"});
             this.listBox1.Location = new System.Drawing.Point(328, 63);
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
@@ -567,7 +562,7 @@
             this.NodeContextTARGET,
             this.NodeContextSELECTED});
             this.NodesContextMenu.Name = "NodesContextMenu";
-            this.NodesContextMenu.Size = new System.Drawing.Size(172, 164);
+            this.NodesContextMenu.Size = new System.Drawing.Size(172, 142);
             // 
             // NodeContextSETXY
             // 
@@ -615,6 +610,7 @@
             this.NodeContextSELECTED.Name = "NodeContextSELECTED";
             this.NodeContextSELECTED.Size = new System.Drawing.Size(171, 22);
             this.NodeContextSELECTED.Text = "Status.Selected";
+            this.NodeContextSELECTED.Click += new System.EventHandler(this.NodeContextSELECTED_Click);
             // 
             // OutputLabel
             // 
@@ -721,11 +717,43 @@
             this.DrillButton.Text = "[Drill Selected Node]";
             this.DrillButton.UseVisualStyleBackColor = true;
             // 
+            // OffsetOriginBtton
+            // 
+            this.OffsetOriginBtton.Location = new System.Drawing.Point(660, 32);
+            this.OffsetOriginBtton.Margin = new System.Windows.Forms.Padding(2);
+            this.OffsetOriginBtton.Name = "OffsetOriginBtton";
+            this.OffsetOriginBtton.Size = new System.Drawing.Size(139, 21);
+            this.OffsetOriginBtton.TabIndex = 52;
+            this.OffsetOriginBtton.Text = "Offset Drawing Oriogin by:";
+            this.OffsetOriginBtton.UseVisualStyleBackColor = true;
+            this.OffsetOriginBtton.Click += new System.EventHandler(this.OffsetOriginBtton_Click);
+            // 
+            // YOriginTextbox
+            // 
+            this.YOriginTextbox.Location = new System.Drawing.Point(860, 32);
+            this.YOriginTextbox.Margin = new System.Windows.Forms.Padding(2);
+            this.YOriginTextbox.Name = "YOriginTextbox";
+            this.YOriginTextbox.Size = new System.Drawing.Size(57, 20);
+            this.YOriginTextbox.TabIndex = 51;
+            this.YOriginTextbox.Text = "0.0000";
+            // 
+            // XoriginTextbox
+            // 
+            this.XoriginTextbox.Location = new System.Drawing.Point(799, 32);
+            this.XoriginTextbox.Margin = new System.Windows.Forms.Padding(2);
+            this.XoriginTextbox.Name = "XoriginTextbox";
+            this.XoriginTextbox.Size = new System.Drawing.Size(57, 20);
+            this.XoriginTextbox.TabIndex = 50;
+            this.XoriginTextbox.Text = "0.0000";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.OffsetOriginBtton);
+            this.Controls.Add(this.YOriginTextbox);
+            this.Controls.Add(this.XoriginTextbox);
             this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
             this.Controls.Add(this.SeekZeroButton);
@@ -840,6 +868,9 @@
         private System.Windows.Forms.ToolStripMenuItem NodeContextDRILED;
         private System.Windows.Forms.ToolStripMenuItem NodeContextTARGET;
         private System.Windows.Forms.ToolStripMenuItem NodeContextSELECTED;
+        private System.Windows.Forms.Button OffsetOriginBtton;
+        private System.Windows.Forms.TextBox YOriginTextbox;
+        private System.Windows.Forms.TextBox XoriginTextbox;
     }
 }
 
