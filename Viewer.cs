@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -248,28 +249,19 @@ namespace CNC_Drill_Controller1
             zoomLevel = fitZoomLevel;//override panPosition compensation
             ZoomLevel = fitZoomLevel;
         }
-
-        private Rectangle getCurrentRectangle()
-        {
-            var l = PanPosition.X / zoomLevel;
-            var t = PanPosition.Y / zoomLevel;
-
-            var w = _outputControl.Width / zoomLevel;
-            var h = _outputControl.Height / zoomLevel;
-
-            return new Rectangle((int)l, (int)t, (int)w, (int)h);
-        }
     }
 
 
 
     internal interface IViewerElements
     {
+        int ID { get; }
         void Draw(Viewer.viewData data);
     }
 
     class CrossHair : IViewerElements
     {
+        public int ID { get; set; }
         private Pen _color;
         private float _x, _y;
 
@@ -278,6 +270,14 @@ namespace CNC_Drill_Controller1
             _color = new Pen(color);
             _x = X;
             _y = Y;
+            ID = -1;
+        }
+        public CrossHair(float X, float Y, Color color, int ID)
+        {
+            _color = new Pen(color);
+            _x = X;
+            _y = Y;
+            this.ID = ID;
         }
 
         public void Draw(Viewer.viewData data)
@@ -306,6 +306,7 @@ namespace CNC_Drill_Controller1
         private float _radius, _diameter;
         private Pen _color;
         private PointF _pos;
+        public int ID { get; set; }
 
         //nifty transparent property test:
         public Color color { get { return _color.Color; } set { _color = new Pen(value); } }
@@ -316,6 +317,15 @@ namespace CNC_Drill_Controller1
             _radius = diameter / 2.0f;
             _color = new Pen(color);
             _pos = position;
+            ID = -1;
+        }
+        public Node(PointF position, float diameter, Color color, int ID)
+        {
+            _diameter = diameter;
+            _radius = diameter / 2.0f;
+            _color = new Pen(color);
+            _pos = position;
+            this.ID = ID;
         }
 
         public void Draw(Viewer.viewData data)
@@ -327,8 +337,11 @@ namespace CNC_Drill_Controller1
 
     class Line : IViewerElements
     {
+
         private Pen _color;
         private float _fx, _fy, _tx, _ty;
+        public int ID { get; set; }
+
         public Line(float fromX, float fromY, float toX, float toY, Color color)
         {
             _fx = fromX;
@@ -336,8 +349,18 @@ namespace CNC_Drill_Controller1
             _tx = toX;
             _ty = toY;
             _color = new Pen(color);
-
+            ID = -1;
         }
+        public Line(float fromX, float fromY, float toX, float toY, Color color, int ID)
+        {
+            _fx = fromX;
+            _fy = fromY;
+            _tx = toX;
+            _ty = toY;
+            _color = new Pen(color);
+            this.ID = ID;
+        }
+
         public void Draw(Viewer.viewData data)
         {
             var out_from = ViewerHelper.ScalePoint(_fx, _fy, data);
@@ -352,25 +375,38 @@ namespace CNC_Drill_Controller1
         private Pen _color;
         private Brush _fill;
 
-        public Box(PointF TopLeft, PointF Size, Color color)
+        public int ID { get; set; }
+
+        private void box(float x, float y, float w, float h, Color color, int id)
         {
-            _x = TopLeft.X;
-            _y = TopLeft.Y;
-            _w = Size.X;
-            _h = Size.Y;
+            _x = x;
+            _y = y;
+            _w = w;
+            _h = h;
             _color = new Pen(color);
             _fill = new SolidBrush(color);
+            ID = id; 
+        }
+
+        public Box(PointF TopLeft, PointF Size, Color color)
+        {
+            box(TopLeft.X, TopLeft.Y,Size.X, Size.Y, color, -1);
         }
 
         public Box(float X, float Y, float Width, float Height, Color color)
         {
-            _x = X;
-            _y = Y;
-            _w = Width;
-            _h = Height;
-            _color = new Pen(color);
-            _fill = new SolidBrush(color);
+            box(X, Y, Width, Height, color, -1);
         }
+        public Box(PointF TopLeft, PointF Size, Color color, int ID)
+        {
+            box(TopLeft.X, TopLeft.Y, Size.X, Size.Y, color, ID);
+        }
+        public Box(float X, float Y, float Width, float Height, Color color, int ID)
+        {
+            box(X, Y, Width, Height, color, ID);
+        }
+
+
 
         public void Draw(Viewer.viewData data)
         {

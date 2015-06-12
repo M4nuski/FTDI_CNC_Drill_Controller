@@ -22,8 +22,7 @@ namespace CNC_Drill_Controller1
         private byte[] stepBytes = {0x33, 0x66, 0xCC, 0x99};
 
         #endregion
-
-
+        
         #region USB to UI properties
 
         private DateTime lastUpdate = DateTime.Now;
@@ -35,7 +34,6 @@ namespace CNC_Drill_Controller1
 
         #endregion
         
-
         #region View Properties
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
@@ -49,6 +47,7 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
+        private char[] trimChars = { ' ' };
         private bool seekingLimits; //TODO: add limit switch auto seeking, ask for approximate location and creep toward minX and minY
 
         #region Form Initialization
@@ -131,25 +130,19 @@ namespace CNC_Drill_Controller1
         {
             moveBy(0, -AxisOffsetCount);
         }
-        private void Sendbutton_Click(object sender, EventArgs e)
-        {
-            Transfer();
-        }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
             if (!CheckBoxInhibit) Transfer();
         }
 
-        private float safeTextToFloat(string text)
+        private void Sendbutton_Click(object sender, EventArgs e)
         {
-            float res;
-            if (float.TryParse(text, out res))
-            {
-                return res;
-            }
-            logger1.AddLine("Failed to convert value: " + text);
-            return 0.0f;
+            Transfer();
         }
+        private void ReloadUSBbutton_Click(object sender, EventArgs e)
+        {
+            Form1_Load(this, e);
+        }         
 
         private void setXButton_Click(object sender, EventArgs e)
         {
@@ -163,29 +156,21 @@ namespace CNC_Drill_Controller1
             Y_Axis_Delta = (int)(Y_Axis_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
         }
 
-
         private void zeroXbutton_Click(object sender, EventArgs e)
         {
             XCurrentPosTextBox.Text = "0.0000";
             setXButton_Click(this, e);
         }
-
         private void zeroYbutton_Click(object sender, EventArgs e)
         {
             YCurrentPosTextBox.Text = "0.0000";
             SetYButton_Click(this, e);
         }
-
         private void zeroAllbutton_Click(object sender, EventArgs e)
         {
             zeroXbutton_Click(this, e);
             zeroYbutton_Click(this, e);
         }
-
-        private void ReloadUSBbutton_Click(object sender, EventArgs e)
-        {
-            Form1_Load(this, e);
-        }         
         
         private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -200,6 +185,16 @@ namespace CNC_Drill_Controller1
                 AxisOffsetCount = 1;
             }
         }
+        private float safeTextToFloat(string text)
+        {
+            float res;
+            if (float.TryParse(text, out res))
+            {
+                return res;
+            }
+            logger1.AddLine("Failed to convert value: " + text);
+            return 0.0f;
+        }
         #endregion
 
         #region Log methods
@@ -207,6 +202,7 @@ namespace CNC_Drill_Controller1
         {
             logger1.Clear();
         }
+
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var logfile = File.AppendText("CNC_Drill_CTRL.log");
@@ -565,11 +561,12 @@ namespace CNC_Drill_Controller1
         private void MoveTobutton_Click(object sender, EventArgs e)
         {
             var movedata = (string)listBox1.SelectedItem;
-            var axisdata = movedata.Split(new[] { ',' });
+
+            var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
             {
-                var mx = safeTextToFloat(axisdata[0].Trim(new[] { ' ' }));
-                var my = safeTextToFloat(axisdata[1].Trim(new[] { ' ' }));
+                var mx = safeTextToFloat(axisdata[0].Trim(trimChars));
+                var my = safeTextToFloat(axisdata[1].Trim(trimChars));
                 logger1.AddLine("Moving to: " + mx.ToString("F5") + ", " + my.ToString("F5"));
                 MoveTo(mx, my);
             }
@@ -578,17 +575,16 @@ namespace CNC_Drill_Controller1
         private void SetAsXYbutton_Click(object sender, EventArgs e)
         {
             var movedata = (string)listBox1.SelectedItem;
-            var axisdata = movedata.Split(new[] { ',' });
+            var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
             {
-                XCurrentPosTextBox.Text = axisdata[0].Trim(new[] { ' ' });
-                YCurrentPosTextBox.Text = axisdata[1].Trim(new[] { ' ' });
+                XCurrentPosTextBox.Text = axisdata[0].Trim(trimChars);
+                YCurrentPosTextBox.Text = axisdata[1].Trim(trimChars);
                 setXButton_Click(this, e);
                 SetYButton_Click(this, e);
             }
         } 
-
-
+        
         private void OutputLabel_MouseEnter(object sender, EventArgs e)
         {
             Cursor.Hide();
@@ -606,7 +602,7 @@ namespace CNC_Drill_Controller1
 
         private void NodeContextSELECTED_Click(object sender, EventArgs e)
         {
-            var selectedNode = listBox1.SelectedItem as DrillNode;
+            var selectedNode = listBox1.SelectedItem as DrillNode;//todo revert to string
             if (selectedNode != null)
             {
                selectedNode.status = DrillNode.DrillNodeStatus.Selected;
@@ -629,7 +625,7 @@ namespace CNC_Drill_Controller1
             {
                 for (var i = 0; i < Nodes.Count; i++)
                 {
-                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color));
+                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color ,i));
                     listBox1.Items.Add(Nodes[i].Location);
                 }
             }
@@ -643,6 +639,17 @@ namespace CNC_Drill_Controller1
             RebuildNodesDisplays();
         }
         #endregion
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Selected;
+
+            foreach (var elem in nodeViewer.Elements)
+            {
+                if (elem)
+            }
+            OutputLabel.Refresh();
+        }
 
     }
 }

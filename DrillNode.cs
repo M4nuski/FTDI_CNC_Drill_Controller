@@ -23,6 +23,8 @@ namespace CNC_Drill_Controller1
 
         public DrillNodeStatus status;
 
+        public int ID;
+
         private Dictionary<DrillNodeStatus, Color> nodeStatusColors = new Dictionary<DrillNodeStatus, Color>()
         {
             {DrillNodeStatus.Idle, Color.Black}, 
@@ -35,12 +37,14 @@ namespace CNC_Drill_Controller1
         {
             location = new PointF(0, 0);
             status = DrillNodeStatus.Idle;
+            ID = -1;
         }
 
-        public DrillNode(PointF Location)
+        public DrillNode(PointF Location, int ID)
         {
             location = Location;
             status = DrillNodeStatus.Idle;
+            this.ID = ID;
         }
     }
 }

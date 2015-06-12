@@ -549,6 +549,7 @@
             this.listBox1.ScrollAlwaysVisible = true;
             this.listBox1.Size = new System.Drawing.Size(156, 498);
             this.listBox1.TabIndex = 37;
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
             // NodesContextMenu
