@@ -588,5 +588,10 @@ namespace CNC_Drill_Controller1
         {
             Cursor.Show();
         }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e)
+        {
+           NodesContextMenu.Show(listBox1,listBox1.PointToClient(Cursor.Position));
+        }
     }
 }

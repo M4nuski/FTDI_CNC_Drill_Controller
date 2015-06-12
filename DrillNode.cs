@@ -38,10 +38,5 @@ namespace CNC_Drill_Controller1
             location = Location;
             status = DrillNodeStatus.Idle;
         }
-
-        //public Color color()
-        //{
-        //    return nodeStatusColors[status];
-        //}
     }
 }

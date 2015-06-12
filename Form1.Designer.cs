@@ -72,8 +72,14 @@
             this.Xlabel = new System.Windows.Forms.Label();
             this.Ylabel = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.MoveTobutton = new System.Windows.Forms.Button();
-            this.SetAsXYbutton = new System.Windows.Forms.Button();
+            this.NodesContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.NodeContextSETXY = new System.Windows.Forms.ToolStripMenuItem();
+            this.NodeContextMOVETO = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.NodeContextIDLE = new System.Windows.Forms.ToolStripMenuItem();
+            this.NodeContextDRILED = new System.Windows.Forms.ToolStripMenuItem();
+            this.NodeContextTARGET = new System.Windows.Forms.ToolStripMenuItem();
+            this.NodeContextSELECTED = new System.Windows.Forms.ToolStripMenuItem();
             this.OutputLabel = new System.Windows.Forms.Label();
             this.XScalebutton = new System.Windows.Forms.Button();
             this.YScalebutton = new System.Windows.Forms.Button();
@@ -85,6 +91,7 @@
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.DrillButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
+            this.NodesContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // USBdevicesComboBox
@@ -329,9 +336,9 @@
             this.checkBoxT.Location = new System.Drawing.Point(15, 106);
             this.checkBoxT.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxT.Name = "checkBoxT";
-            this.checkBoxT.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxT.Size = new System.Drawing.Size(117, 17);
             this.checkBoxT.TabIndex = 10;
-            this.checkBoxT.Text = "Drill Cycle From Top";
+            this.checkBoxT.Text = "Drill Cycle from Top";
             this.checkBoxT.UseVisualStyleBackColor = true;
             this.checkBoxT.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
@@ -394,17 +401,17 @@
             // UIupdateTimer
             // 
             this.UIupdateTimer.Enabled = true;
-            this.UIupdateTimer.Interval = 125;
+            this.UIupdateTimer.Interval = 200;
             this.UIupdateTimer.Tick += new System.EventHandler(this.UIupdateTimer_Tick);
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(417, 61);
+            this.loadFileButton.Location = new System.Drawing.Point(328, 33);
             this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(76, 19);
+            this.loadFileButton.Size = new System.Drawing.Size(156, 19);
             this.loadFileButton.TabIndex = 15;
-            this.loadFileButton.Text = "Load File";
+            this.loadFileButton.Text = "Load .VDX File";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.LoadFileButton_Click);
             // 
@@ -424,7 +431,7 @@
             // 
             // YScaleTextBox
             // 
-            this.YScaleTextBox.Location = new System.Drawing.Point(342, 33);
+            this.YScaleTextBox.Location = new System.Drawing.Point(219, 55);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.ReadOnly = true;
@@ -434,7 +441,7 @@
             // 
             // XCurrentPosTextBox
             // 
-            this.XCurrentPosTextBox.Location = new System.Drawing.Point(218, 80);
+            this.XCurrentPosTextBox.Location = new System.Drawing.Point(218, 102);
             this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -443,7 +450,7 @@
             // 
             // YCurrentPosTextBox
             // 
-            this.YCurrentPosTextBox.Location = new System.Drawing.Point(218, 103);
+            this.YCurrentPosTextBox.Location = new System.Drawing.Point(218, 125);
             this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -452,7 +459,7 @@
             // 
             // setXButton
             // 
-            this.setXButton.Location = new System.Drawing.Point(158, 80);
+            this.setXButton.Location = new System.Drawing.Point(158, 102);
             this.setXButton.Margin = new System.Windows.Forms.Padding(2);
             this.setXButton.Name = "setXButton";
             this.setXButton.Size = new System.Drawing.Size(56, 19);
@@ -463,7 +470,7 @@
             // 
             // SetYButton
             // 
-            this.SetYButton.Location = new System.Drawing.Point(158, 103);
+            this.SetYButton.Location = new System.Drawing.Point(158, 125);
             this.SetYButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetYButton.Name = "SetYButton";
             this.SetYButton.Size = new System.Drawing.Size(56, 19);
@@ -474,7 +481,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(158, 56);
+            this.zeroXbutton.Location = new System.Drawing.Point(158, 78);
             this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
@@ -485,7 +492,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(218, 56);
+            this.zeroYbutton.Location = new System.Drawing.Point(218, 78);
             this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
@@ -496,10 +503,10 @@
             // 
             // zeroAllbutton
             // 
-            this.zeroAllbutton.Location = new System.Drawing.Point(281, 57);
+            this.zeroAllbutton.Location = new System.Drawing.Point(158, 149);
             this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
-            this.zeroAllbutton.Size = new System.Drawing.Size(56, 19);
+            this.zeroAllbutton.Size = new System.Drawing.Size(118, 19);
             this.zeroAllbutton.TabIndex = 26;
             this.zeroAllbutton.Text = "Zero All";
             this.zeroAllbutton.UseVisualStyleBackColor = true;
@@ -531,10 +538,9 @@
             // 
             // listBox1
             // 
+            this.listBox1.ContextMenuStrip = this.NodesContextMenu;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Items.AddRange(new object[] {
-            "Load .vdx to populate list",
-            "test data:",
             "0.000, 0.000",
             "1.000, 1.000",
             "0.500, 0.000",
@@ -542,40 +548,79 @@
             "0.250, 0.250",
             "0.250, 0.000",
             "0.000, 0.250"});
-            this.listBox1.Location = new System.Drawing.Point(337, 112);
+            this.listBox1.Location = new System.Drawing.Point(328, 63);
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(156, 394);
+            this.listBox1.Size = new System.Drawing.Size(156, 498);
             this.listBox1.TabIndex = 37;
+            this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
-            // MoveTobutton
+            // NodesContextMenu
             // 
-            this.MoveTobutton.Location = new System.Drawing.Point(276, 463);
-            this.MoveTobutton.Margin = new System.Windows.Forms.Padding(2);
-            this.MoveTobutton.Name = "MoveTobutton";
-            this.MoveTobutton.Size = new System.Drawing.Size(56, 19);
-            this.MoveTobutton.TabIndex = 38;
-            this.MoveTobutton.Text = "MoveTo";
-            this.MoveTobutton.UseVisualStyleBackColor = true;
-            this.MoveTobutton.Click += new System.EventHandler(this.MoveTobutton_Click);
+            this.NodesContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NodeContextSETXY,
+            this.NodeContextMOVETO,
+            this.toolStripSeparator1,
+            this.NodeContextIDLE,
+            this.NodeContextDRILED,
+            this.NodeContextTARGET,
+            this.NodeContextSELECTED});
+            this.NodesContextMenu.Name = "NodesContextMenu";
+            this.NodesContextMenu.Size = new System.Drawing.Size(172, 164);
             // 
-            // SetAsXYbutton
+            // NodeContextSETXY
             // 
-            this.SetAsXYbutton.Location = new System.Drawing.Point(276, 440);
-            this.SetAsXYbutton.Margin = new System.Windows.Forms.Padding(2);
-            this.SetAsXYbutton.Name = "SetAsXYbutton";
-            this.SetAsXYbutton.Size = new System.Drawing.Size(56, 19);
-            this.SetAsXYbutton.TabIndex = 39;
-            this.SetAsXYbutton.Text = "SetAsXY";
-            this.SetAsXYbutton.UseVisualStyleBackColor = true;
-            this.SetAsXYbutton.Click += new System.EventHandler(this.SetAsXYbutton_Click);
+            this.NodeContextSETXY.Name = "NodeContextSETXY";
+            this.NodeContextSETXY.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextSETXY.Text = "Set As Current X-Y";
+            this.NodeContextSETXY.Click += new System.EventHandler(this.SetAsXYbutton_Click);
+            // 
+            // NodeContextMOVETO
+            // 
+            this.NodeContextMOVETO.Name = "NodeContextMOVETO";
+            this.NodeContextMOVETO.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextMOVETO.Text = "Move To";
+            this.NodeContextMOVETO.Click += new System.EventHandler(this.MoveTobutton_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
+            // 
+            // NodeContextIDLE
+            // 
+            this.NodeContextIDLE.CheckOnClick = true;
+            this.NodeContextIDLE.Name = "NodeContextIDLE";
+            this.NodeContextIDLE.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextIDLE.Text = "Status.Idle";
+            // 
+            // NodeContextDRILED
+            // 
+            this.NodeContextDRILED.CheckOnClick = true;
+            this.NodeContextDRILED.Name = "NodeContextDRILED";
+            this.NodeContextDRILED.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextDRILED.Text = "Status.Drilled";
+            // 
+            // NodeContextTARGET
+            // 
+            this.NodeContextTARGET.CheckOnClick = true;
+            this.NodeContextTARGET.Name = "NodeContextTARGET";
+            this.NodeContextTARGET.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextTARGET.Text = "Status.Target";
+            // 
+            // NodeContextSELECTED
+            // 
+            this.NodeContextSELECTED.CheckOnClick = true;
+            this.NodeContextSELECTED.Name = "NodeContextSELECTED";
+            this.NodeContextSELECTED.Size = new System.Drawing.Size(171, 22);
+            this.NodeContextSELECTED.Text = "Status.Selected";
             // 
             // OutputLabel
             // 
             this.OutputLabel.BackColor = System.Drawing.Color.White;
             this.OutputLabel.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.OutputLabel.Location = new System.Drawing.Point(499, 32);
+            this.OutputLabel.Location = new System.Drawing.Point(497, 63);
             this.OutputLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OutputLabel.Name = "OutputLabel";
             this.OutputLabel.Size = new System.Drawing.Size(500, 500);
@@ -595,7 +640,7 @@
             // 
             // YScalebutton
             // 
-            this.YScalebutton.Location = new System.Drawing.Point(281, 33);
+            this.YScalebutton.Location = new System.Drawing.Point(158, 55);
             this.YScalebutton.Margin = new System.Windows.Forms.Padding(2);
             this.YScalebutton.Name = "YScalebutton";
             this.YScalebutton.Size = new System.Drawing.Size(56, 19);
@@ -606,7 +651,7 @@
             // ViewZoomLabel
             // 
             this.ViewZoomLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewZoomLabel.Location = new System.Drawing.Point(417, 35);
+            this.ViewZoomLabel.Location = new System.Drawing.Point(921, 33);
             this.ViewZoomLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewZoomLabel.Name = "ViewZoomLabel";
             this.ViewZoomLabel.Size = new System.Drawing.Size(76, 19);
@@ -616,7 +661,7 @@
             // ViewXLabel
             // 
             this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewXLabel.Location = new System.Drawing.Point(337, 84);
+            this.ViewXLabel.Location = new System.Drawing.Point(500, 33);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
             this.ViewXLabel.Size = new System.Drawing.Size(76, 19);
@@ -626,7 +671,7 @@
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(417, 84);
+            this.ViewYLabel.Location = new System.Drawing.Point(580, 33);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
             this.ViewYLabel.Size = new System.Drawing.Size(76, 19);
@@ -636,7 +681,7 @@
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(337, 510);
+            this.RunButton.Location = new System.Drawing.Point(12, 510);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(158, 22);
@@ -647,10 +692,10 @@
             // SeekZeroButton
             // 
             this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(4, 351);
+            this.SeekZeroButton.Location = new System.Drawing.Point(12, 484);
             this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
             this.SeekZeroButton.Name = "SeekZeroButton";
-            this.SeekZeroButton.Size = new System.Drawing.Size(147, 22);
+            this.SeekZeroButton.Size = new System.Drawing.Size(158, 22);
             this.SeekZeroButton.TabIndex = 47;
             this.SeekZeroButton.Text = "[Find Axis Origins]";
             this.SeekZeroButton.UseVisualStyleBackColor = true;
@@ -668,11 +713,12 @@
             // 
             // DrillButton
             // 
-            this.DrillButton.Location = new System.Drawing.Point(276, 487);
+            this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DrillButton.Location = new System.Drawing.Point(12, 537);
             this.DrillButton.Name = "DrillButton";
-            this.DrillButton.Size = new System.Drawing.Size(56, 19);
+            this.DrillButton.Size = new System.Drawing.Size(158, 22);
             this.DrillButton.TabIndex = 49;
-            this.DrillButton.Text = "Drill";
+            this.DrillButton.Text = "[Drill Selected Node]";
             this.DrillButton.UseVisualStyleBackColor = true;
             // 
             // Form1
@@ -690,8 +736,6 @@
             this.Controls.Add(this.YScalebutton);
             this.Controls.Add(this.XScalebutton);
             this.Controls.Add(this.OutputLabel);
-            this.Controls.Add(this.SetAsXYbutton);
-            this.Controls.Add(this.MoveTobutton);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.Ylabel);
             this.Controls.Add(this.Xlabel);
@@ -728,6 +772,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.NodesContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -777,8 +822,6 @@
         private System.Windows.Forms.Label Xlabel;
         private System.Windows.Forms.Label Ylabel;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Button MoveTobutton;
-        private System.Windows.Forms.Button SetAsXYbutton;
         private System.Windows.Forms.Label OutputLabel;
         private System.Windows.Forms.Button XScalebutton;
         private System.Windows.Forms.Button YScalebutton;
@@ -789,6 +832,14 @@
         private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
         private System.Windows.Forms.Button DrillButton;
+        private System.Windows.Forms.ContextMenuStrip NodesContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextSETXY;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextMOVETO;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextIDLE;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextDRILED;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextTARGET;
+        private System.Windows.Forms.ToolStripMenuItem NodeContextSELECTED;
     }
 }
 

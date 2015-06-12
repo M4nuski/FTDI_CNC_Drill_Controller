@@ -282,7 +282,7 @@ namespace CNC_Drill_Controller1
 
         public void Draw(Viewer.viewData data)
         {
-            var out_rectangle = ViewerHelper.ScaleUp(_x, _y, data.Size.X, data.Size.Y, data);
+            var out_rectangle = ViewerHelper.ScaleRectangle(_x, _y, data.Size.X, data.Size.Y, data);
             data.OutputGraphic.DrawLine(_color, out_rectangle.X, 0, out_rectangle.X, out_rectangle.Height);
             data.OutputGraphic.DrawLine(_color, 0, out_rectangle.Y, out_rectangle.Width, out_rectangle.Y);
         }
@@ -320,7 +320,8 @@ namespace CNC_Drill_Controller1
 
         public void Draw(Viewer.viewData data)
         {
-            data.OutputGraphic.DrawEllipse(_color, _pos.X - _radius, _pos.Y - _radius, _diameter, _diameter);
+            var out_pos = ViewerHelper.ScaleRectangle(_pos.X - _radius, _pos.Y - _radius, _diameter, _diameter, data);
+            data.OutputGraphic.DrawEllipse(_color, out_pos);
         }
     }
 
@@ -339,7 +340,9 @@ namespace CNC_Drill_Controller1
         }
         public void Draw(Viewer.viewData data)
         {
-            data.OutputGraphic.DrawLine(_color, _fx, _fy, _tx, _ty);
+            var out_from = ViewerHelper.ScalePoint(_fx, _fy, data);
+            var out_to = ViewerHelper.ScalePoint(_tx, _ty, data);
+            data.OutputGraphic.DrawLine(_color, out_from, out_to);
         }
     }
 
@@ -371,7 +374,7 @@ namespace CNC_Drill_Controller1
 
         public void Draw(Viewer.viewData data)
         {
-            var out_rectangle = ViewerHelper.ScaleUp(_x, _y, _w, _h, data);
+            var out_rectangle = ViewerHelper.ScaleRectangle(_x, _y, _w, _h, data);
             data.OutputGraphic.DrawRectangle(_color, out_rectangle);
             data.OutputGraphic.FillRectangle(_fill, out_rectangle);
         }
@@ -379,7 +382,7 @@ namespace CNC_Drill_Controller1
 
     static class ViewerHelper
     {
-        public static Rectangle ScaleUp(float X, float Y, float W, float H, Viewer.viewData data)
+        public static Rectangle ScaleRectangle(float X, float Y, float W, float H, Viewer.viewData data)
         {
             var l = ((X*data.Scale)*data.ZoomLevel) - data.PanPosition.X;
             var t = ((Y*data.Scale)*data.ZoomLevel) - data.PanPosition.Y;
@@ -387,6 +390,20 @@ namespace CNC_Drill_Controller1
             var w = (W * data.Scale) * data.ZoomLevel;
             var h = (H * data.Scale) * data.ZoomLevel;
             return new Rectangle((int)l, (int)t, (int)w, (int)h);
+        }
+
+        public static Point ScalePoint(float X, float Y, Viewer.viewData data)
+        {
+            var l = ((X * data.Scale) * data.ZoomLevel) - data.PanPosition.X;
+            var t = ((Y * data.Scale) * data.ZoomLevel) - data.PanPosition.Y;
+            return new Point((int)l, (int)t);            
+        }
+
+        public static Point ScalePointF(PointF Pos, Viewer.viewData data)
+        {
+            var l = ((Pos.X * data.Scale) * data.ZoomLevel) - data.PanPosition.X;
+            var t = ((Pos.Y * data.Scale) * data.ZoomLevel) - data.PanPosition.Y;
+            return new Point((int)l, (int)t);
         }
     }
 

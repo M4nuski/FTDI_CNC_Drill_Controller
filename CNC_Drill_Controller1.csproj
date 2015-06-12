@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VDXLoader.cs" />
     <Compile Include="Viewer.cs" />
     <EmbeddedResource Include="DrawingTypeDialog.resx">
       <DependentUpon>DrawingTypeDialog.cs</DependentUpon>
