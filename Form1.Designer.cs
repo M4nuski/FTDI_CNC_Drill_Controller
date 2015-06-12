@@ -580,7 +580,8 @@
             this.OutputLabel.Name = "OutputLabel";
             this.OutputLabel.Size = new System.Drawing.Size(500, 500);
             this.OutputLabel.TabIndex = 40;
-            this.OutputLabel.Paint += new System.Windows.Forms.PaintEventHandler(this.OutputLabel_Paint);
+            this.OutputLabel.MouseEnter += new System.EventHandler(this.OutputLabel_MouseEnter);
+            this.OutputLabel.MouseLeave += new System.EventHandler(this.OutputLabel_MouseLeave);
             // 
             // XScalebutton
             // 

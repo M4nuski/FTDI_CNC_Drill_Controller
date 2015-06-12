@@ -42,12 +42,14 @@ namespace CNC_Drill_Controller1
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
 
-        private List<DrillNode> Nodes;
+        
+        private List<DrillNode> Nodes;//todo fill up Nodes from vdx file
 
         private Viewer nodeViewer;
         private CrossHair cursorCrossHair;
         private CrossHair drillCrossHair;
         private Box CNCTableBox;
+        private Box drawingPageBox;
 
         public Form1()
         {
@@ -60,11 +62,17 @@ namespace CNC_Drill_Controller1
             cursorCrossHair = new CrossHair(0,0, Color.Blue);
             drillCrossHair = new CrossHair(0,0, Color.Red);
             CNCTableBox = new Box(0,0,6,6, Color.LightGray);
+            drawingPageBox = new Box(0,0,8.5f,11,Color.GhostWhite);
 
-            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
-            nodeViewer.Elements = new List<IViewerElements>()
+            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f))
             {
-                        CNCTableBox,  drillCrossHair, cursorCrossHair
+                Elements = new List<IViewerElements>
+                {
+                    drawingPageBox,
+                    CNCTableBox,
+                    drillCrossHair,
+                    cursorCrossHair
+                }
             };
             //nodeViewer = new Viewer(panel1, new PointF(11.0f, 11.0f));
             //nodeViewer.Elements = new List<IViewerElements>()
@@ -571,19 +579,14 @@ namespace CNC_Drill_Controller1
             }
         }
 
-        private void OutputLabel_Paint(object sender, PaintEventArgs e)
+        private void OutputLabel_MouseEnter(object sender, EventArgs e)
         {
-            //todo override to draw nodes and current location of drill head
-            //cross loc of drill head
-            //cross loc of pointer
-            //nodes
-            //rectangle 6x6 table limits
-            //rectangle page from drawing
-
+            Cursor.Hide();
         }
 
-        private void OutputLabel_MouseMove(object sender, MouseEventArgs e)
+        private void OutputLabel_MouseLeave(object sender, EventArgs e)
         {
+            Cursor.Show();
         }
     }
 }
