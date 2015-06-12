@@ -45,6 +45,9 @@ namespace CNC_Drill_Controller1
         private List<DrillNode> Nodes;
 
         private Viewer nodeViewer;
+        private CrossHair cursorCrossHair;
+        private CrossHair drillCrossHair;
+        private Box CNCTableBox;
 
         public Form1()
         {
@@ -54,15 +57,21 @@ namespace CNC_Drill_Controller1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            cursorCrossHair = new CrossHair(0,0, Color.Blue);
+            drillCrossHair = new CrossHair(0,0, Color.Red);
+            CNCTableBox = new Box(0,0,6,6, Color.LightGray);
+
             nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
             nodeViewer.Elements = new List<IViewerElements>()
             {
-                new Box(new PointF(4.5f, 4.5f), new PointF(2, 2), Color.Red),
-                new Box(new PointF(0.0f, 0.0f), new PointF(0.2f, 0.2f), Color.Green),
-                new Box(new PointF(10.8f, 10.8f), new PointF(0.2f, 0.2f), Color.Green),
-                new Box(new PointF(0.0f, 10.8f), new PointF(0.2f, 0.2f), Color.Green),
-                new Box(new PointF(10.8f, 0.0f), new PointF(0.2f, 0.2f), Color.Green),
+                        CNCTableBox,  drillCrossHair, cursorCrossHair
             };
+            //nodeViewer = new Viewer(panel1, new PointF(11.0f, 11.0f));
+            //nodeViewer.Elements = new List<IViewerElements>()
+           // {
+           //     new Box(new PointF(0f, 0f), new PointF(11.0f, 11.0f), Color.Red)
+           // };
+
 
             AxisOffsetComboBox.SelectedIndex = 0;
             uint numUI = 0;
@@ -333,6 +342,11 @@ namespace CNC_Drill_Controller1
             ViewXLabel.Text = nodeViewer.MousePositionF.X.ToString("F4");
             ViewYLabel.Text = nodeViewer.MousePositionF.Y.ToString("F4");
             ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel*100) + "%";
+
+            cursorCrossHair.UpdatePosition(nodeViewer.MousePositionF);
+            drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
+            OutputLabel.Refresh();
+            
 
 
         }

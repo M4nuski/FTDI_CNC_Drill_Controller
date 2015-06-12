@@ -84,7 +84,6 @@
             this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.DrillButton = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -675,20 +674,11 @@
             this.DrillButton.Text = "Drill";
             this.DrillButton.UseVisualStyleBackColor = true;
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Location = new System.Drawing.Point(41, 420);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(172, 141);
-            this.panel1.TabIndex = 50;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
             this.Controls.Add(this.SeekZeroButton);
@@ -798,7 +788,6 @@
         private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
         private System.Windows.Forms.Button DrillButton;
-        private System.Windows.Forms.Panel panel1;
     }
 }
 
