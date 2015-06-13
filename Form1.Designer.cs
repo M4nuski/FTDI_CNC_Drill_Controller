@@ -404,7 +404,7 @@
             // UIupdateTimer
             // 
             this.UIupdateTimer.Enabled = true;
-            this.UIupdateTimer.Interval = 200;
+            this.UIupdateTimer.Interval = 125;
             this.UIupdateTimer.Tick += new System.EventHandler(this.UIupdateTimer_Tick);
             // 
             // loadFileButton
@@ -685,6 +685,7 @@
             this.RunButton.TabIndex = 46;
             this.RunButton.Text = "[Run Drilling Program]";
             this.RunButton.UseVisualStyleBackColor = true;
+            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // SeekZeroButton
             // 

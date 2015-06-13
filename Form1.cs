@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using FTD2XX_NET;
@@ -19,21 +20,29 @@ namespace CNC_Drill_Controller1
         private const int max_steps_per_transfert = 48; //1 turn
         public int X_Scale = 960;
         public int Y_Scale = 960;
-        private byte[] stepBytes = {0x33, 0x66, 0xCC, 0x99};
+        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
 
         #endregion
-        
+
         #region USB to UI properties
 
         private DateTime lastUpdate = DateTime.Now;
         private bool CheckBoxInhibit;
-        public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
-        public bool TopSwitch, BottomSwitch;
+        //public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
+        //public bool TopSwitch, BottomSwitch;
         private int X_Axis_Location, Y_Axis_Location, AxisOffsetCount;
         public int X_Axis_Delta, Y_Axis_Delta;
 
+        private struct SwitchFeedBack
+        {
+            public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
+            public bool TopSwitch, BottomSwitch;
+        }
+
+        private SwitchFeedBack SwitchState;
+
         #endregion
-        
+
         #region View Properties
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
@@ -109,9 +118,9 @@ namespace CNC_Drill_Controller1
                 logger1.AddLine("Failed to get number of devices (error " + ftStatus + ")");
             }
             #endregion
-        } 
+        }
         #endregion
-        
+
         #region Direct USB UI control methods
         private void PlusXbutton_Click(object sender, EventArgs e)
         {
@@ -142,7 +151,7 @@ namespace CNC_Drill_Controller1
         private void ReloadUSBbutton_Click(object sender, EventArgs e)
         {
             Form1_Load(this, e);
-        }         
+        }
 
         private void setXButton_Click(object sender, EventArgs e)
         {
@@ -171,7 +180,7 @@ namespace CNC_Drill_Controller1
             zeroXbutton_Click(this, e);
             zeroYbutton_Click(this, e);
         }
-        
+
         private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var toParse = (string)AxisOffsetComboBox.SelectedItem;
@@ -211,11 +220,11 @@ namespace CNC_Drill_Controller1
             logfile.WriteLine("");
             logfile.Close();
             logger1.AddLine("Log Saved to CNC_Drill_CTRL.log");
-        } 
+        }
         #endregion
-        
+
         #region USB transfer method and heleprs
-        private void Transfer()
+        private SwitchFeedBack Transfer()
         {
             if (USB_Interface.IsOpen)
             {
@@ -231,6 +240,7 @@ namespace CNC_Drill_Controller1
                 var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
                 if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
                 {
+                    USB_Interface.Close();
                     logger1.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/20)");
                 }
                 //de-serialize
@@ -238,14 +248,16 @@ namespace CNC_Drill_Controller1
                 ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
                 if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
                 {
+                    USB_Interface.Close();
                     logger1.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
                 }
                 else
                 {
-                    readSwitches();
+                    SwitchState = readSwitches();
                     lastUpdate = DateTime.Now;
                 }
             }
+            return SwitchState;
         }
 
         private byte CreateStepByte(int X_Location, int Y_Location)
@@ -322,20 +334,21 @@ namespace CNC_Drill_Controller1
             return output;
         }
 
-        private void readSwitches()
+        private SwitchFeedBack readSwitches()
         {
             //todo: re-wire header as of now max and min limit switches are swapped
-            MaxXswitch = !getBit(InputBuffer[15], 1);
-            MinXswitch = !getBit(InputBuffer[17], 1);
+            SwitchState.MaxXswitch = !getBit(InputBuffer[15], 1);
+            SwitchState.MinXswitch = !getBit(InputBuffer[17], 1);
 
-            MaxYswitch = !getBit(InputBuffer[13], 1);
-            MinYswitch = !getBit(InputBuffer[11], 1);
+            SwitchState.MaxYswitch = !getBit(InputBuffer[13], 1);
+            SwitchState.MinYswitch = !getBit(InputBuffer[11], 1);
 
-            TopSwitch = !getBit(InputBuffer[9], 1);
-            BottomSwitch = !getBit(InputBuffer[7], 1);
-        } 
+            SwitchState.TopSwitch = !getBit(InputBuffer[9], 1);
+            SwitchState.BottomSwitch = !getBit(InputBuffer[7], 1);
+            return SwitchState;
+        }
         #endregion
-        
+
         #region USB controls methods
         private void USBdevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -375,7 +388,7 @@ namespace CNC_Drill_Controller1
             {
                 logger1.AddLine("Failed to set BitMode (error " + ftStatus + ")");
             }
-        } 
+        }
         #endregion
 
         private void UIupdateTimer_Tick(object sender, EventArgs e)
@@ -390,31 +403,31 @@ namespace CNC_Drill_Controller1
                     Transfer();
                 }
 
-                if (MinXswitch && MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
+                if (SwitchState.MinXswitch && SwitchState.MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
                 {
                     XMinStatusLabel.BackColor = Color.DodgerBlue;
                     XMaxStatusLabel.BackColor = Color.DodgerBlue;
                 }
                 else
                 {
-                    XMinStatusLabel.BackColor = !MinXswitch ? Color.Lime : Color.Red;
-                    XMaxStatusLabel.BackColor = !MaxXswitch ? Color.Lime : Color.Red;
+                    XMinStatusLabel.BackColor = !SwitchState.MinXswitch ? Color.Lime : Color.Red;
+                    XMaxStatusLabel.BackColor = !SwitchState.MaxXswitch ? Color.Lime : Color.Red;
                 }
 
-                if (MinYswitch && MaxYswitch)
+                if (SwitchState.MinYswitch && SwitchState.MaxYswitch)
                 {
                     YMinStatusLabel.BackColor = Color.DodgerBlue;
                     YMaxStatusLabel.BackColor = Color.DodgerBlue;
                 }
                 else
                 {
-                    YMinStatusLabel.BackColor = !MinYswitch ? Color.Lime : Color.Red;
-                    YMaxStatusLabel.BackColor = !MaxYswitch ? Color.Lime : Color.Red;
+                    YMinStatusLabel.BackColor = !SwitchState.MinYswitch ? Color.Lime : Color.Red;
+                    YMaxStatusLabel.BackColor = !SwitchState.MaxYswitch ? Color.Lime : Color.Red;
                 }
 
 
                 //top drill limit switch
-                if (!TopSwitch)
+                if (!SwitchState.TopSwitch)
                 {
                     if (checkBoxT.Checked)
                     {
@@ -425,7 +438,7 @@ namespace CNC_Drill_Controller1
                 else TopStatusLabel.BackColor = Color.Lime;
 
                 //bottom drill limit switch
-                if (!BottomSwitch)
+                if (!SwitchState.BottomSwitch)
                 {
                     if (checkBoxB.Checked)
                     {
@@ -435,7 +448,7 @@ namespace CNC_Drill_Controller1
                 }
                 else BottomStatusLabel.BackColor = Color.Lime;
                 CheckBoxInhibit = false;
-            } 
+            }
             #endregion
 
             #region UI update from internal properties / view
@@ -452,10 +465,10 @@ namespace CNC_Drill_Controller1
 
             cursorCrossHair.UpdatePosition(nodeViewer.MousePositionF);
             drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
-            OutputLabel.Refresh(); 
+            OutputLabel.Refresh();
             #endregion
         }
-        
+
         #region Internal USB control methods
         private void moveBy(int DeltaX, int DeltaY)
         {
@@ -509,7 +522,7 @@ namespace CNC_Drill_Controller1
                 toolStripProgressBar1.Value = i;
                 numMoves -= num_moves_for_this_cycle;
                 Refresh();
-                if (MaxXswitch || MinXswitch || MaxYswitch || MinYswitch)
+                if (SwitchState.MaxXswitch || SwitchState.MinXswitch || SwitchState.MaxYswitch || SwitchState.MinYswitch)
                 {
                     if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
                     i = numCycle; //if limit reached exit loop
@@ -530,7 +543,7 @@ namespace CNC_Drill_Controller1
                 moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
             }
             else logger1.AddLine("Move target out of range.");
-        } 
+        }
         #endregion
 
         #region View / Listbox UI controls
@@ -583,8 +596,8 @@ namespace CNC_Drill_Controller1
                 setXButton_Click(this, e);
                 SetYButton_Click(this, e);
             }
-        } 
-        
+        }
+
         private void OutputLabel_MouseEnter(object sender, EventArgs e)
         {
             Cursor.Hide();
@@ -597,7 +610,7 @@ namespace CNC_Drill_Controller1
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
-           NodesContextMenu.Show(listBox1,listBox1.PointToClient(Cursor.Position));
+            NodesContextMenu.Show(listBox1, listBox1.PointToClient(Cursor.Position));
         }
 
         private void NodeContextSELECTED_Click(object sender, EventArgs e)
@@ -605,7 +618,7 @@ namespace CNC_Drill_Controller1
             var selectedNode = listBox1.SelectedItem as DrillNode;//todo revert to string
             if (selectedNode != null)
             {
-               selectedNode.status = DrillNode.DrillNodeStatus.Selected;
+                selectedNode.status = DrillNode.DrillNodeStatus.Selected;
             }
             RebuildNodesDisplays();
         }
@@ -625,7 +638,7 @@ namespace CNC_Drill_Controller1
             {
                 for (var i = 0; i < Nodes.Count; i++)
                 {
-                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color ,i));
+                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color, i));
                     listBox1.Items.Add(Nodes[i].Location);
                     Nodes[i].ID = i;
                 }
@@ -650,10 +663,10 @@ namespace CNC_Drill_Controller1
                     Nodes[i].status = DrillNode.DrillNodeStatus.Selected;
                     for (var j = 0; j < nodeViewer.Elements.Count; j++)
                     {
-                        if (nodeViewer.Elements[j].ID==Nodes[i].ID)
-                        nodeViewer.Elements[j].color = Nodes[i].Color;
+                        if (nodeViewer.Elements[j].ID == Nodes[i].ID)
+                            nodeViewer.Elements[j].color = Nodes[i].Color;
                     }
-                    
+
                 }
                 else
                 {
@@ -671,11 +684,16 @@ namespace CNC_Drill_Controller1
             OutputLabel.Refresh();
         }
 
+        private bool OutOfScopeUSB_IsOpen()
+        {
+            return USB_Interface.IsOpen;
+        }
+
         private void DrillButton_Click(object sender, EventArgs e)
         {
             //script :
             //check state of all switch for startup conditions.
-            //disable controls/UI?
+            //disable controls/UI
             //set node as target/next
             //start time-out timer
             //init drill from top
@@ -683,7 +701,128 @@ namespace CNC_Drill_Controller1
             //wait for top switch on
             //set node as drilled
             //if timer expires before end of drill cycle set node as idle and log error
+
+            logger1.AddLine("Starting Scripted Run [Drill Selected Node]...");
+            var failed = !OutOfScopeUSB_IsOpen();
+            Refresh();
+
+            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch && !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch)
+            {
+                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
+                logger1.AddLine("Moving to: " + Nodes[listBox1.SelectedIndex].Location);
+                Enabled = false;
+                MoveTo(Nodes[listBox1.SelectedIndex].location.X, Nodes[listBox1.SelectedIndex].location.Y);
+
+                logger1.AddLine("Drilling...");
+                checkBoxT.Checked = true;
+                Refresh();
+
+                var maxTries = 10;
+                while (SwitchState.TopSwitch && !failed)
+                {
+                    SwitchState = Transfer();
+                    failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    maxTries--;
+                    Thread.Sleep(100);
+                }
+                checkBoxT.Checked = false;
+
+                maxTries = 10;
+                while (!SwitchState.TopSwitch && !failed)
+                {
+                    SwitchState = Transfer();
+                    failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    maxTries--;
+                    Thread.Sleep(100);
+                }
+                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
+                UpdateNodeColors();
+                logger1.AddLine("Scripted Run Completed.");
+            }
+            else logger1.AddLine("Can't init drill cycle, limit switches are not properly set.");
+            Enabled = true;
         }
 
+        private void RunButton_Click(object sender, EventArgs e)
+        {
+            logger1.AddLine("Starting Scripted Run [Drilling all Nodes]...");
+            var failed = !OutOfScopeUSB_IsOpen();
+            Refresh();
+
+            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch &&
+                !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch && !failed)
+            {
+                for (var i = 0; i < listBox1.Items.Count; i++)
+                {
+                    if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch &&
+                        !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch && !failed)
+                    {
+
+                        Nodes[i].status = DrillNode.DrillNodeStatus.Next;
+                        UpdateNodeColors();
+                        logger1.AddLine("Moving to ["+i+"/"+listBox1.Items.Count+"]: " + Nodes[i].Location);
+                        Refresh();
+
+                        Enabled = false;
+                        MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
+
+                        logger1.AddLine("Drilling...");
+                        checkBoxT.Checked = true;
+                        Refresh();
+
+
+                        var maxTries = 10;
+                        while (SwitchState.TopSwitch && !failed)
+                        {
+                            SwitchState = Transfer();
+                            failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                            UIupdateTimer_Tick(this, null);
+                            Refresh();
+                            maxTries--;
+                            Thread.Sleep(100);
+                        }
+
+                        checkBoxT.Checked = false;
+                        Refresh();
+
+
+                        maxTries = 10;
+                        while (!SwitchState.TopSwitch && !failed)
+                        {
+                            SwitchState = Transfer();
+                            failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                            UIupdateTimer_Tick(this, null);
+                            Refresh();
+                            maxTries--;
+                            Thread.Sleep(100);
+                        }
+                        Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
+                        UpdateNodeColors();
+                        Refresh();
+                    }
+                }
+
+                logger1.AddLine("Scripted Run Completed.");
+            }
+            else logger1.AddLine("Can't init drill cycle, limit switches are not properly set or USB interface is Closed.");
+            Enabled = true;
+        }
+
+
+        private void UpdateNodeColors()
+        {
+            for (var i = 0; i < Nodes.Count; i++)
+            {
+                for (var j = 0; j < nodeViewer.Elements.Count; j++)
+                {
+                    if (nodeViewer.Elements[j].ID == Nodes[i].ID)
+                        nodeViewer.Elements[j].color = Nodes[i].Color;
+                }
+            }
+        }
     }
 }
