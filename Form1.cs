@@ -662,6 +662,8 @@ namespace CNC_Drill_Controller1
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
             RebuildListBoxAndViewerFromNodes();
+            XoriginTextbox.Text = "0.0000";
+            YOriginTextbox.Text = "0.0000";
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

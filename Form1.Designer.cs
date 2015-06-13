@@ -408,10 +408,10 @@
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(328, 33);
+            this.loadFileButton.Location = new System.Drawing.Point(328, 32);
             this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(156, 19);
+            this.loadFileButton.Size = new System.Drawing.Size(156, 21);
             this.loadFileButton.TabIndex = 15;
             this.loadFileButton.Text = "Load .VDX File";
             this.loadFileButton.UseVisualStyleBackColor = true;
@@ -540,6 +540,8 @@
             // 
             // listBox1
             // 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.listBox1.ContextMenuStrip = this.NodesContextMenu;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(328, 63);
@@ -561,7 +563,7 @@
             this.NodeContextDRILED,
             this.NodeContextTARGET});
             this.NodesContextMenu.Name = "NodesContextMenu";
-            this.NodesContextMenu.Size = new System.Drawing.Size(172, 142);
+            this.NodesContextMenu.Size = new System.Drawing.Size(172, 120);
             // 
             // NodeContextSETXY
             // 
@@ -605,6 +607,9 @@
             // 
             // OutputLabel
             // 
+            this.OutputLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.OutputLabel.BackColor = System.Drawing.Color.White;
             this.OutputLabel.Cursor = System.Windows.Forms.Cursors.Cross;
             this.OutputLabel.Location = new System.Drawing.Point(497, 63);
@@ -667,6 +672,7 @@
             // 
             // RunButton
             // 
+            this.RunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.RunButton.Location = new System.Drawing.Point(12, 537);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
@@ -679,6 +685,7 @@
             // 
             // SeekZeroButton
             // 
+            this.SeekZeroButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SeekZeroButton.Location = new System.Drawing.Point(12, 484);
             this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
@@ -701,6 +708,7 @@
             // 
             // DrillButton
             // 
+            this.DrillButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DrillButton.Location = new System.Drawing.Point(12, 510);
             this.DrillButton.Name = "DrillButton";
