@@ -627,6 +627,7 @@ namespace CNC_Drill_Controller1
                 {
                     nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color ,i));
                     listBox1.Items.Add(Nodes[i].Location);
+                    Nodes[i].ID = i;
                 }
             }
         }
@@ -642,13 +643,46 @@ namespace CNC_Drill_Controller1
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Selected;
-
-            foreach (var elem in nodeViewer.Elements)
+            for (var i = 0; i < Nodes.Count; i++)
             {
-                if (elem)
+                if (i == listBox1.SelectedIndex)
+                {
+                    Nodes[i].status = DrillNode.DrillNodeStatus.Selected;
+                    for (var j = 0; j < nodeViewer.Elements.Count; j++)
+                    {
+                        if (nodeViewer.Elements[j].ID==Nodes[i].ID)
+                        nodeViewer.Elements[j].color = Nodes[i].Color;
+                    }
+                    
+                }
+                else
+                {
+                    if (Nodes[i].status == DrillNode.DrillNodeStatus.Selected)
+                    {
+                        Nodes[i].status = DrillNode.DrillNodeStatus.Idle;
+                        for (var j = 0; j < nodeViewer.Elements.Count; j++)
+                        {
+                            if (nodeViewer.Elements[j].ID == Nodes[i].ID)
+                                nodeViewer.Elements[j].color = Nodes[i].Color;
+                        }
+                    }
+                }
             }
             OutputLabel.Refresh();
+        }
+
+        private void DrillButton_Click(object sender, EventArgs e)
+        {
+            //script :
+            //check state of all switch for startup conditions.
+            //disable controls/UI?
+            //set node as target/next
+            //start time-out timer
+            //init drill from top
+            //wait for top switch off
+            //wait for top switch on
+            //set node as drilled
+            //if timer expires before end of drill cycle set node as idle and log error
         }
 
     }

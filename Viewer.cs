@@ -256,12 +256,17 @@ namespace CNC_Drill_Controller1
     internal interface IViewerElements
     {
         int ID { get; }
+        Color color { get; set; }
         void Draw(Viewer.viewData data);
     }
 
     class CrossHair : IViewerElements
     {
         public int ID { get; set; }
+        public Color color {
+            get { return _color.Color; }
+            set { _color = new Pen(value);}
+        }
         private Pen _color;
         private float _x, _y;
 
@@ -304,12 +309,14 @@ namespace CNC_Drill_Controller1
     class Node : IViewerElements
     {
         private float _radius, _diameter;
+        public Color color
+        {
+            get { return _color.Color; }
+            set { _color = new Pen(value); }
+        }
         private Pen _color;
         private PointF _pos;
         public int ID { get; set; }
-
-        //nifty transparent property test:
-        public Color color { get { return _color.Color; } set { _color = new Pen(value); } }
 
         public Node(PointF position, float diameter, Color color)
         {
@@ -341,6 +348,11 @@ namespace CNC_Drill_Controller1
         private Pen _color;
         private float _fx, _fy, _tx, _ty;
         public int ID { get; set; }
+        public Color color
+        {
+            get { return _color.Color; }
+            set { _color = new Pen(value); }
+        }
 
         public Line(float fromX, float fromY, float toX, float toY, Color color)
         {
@@ -374,17 +386,26 @@ namespace CNC_Drill_Controller1
         private float _x, _y, _w, _h;
         private Pen _color;
         private Brush _fill;
+        public Color color
+        {
+            get { return _color.Color; }
+            set
+            {
+                _color = new Pen(value);
+                _fill = new SolidBrush(value);
+            }
+        }
 
         public int ID { get; set; }
 
-        private void box(float x, float y, float w, float h, Color color, int id)
+        private void box(float x, float y, float w, float h, Color FillColor, int id)
         {
             _x = x;
             _y = y;
             _w = w;
             _h = h;
-            _color = new Pen(color);
-            _fill = new SolidBrush(color);
+            _color = new Pen(FillColor);
+            _fill = new SolidBrush(FillColor);
             ID = id; 
         }
 
@@ -405,8 +426,6 @@ namespace CNC_Drill_Controller1
         {
             box(X, Y, Width, Height, color, ID);
         }
-
-
 
         public void Draw(Viewer.viewData data)
         {

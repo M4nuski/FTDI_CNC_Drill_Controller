@@ -717,6 +717,7 @@
             this.DrillButton.TabIndex = 49;
             this.DrillButton.Text = "[Drill Selected Node]";
             this.DrillButton.UseVisualStyleBackColor = true;
+            this.DrillButton.Click += new System.EventHandler(this.DrillButton_Click);
             // 
             // OffsetOriginBtton
             // 

@@ -16,7 +16,7 @@ namespace CNC_Drill_Controller1
         }
 
         public string Location {
-            get { return this.location.X.ToString("F4") + " " + this.location.Y.ToString("F4"); }
+            get { return location.X.ToString("F4") + " " + location.Y.ToString("F4"); }
         }
 
         public PointF location;
@@ -25,7 +25,7 @@ namespace CNC_Drill_Controller1
 
         public int ID;
 
-        private Dictionary<DrillNodeStatus, Color> nodeStatusColors = new Dictionary<DrillNodeStatus, Color>()
+        private Dictionary<DrillNodeStatus, Color> nodeStatusColors = new Dictionary<DrillNodeStatus, Color>
         {
             {DrillNodeStatus.Idle, Color.Black}, 
             {DrillNodeStatus.Next, Color.Red}, 

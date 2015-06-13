@@ -88,7 +88,7 @@ namespace CNC_Drill_Controller1
                 {
                     if (rawShape.isEllipse && !rawShape.isDuplicate && !rawShape.isZero)
                     {
-                        DrillNodes.Add(new DrillNode(new PointF(flipX? (PageWidth-rawShape.x) : rawShape.x, PageHeight - rawShape.y)));
+                        DrillNodes.Add(new DrillNode(new PointF(flipX? (PageWidth-rawShape.x) : rawShape.x, PageHeight - rawShape.y),-1));
                     }
                 }
 

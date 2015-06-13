@@ -27,7 +27,7 @@ namespace CNC_Drill_Controller1
         public DialogResult ShowDialog(DrawingConfigStruct InitialConfig)
         {
             DrawingConfig = InitialConfig;
-            return base.ShowDialog();
+            return ShowDialog();
         }
 
         private void button2_Click(object sender, EventArgs e)
