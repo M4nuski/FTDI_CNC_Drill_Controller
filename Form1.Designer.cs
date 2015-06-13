@@ -79,7 +79,6 @@
             this.NodeContextIDLE = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextDRILED = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextTARGET = new System.Windows.Forms.ToolStripMenuItem();
-            this.NodeContextSELECTED = new System.Windows.Forms.ToolStripMenuItem();
             this.OutputLabel = new System.Windows.Forms.Label();
             this.XScalebutton = new System.Windows.Forms.Button();
             this.YScalebutton = new System.Windows.Forms.Button();
@@ -560,8 +559,7 @@
             this.toolStripSeparator1,
             this.NodeContextIDLE,
             this.NodeContextDRILED,
-            this.NodeContextTARGET,
-            this.NodeContextSELECTED});
+            this.NodeContextTARGET});
             this.NodesContextMenu.Name = "NodesContextMenu";
             this.NodesContextMenu.Size = new System.Drawing.Size(172, 142);
             // 
@@ -586,32 +584,24 @@
             // 
             // NodeContextIDLE
             // 
-            this.NodeContextIDLE.CheckOnClick = true;
             this.NodeContextIDLE.Name = "NodeContextIDLE";
             this.NodeContextIDLE.Size = new System.Drawing.Size(171, 22);
             this.NodeContextIDLE.Text = "Status.Idle";
+            this.NodeContextIDLE.Click += new System.EventHandler(this.NodeContextIDLE_Click);
             // 
             // NodeContextDRILED
             // 
-            this.NodeContextDRILED.CheckOnClick = true;
             this.NodeContextDRILED.Name = "NodeContextDRILED";
             this.NodeContextDRILED.Size = new System.Drawing.Size(171, 22);
             this.NodeContextDRILED.Text = "Status.Drilled";
+            this.NodeContextDRILED.Click += new System.EventHandler(this.NodeContextDRILED_Click);
             // 
             // NodeContextTARGET
             // 
-            this.NodeContextTARGET.CheckOnClick = true;
             this.NodeContextTARGET.Name = "NodeContextTARGET";
             this.NodeContextTARGET.Size = new System.Drawing.Size(171, 22);
             this.NodeContextTARGET.Text = "Status.Target";
-            // 
-            // NodeContextSELECTED
-            // 
-            this.NodeContextSELECTED.CheckOnClick = true;
-            this.NodeContextSELECTED.Name = "NodeContextSELECTED";
-            this.NodeContextSELECTED.Size = new System.Drawing.Size(171, 22);
-            this.NodeContextSELECTED.Text = "Status.Selected";
-            this.NodeContextSELECTED.Click += new System.EventHandler(this.NodeContextSELECTED_Click);
+            this.NodeContextTARGET.Click += new System.EventHandler(this.NodeContextTARGET_Click);
             // 
             // OutputLabel
             // 
@@ -678,12 +668,12 @@
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(12, 510);
+            this.RunButton.Location = new System.Drawing.Point(12, 537);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(158, 22);
             this.RunButton.TabIndex = 46;
-            this.RunButton.Text = "[Run Drilling Program]";
+            this.RunButton.Text = "[Drill All Nodes]";
             this.RunButton.UseVisualStyleBackColor = true;
             this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
@@ -712,7 +702,7 @@
             // DrillButton
             // 
             this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillButton.Location = new System.Drawing.Point(12, 537);
+            this.DrillButton.Location = new System.Drawing.Point(12, 510);
             this.DrillButton.Name = "DrillButton";
             this.DrillButton.Size = new System.Drawing.Size(158, 22);
             this.DrillButton.TabIndex = 49;
@@ -870,7 +860,6 @@
         private System.Windows.Forms.ToolStripMenuItem NodeContextIDLE;
         private System.Windows.Forms.ToolStripMenuItem NodeContextDRILED;
         private System.Windows.Forms.ToolStripMenuItem NodeContextTARGET;
-        private System.Windows.Forms.ToolStripMenuItem NodeContextSELECTED;
         private System.Windows.Forms.Button OffsetOriginBtton;
         private System.Windows.Forms.TextBox YOriginTextbox;
         private System.Windows.Forms.TextBox XoriginTextbox;

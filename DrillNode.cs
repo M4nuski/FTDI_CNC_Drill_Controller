@@ -29,7 +29,7 @@ namespace CNC_Drill_Controller1
         {
             {DrillNodeStatus.Idle, Color.Black}, 
             {DrillNodeStatus.Next, Color.Red}, 
-            {DrillNodeStatus.Drilled, Color.DimGray}, 
+            {DrillNodeStatus.Drilled, Color.Yellow}, 
             {DrillNodeStatus.Selected, Color.Blue}, 
         };
 

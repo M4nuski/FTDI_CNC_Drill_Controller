@@ -40,6 +40,8 @@ namespace CNC_Drill_Controller1
         }
 
         private SwitchFeedBack SwitchState;
+        private DrillNode.DrillNodeStatus lastSelectedStatus;
+        private int lastSelectedIndex;
 
         #endregion
 
@@ -76,7 +78,9 @@ namespace CNC_Drill_Controller1
             CNCTableBox = new Box(0, 0, 6, 6, Color.LightGray);
             drawingPageBox = new Box(0, 0, 8.5f, 11, Color.GhostWhite);
             nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
-            RebuildNodesDisplays();
+            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
+            lastSelectedIndex = -1;
+            RebuildListBoxAndViewerFromNodes();
 
             #endregion
 
@@ -547,6 +551,16 @@ namespace CNC_Drill_Controller1
         #endregion
 
         #region View / Listbox UI controls
+        private void OutputLabel_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor.Hide();
+        }
+
+        private void OutputLabel_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor.Show();
+        }        
+        
         private void LoadFileButton_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = "*.vdx";
@@ -565,8 +579,9 @@ namespace CNC_Drill_Controller1
                     logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
 
                     drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
-
-                    RebuildNodesDisplays();
+                    lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
+                    RebuildListBoxAndViewerFromNodes();
+                    lastSelectedIndex = -1;
                 }
             }
         }
@@ -584,7 +599,6 @@ namespace CNC_Drill_Controller1
                 MoveTo(mx, my);
             }
         }
-
         private void SetAsXYbutton_Click(object sender, EventArgs e)
         {
             var movedata = (string)listBox1.SelectedItem;
@@ -597,35 +611,32 @@ namespace CNC_Drill_Controller1
                 SetYButton_Click(this, e);
             }
         }
-
-        private void OutputLabel_MouseEnter(object sender, EventArgs e)
-        {
-            Cursor.Hide();
-        }
-
-        private void OutputLabel_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor.Show();
-        }
-
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
             NodesContextMenu.Show(listBox1, listBox1.PointToClient(Cursor.Position));
         }
-
-        private void NodeContextSELECTED_Click(object sender, EventArgs e)
+        private void NodeContextTARGET_Click(object sender, EventArgs e)
         {
-            var selectedNode = listBox1.SelectedItem as DrillNode;//todo revert to string
-            if (selectedNode != null)
-            {
-                selectedNode.status = DrillNode.DrillNodeStatus.Selected;
-            }
-            RebuildNodesDisplays();
+            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
+            UpdateNodeColors();
+        }
+        private void NodeContextDRILED_Click(object sender, EventArgs e)
+        {
+            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
+            UpdateNodeColors();
+        }
+        private void NodeContextIDLE_Click(object sender, EventArgs e)
+        {
+            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Idle;
+            UpdateNodeColors();
         }
 
-        private void RebuildNodesDisplays()
+
+        private void RebuildListBoxAndViewerFromNodes()
         {
             listBox1.Items.Clear();
+            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
+            lastSelectedIndex = -1;
             nodeViewer.Elements = new List<IViewerElements>
             {
                 drawingPageBox,
@@ -650,39 +661,23 @@ namespace CNC_Drill_Controller1
             var origOffset = new SizeF(safeTextToFloat(XoriginTextbox.Text), safeTextToFloat(YOriginTextbox.Text));
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
-            RebuildNodesDisplays();
+            RebuildListBoxAndViewerFromNodes();
         }
-        #endregion
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            for (var i = 0; i < Nodes.Count; i++)
+            if (lastSelectedIndex >= 0)
             {
-                if (i == listBox1.SelectedIndex)
-                {
-                    Nodes[i].status = DrillNode.DrillNodeStatus.Selected;
-                    for (var j = 0; j < nodeViewer.Elements.Count; j++)
-                    {
-                        if (nodeViewer.Elements[j].ID == Nodes[i].ID)
-                            nodeViewer.Elements[j].color = Nodes[i].Color;
-                    }
-
-                }
-                else
-                {
-                    if (Nodes[i].status == DrillNode.DrillNodeStatus.Selected)
-                    {
-                        Nodes[i].status = DrillNode.DrillNodeStatus.Idle;
-                        for (var j = 0; j < nodeViewer.Elements.Count; j++)
-                        {
-                            if (nodeViewer.Elements[j].ID == Nodes[i].ID)
-                                nodeViewer.Elements[j].color = Nodes[i].Color;
-                        }
-                    }
-                }
+                if (Nodes[lastSelectedIndex].status == DrillNode.DrillNodeStatus.Selected)
+                    Nodes[lastSelectedIndex].status = lastSelectedStatus;
             }
+            lastSelectedStatus = Nodes[listBox1.SelectedIndex].status;
+            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Selected;
+            lastSelectedIndex = listBox1.SelectedIndex;
+            UpdateNodeColors();
             OutputLabel.Refresh();
         }
+        #endregion
 
         private bool OutOfScopeUSB_IsOpen()
         {
@@ -704,12 +699,14 @@ namespace CNC_Drill_Controller1
 
             logger1.AddLine("Starting Scripted Run [Drill Selected Node]...");
             var failed = !OutOfScopeUSB_IsOpen();
-            Refresh();
 
-            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch && !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch)
+            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch && !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch && !failed)
             {
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
+                UpdateNodeColors();
                 logger1.AddLine("Moving to: " + Nodes[listBox1.SelectedIndex].Location);
+                Refresh();
+
                 Enabled = false;
                 MoveTo(Nodes[listBox1.SelectedIndex].location.X, Nodes[listBox1.SelectedIndex].location.Y);
 
@@ -749,9 +746,8 @@ namespace CNC_Drill_Controller1
 
         private void RunButton_Click(object sender, EventArgs e)
         {
-            logger1.AddLine("Starting Scripted Run [Drilling all Nodes]...");
+            logger1.AddLine("Starting Scripted Run [Drill all Nodes]...");
             var failed = !OutOfScopeUSB_IsOpen();
-            Refresh();
 
             if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch &&
                 !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch && !failed)
@@ -761,48 +757,54 @@ namespace CNC_Drill_Controller1
                     if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && !SwitchState.MaxYswitch &&
                         !SwitchState.MinYswitch && SwitchState.TopSwitch && !SwitchState.BottomSwitch && !failed)
                     {
-
-                        Nodes[i].status = DrillNode.DrillNodeStatus.Next;
-                        UpdateNodeColors();
-                        logger1.AddLine("Moving to ["+i+"/"+listBox1.Items.Count+"]: " + Nodes[i].Location);
-                        Refresh();
-
-                        Enabled = false;
-                        MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
-
-                        logger1.AddLine("Drilling...");
-                        checkBoxT.Checked = true;
-                        Refresh();
-
-
-                        var maxTries = 10;
-                        while (SwitchState.TopSwitch && !failed)
+                        if (Nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
                         {
-                            SwitchState = Transfer();
-                            failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                            UIupdateTimer_Tick(this, null);
+                            Nodes[i].status = DrillNode.DrillNodeStatus.Next;
+                            UpdateNodeColors();
+                            logger1.AddLine("Moving to [" + i + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
                             Refresh();
-                            maxTries--;
-                            Thread.Sleep(100);
+
+                            Enabled = false;
+                            MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
+
+                            logger1.AddLine("Drilling...");
+                            checkBoxT.Checked = true;
+                            Refresh();
+
+
+                            var maxTries = 10;
+                            while (SwitchState.TopSwitch && !failed)
+                            {
+                                SwitchState = Transfer();
+                                failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                                UIupdateTimer_Tick(this, null);
+                                Refresh();
+                                maxTries--;
+                                Thread.Sleep(100);
+                            }
+
+                            checkBoxT.Checked = false;
+                            Refresh();
+
+
+                            maxTries = 10;
+                            while (!SwitchState.TopSwitch && !failed)
+                            {
+                                SwitchState = Transfer();
+                                failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
+                                UIupdateTimer_Tick(this, null);
+                                Refresh();
+                                maxTries--;
+                                Thread.Sleep(100);
+                            }
+                            Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
+                            UpdateNodeColors();
+                            Refresh();
                         }
-
-                        checkBoxT.Checked = false;
-                        Refresh();
-
-
-                        maxTries = 10;
-                        while (!SwitchState.TopSwitch && !failed)
+                        else
                         {
-                            SwitchState = Transfer();
-                            failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                            UIupdateTimer_Tick(this, null);
-                            Refresh();
-                            maxTries--;
-                            Thread.Sleep(100);
+                            logger1.AddLine("Node [" + i + "/"+ listBox1.Items.Count+"] already drilled.");
                         }
-                        Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
-                        UpdateNodeColors();
-                        Refresh();
                     }
                 }
 
@@ -824,5 +826,6 @@ namespace CNC_Drill_Controller1
                 }
             }
         }
+
     }
 }
