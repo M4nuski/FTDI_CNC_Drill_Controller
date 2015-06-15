@@ -90,7 +90,7 @@ namespace CNC_Drill_Controller1
             #region USB interface initialization
 
             USBdevicesComboBox.Items.Clear();
-            
+
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
@@ -563,8 +563,8 @@ namespace CNC_Drill_Controller1
         private void OutputLabel_MouseLeave(object sender, EventArgs e)
         {
             Cursor.Show();
-        }        
-        
+        }
+
         private void LoadFileButton_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = "*.vdx";
@@ -809,7 +809,7 @@ namespace CNC_Drill_Controller1
                         }
                         else
                         {
-                            logger1.AddLine("Node [" + i + "/"+ listBox1.Items.Count+"] already drilled.");
+                            logger1.AddLine("Node [" + i + "/" + listBox1.Items.Count + "] already drilled.");
                         }
                     }
                 }
@@ -835,12 +835,19 @@ namespace CNC_Drill_Controller1
 
         private double Sqr(float X)
         {
-            return X*X;
+            return X * X;
         }
 
         private double Length(PointF A, PointF B)
         {
-            return Math.Sqrt(Sqr(A.X-B.X) + Sqr(A.Y-B.Y));
+            return Math.Sqrt(Sqr(A.X - B.X) + Sqr(A.Y - B.Y));
+        }
+
+        private double SqLength(PointF A, PointF B)
+        {
+            var x = Math.Abs(A.X - B.X);
+            var y = Math.Abs(A.Y - B.Y);
+            return Math.Max(x, y);
         }
 
         private double[] GetNodeDistances(List<DrillNode> nodes, PointF Origin)
@@ -848,7 +855,7 @@ namespace CNC_Drill_Controller1
             var result = new double[nodes.Count];
             for (var i = 0; i < result.Length; i++)
             {
-                result[i] = Length(Origin, nodes[i].location);
+                result[i] = SqLength(Origin, nodes[i].location);
             }
             return result;
         }
@@ -859,6 +866,7 @@ namespace CNC_Drill_Controller1
             if (Nodes.Count > 2)
             {
                 logger1.AddLine("Optimizing node sequence...");
+                var oldLength = getPathLength();
                 var newNodes = new List<DrillNode>();
                 var numNodes = Nodes.Count;
                 //todo optimize drill path from current position;
@@ -866,8 +874,8 @@ namespace CNC_Drill_Controller1
                 //  find closest node to current position
                 //  moveto node
 
-                var current_X = (float)(X_Axis_Location - X_Axis_Delta)/X_Scale;
-                var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta)/Y_Scale;
+                var current_X = (float)(X_Axis_Location - X_Axis_Delta) / X_Scale;
+                var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
                 var current_Pos = new PointF(current_X, current_Y);
                 var dists = GetNodeDistances(Nodes, current_Pos);
 
@@ -882,16 +890,16 @@ namespace CNC_Drill_Controller1
 
                 for (var j = 0; j < numNodes - 1; j++)
                 {
-                current_Pos = newNodes[newNodes.Count - 1].location;
-                dists = GetNodeDistances(Nodes, current_Pos);
-                Closest = 0;
-                for (var i = 0; i < dists.Length; i++)
-                {
-                    if (dists[i] < dists[Closest]) Closest = i;
-                }
+                    current_Pos = newNodes[newNodes.Count - 1].location;
+                    dists = GetNodeDistances(Nodes, current_Pos);
+                    Closest = 0;
+                    for (var i = 0; i < dists.Length; i++)
+                    {
+                        if (dists[i] < dists[Closest]) Closest = i;
+                    }
 
-                newNodes.Add(Nodes[Closest]);
-                Nodes.Remove(Nodes[Closest]);
+                    newNodes.Add(Nodes[Closest]);
+                    Nodes.Remove(Nodes[Closest]);
                 }
 
                 Nodes = newNodes;
@@ -902,8 +910,39 @@ namespace CNC_Drill_Controller1
 
                 RebuildListBoxAndViewerFromNodes();
                 logger1.AddLine(Nodes.Count + "/" + numNodes + " nodes done. All node status reset.");
-            } else logger1.AddLine("Not enough nodes to optimize path.");
+                logger1.AddLine("Path of "+getPathLength().ToString("F4") + "\" / " + oldLength.ToString("F4"));
+
+            }
+            else logger1.AddLine("Not enough nodes to optimize path.");
         }
+
+        private double getPathLength()
+        {
+            var current_X = (float)(X_Axis_Location - X_Axis_Delta) / X_Scale;
+            var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
+            var current_Pos = new PointF(current_X, current_Y);
+            var result = 0d;
+            for (var i = 0; i < Nodes.Count; i++)
+            {
+                result += SqLength(current_Pos, Nodes[i].location);
+                current_Pos = Nodes[i].location;
+            }
+            return result;
+
+        }
+
+        private void Optimize2Button_Click(object sender, EventArgs e)
+        {
+            //todo optimize with scanline method
+            //sort by Y
+            //start at 0, 0
+            //move right / x+
+            //next line 
+            //move left / x-
+            //next line
+        }
+
+        //todo optimize best path ?
 
     }
 }
