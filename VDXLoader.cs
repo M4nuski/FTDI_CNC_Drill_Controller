@@ -33,22 +33,55 @@ namespace CNC_Drill_Controller1
             else log = s;
         }
 
+
+        private List<rawShapeData> RemoveNonEllipses(List<rawShapeData> inData)
+        {
+            var nonelli = inData.RemoveAll(d => !d.isEllipse);
+            AddLine(nonelli + " NonEllipses");
+            return inData;
+        }
+
+        private List<rawShapeData> RemoveZero(List<rawShapeData> inData)
+        {
+            for (var i = 0; i < inData.Count; i++)
+            {
+                inData[i].isZero = (Math.Abs(inData[i].x) < float.Epsilon) && (Math.Abs(inData[i].y) < float.Epsilon);
+            }
+            var zero = inData.RemoveAll(d => d.isZero);
+            AddLine(zero + " Zeros");
+            return inData;
+        }
+
+        private List<rawShapeData> RemoveDuplicates(List<rawShapeData> inData)
+        {
+            var dup = new bool[inData.Count];
+            for (var i = 0; i < inData.Count; i++)
+            {
+                if (!dup[i]) for (var j = 0; j < inData.Count; j++)
+                    {
+                        if ((i != j) && (!dup[j]))
+                        {
+                            var dist =
+                                Math.Sqrt(Math.Pow(inData[i].x - inData[j].x, 2) + Math.Pow(inData[i].y - inData[j].y, 2));
+                            dup[j] = (dist < NodeEpsilon);
+                        }
+                    }
+            }
+            for (var i = 0; i < inData.Count; i++)
+            {
+                inData[i].isDuplicate = dup[i];
+            }
+
+            var nDup = inData.RemoveAll(d => d.isDuplicate);
+            AddLine(nDup + " Duplicates");
+            return inData;
+        }
+
         private void cleanList()
         {
-            for (var i = 0; i < Shapes.Count; i++)
-            {
-                for (var j = 0; j < Shapes.Count; j++)
-                {
-                    if (i != j)
-                    {
-                        Shapes[i].isZero = (Math.Abs(Shapes[i].x) < float.Epsilon) && (Math.Abs(Shapes[i].y) < float.Epsilon);
-
-                        Shapes[i].isDuplicate =
-                            (Math.Sqrt(Math.Pow(Shapes[i].x - Shapes[j].x, 2) + Math.Pow(Shapes[i].y - Shapes[j].y, 2)) <
-                             NodeEpsilon) && (!Shapes[j].isDuplicate);
-                    }
-                }
-            }
+            Shapes = RemoveZero(Shapes);
+            Shapes = RemoveNonEllipses(Shapes);
+            Shapes = RemoveDuplicates(Shapes);
         }
 
         public VDXLoader(string FileName, bool flipX)
@@ -76,11 +109,7 @@ namespace CNC_Drill_Controller1
                 }
 
                 AddLine(Shapes.Count.ToString("D") + " Shapes");
-                AddLine(Shapes.Sum(d => (d.isEllipse) ? 1 : 0).ToString("D") + " Ellipses");
-                cleanList();
-                AddLine(Shapes.Sum(d => (d.isZero) ? 1 : 0).ToString("D") + " Zeros");
-                AddLine(Shapes.Sum(d => (d.isDuplicate) ? 1 : 0).ToString("D") + " Duplicates");
-
+                cleanList();    
                 AddLine("Page Width: " + PageWidth.ToString("F1"));
                 AddLine("Page Height: " + PageHeight.ToString("F1"));
                 

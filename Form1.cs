@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using FTD2XX_NET;
+using M4nuskomponents;
 
 namespace CNC_Drill_Controller1
 {
@@ -87,6 +88,9 @@ namespace CNC_Drill_Controller1
             AxisOffsetComboBox.SelectedIndex = 0;
 
             #region USB interface initialization
+
+            USBdevicesComboBox.Items.Clear();
+            
             uint numUI = 0;
             var ftStatus = USB_Interface.GetNumberOfDevices(ref numUI);
             if (ftStatus == FTDI.FT_STATUS.FT_OK)
@@ -827,6 +831,78 @@ namespace CNC_Drill_Controller1
                         nodeViewer.Elements[j].color = Nodes[i].Color;
                 }
             }
+        }
+
+        private double Sqr(float X)
+        {
+            return X*X;
+        }
+
+        private double Length(PointF A, PointF B)
+        {
+            return Math.Sqrt(Sqr(A.X-B.X) + Sqr(A.Y-B.Y));
+        }
+
+        private double[] GetNodeDistances(List<DrillNode> nodes, PointF Origin)
+        {
+            var result = new double[nodes.Count];
+            for (var i = 0; i < result.Length; i++)
+            {
+                result[i] = Length(Origin, nodes[i].location);
+            }
+            return result;
+        }
+
+
+        private void OptimizeButton_Click(object sender, EventArgs e)
+        {
+            if (Nodes.Count > 2)
+            {
+                logger1.AddLine("Optimizing node sequence...");
+                var newNodes = new List<DrillNode>();
+                var numNodes = Nodes.Count;
+                //todo optimize drill path from current position;
+                //loop 
+                //  find closest node to current position
+                //  moveto node
+
+                var current_X = (float)(X_Axis_Location - X_Axis_Delta)/X_Scale;
+                var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta)/Y_Scale;
+                var current_Pos = new PointF(current_X, current_Y);
+                var dists = GetNodeDistances(Nodes, current_Pos);
+
+                var Closest = 0;
+                for (var i = 0; i < dists.Length; i++)
+                {
+                    if (dists[i] < dists[Closest]) Closest = i;
+                }
+
+                newNodes.Add(Nodes[Closest]);
+                Nodes.Remove(Nodes[Closest]);
+
+                for (var j = 0; j < numNodes - 1; j++)
+                {
+                current_Pos = newNodes[newNodes.Count - 1].location;
+                dists = GetNodeDistances(Nodes, current_Pos);
+                Closest = 0;
+                for (var i = 0; i < dists.Length; i++)
+                {
+                    if (dists[i] < dists[Closest]) Closest = i;
+                }
+
+                newNodes.Add(Nodes[Closest]);
+                Nodes.Remove(Nodes[Closest]);
+                }
+
+                Nodes = newNodes;
+                foreach (var drillNode in Nodes)
+                {
+                    drillNode.status = DrillNode.DrillNodeStatus.Idle;
+                }
+
+                RebuildListBoxAndViewerFromNodes();
+                logger1.AddLine(Nodes.Count + "/" + numNodes + " nodes done. All node status reset.");
+            } else logger1.AddLine("Not enough nodes to optimize path.");
         }
 
     }

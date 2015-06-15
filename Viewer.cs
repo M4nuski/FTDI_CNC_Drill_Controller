@@ -312,7 +312,7 @@ namespace CNC_Drill_Controller1
         public Color color
         {
             get { return _color.Color; }
-            set { _color = new Pen(value); }
+            set { _color = new Pen(value, 2.5f); }
         }
         private Pen _color;
         private PointF _pos;
@@ -322,7 +322,7 @@ namespace CNC_Drill_Controller1
         {
             _diameter = diameter;
             _radius = diameter / 2.0f;
-            _color = new Pen(color);
+            _color = new Pen(color, 2.5f);
             _pos = position;
             ID = -1;
         }
@@ -330,7 +330,7 @@ namespace CNC_Drill_Controller1
         {
             _diameter = diameter;
             _radius = diameter / 2.0f;
-            _color = new Pen(color);
+            _color = new Pen(color, 2.5f);
             _pos = position;
             this.ID = ID;
         }
