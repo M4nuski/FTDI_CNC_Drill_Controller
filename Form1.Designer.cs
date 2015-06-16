@@ -93,6 +93,7 @@
             this.YOriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
             this.OptimizeButton = new System.Windows.Forms.Button();
+            this.Optimize2Button = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -553,7 +554,7 @@
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(156, 472);
+            this.listBox1.Size = new System.Drawing.Size(156, 446);
             this.listBox1.TabIndex = 37;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
@@ -755,7 +756,7 @@
             // OptimizeButton
             // 
             this.OptimizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.OptimizeButton.Location = new System.Drawing.Point(328, 542);
+            this.OptimizeButton.Location = new System.Drawing.Point(328, 516);
             this.OptimizeButton.Margin = new System.Windows.Forms.Padding(2);
             this.OptimizeButton.Name = "OptimizeButton";
             this.OptimizeButton.Size = new System.Drawing.Size(156, 21);
@@ -764,11 +765,22 @@
             this.OptimizeButton.UseVisualStyleBackColor = true;
             this.OptimizeButton.Click += new System.EventHandler(this.OptimizeButton_Click);
             // 
+            // Optimize2Button
+            // 
+            this.Optimize2Button.Location = new System.Drawing.Point(328, 542);
+            this.Optimize2Button.Name = "Optimize2Button";
+            this.Optimize2Button.Size = new System.Drawing.Size(156, 21);
+            this.Optimize2Button.TabIndex = 54;
+            this.Optimize2Button.Text = "Optimize / Scanline";
+            this.Optimize2Button.UseVisualStyleBackColor = true;
+            this.Optimize2Button.Click += new System.EventHandler(this.Optimize2Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.Optimize2Button);
             this.Controls.Add(this.OptimizeButton);
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YOriginTextbox);
@@ -890,6 +902,7 @@
         private System.Windows.Forms.TextBox YOriginTextbox;
         private System.Windows.Forms.TextBox XoriginTextbox;
         private System.Windows.Forms.Button OptimizeButton;
+        private System.Windows.Forms.Button Optimize2Button;
     }
 }
 
