@@ -853,7 +853,7 @@ namespace CNC_Drill_Controller1
             var HSL_Length = DrillNodeHelper.getPathLength(NodesHSL, CurrentLocation());
 
             var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(Nodes, new PointF(0, 0));
-            var VSL_Length = DrillNodeHelper.getPathLength(NodesHSL, CurrentLocation());
+            var VSL_Length = DrillNodeHelper.getPathLength(NodesVSL, CurrentLocation());
 
             var best_SL_length = (VSL_Length < HSL_Length) ? VSL_Length : HSL_Length;
             var best_SL_path = (VSL_Length < HSL_Length) ? NodesVSL : NodesHSL;
