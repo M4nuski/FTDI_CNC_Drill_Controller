@@ -72,6 +72,7 @@
       <DependentUpon>DrawingTypeDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="DrillNode.cs" />
+    <Compile Include="ExtLog.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -72,7 +72,7 @@ namespace CNC_Drill_Controller1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            ExtLog.Logger = logger1;
             #region View initialization
 
             cursorCrossHair = new CrossHair(0, 0, Color.Blue);
@@ -541,14 +541,20 @@ namespace CNC_Drill_Controller1
             Cursor.Current = Cursors.Default;
         }
 
-        private void MoveTo(float X, float Y)
+        private PointF CurrentLocation()
         {
             var current_X = ((float)X_Axis_Location - X_Axis_Delta) / X_Scale;
             var current_Y = ((float)Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
-            if ((current_X < 5.900) && (current_Y < 5.900))
+            return new PointF(current_X, current_Y);
+        }
+
+        private void MoveTo(float X, float Y)
+        {
+            var current_pos = CurrentLocation();
+            if ((current_pos.X < 5.900) && (current_pos.Y < 5.900))
             {
-                var deltaX = X - current_X;
-                var deltaY = Y - current_Y;
+                var deltaX = X - current_pos.X;
+                var deltaY = Y - current_pos.Y;
                 moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
             }
             else logger1.AddLine("Move target out of range.");
@@ -579,7 +585,6 @@ namespace CNC_Drill_Controller1
                     logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
 
                     var loader = new VDXLoader(openFileDialog1.FileName, dtypeDialog.DrawingConfig.Inverted);
-                    logger1.AddLine(loader.log);
                     Nodes = loader.DrillNodes;
                     logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
 
@@ -834,169 +839,49 @@ namespace CNC_Drill_Controller1
             }
         }
 
-        private double Sqr(float X)
-        {
-            return X * X;
-        }
 
-        private double Length(PointF A, PointF B)
-        {
-            return Math.Sqrt(Sqr(A.X - B.X) + Sqr(A.Y - B.Y));
-        }
-
-        private double SqLength(PointF A, PointF B)
-        {
-            var x = Math.Abs(A.X - B.X);
-            var y = Math.Abs(A.Y - B.Y);
-            return Math.Max(x, y);
-        }
-
-        private double[] GetNodeDistances(List<DrillNode> nodes, PointF Origin)
-        {
-            var result = new double[nodes.Count];
-            for (var i = 0; i < result.Length; i++)
-            {
-                result[i] = SqLength(Origin, nodes[i].location);
-            }
-            return result;
-        }
 
 
         private void OptimizeButton_Click(object sender, EventArgs e)
         {
-            if (Nodes.Count > 2)
+            var old_length = DrillNodeHelper.getPathLength(Nodes, CurrentLocation());
+
+            var NodesNN = DrillNodeHelper.OptimizeNodesNN(Nodes, CurrentLocation());
+            var NN_Length = DrillNodeHelper.getPathLength(NodesNN, CurrentLocation());
+
+            var NodesHSL = DrillNodeHelper.OptimizeNodesHScanLine(Nodes, new PointF(0, 0));
+            var HSL_Length = DrillNodeHelper.getPathLength(NodesHSL, CurrentLocation());
+
+            var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(Nodes, new PointF(0, 0));
+            var VSL_Length = DrillNodeHelper.getPathLength(NodesHSL, CurrentLocation());
+
+            var best_SL_length = (VSL_Length < HSL_Length) ? VSL_Length : HSL_Length;
+            var best_SL_path = (VSL_Length < HSL_Length) ? NodesVSL : NodesHSL;
+
+            var best_length = (NN_Length < best_SL_length) ? NN_Length : best_SL_length;
+            var best_path = (NN_Length < best_SL_length) ? NodesNN : best_SL_path;
+
+            if (best_length < old_length)
             {
-                logger1.AddLine("Optimizing node sequence (nearest neighbor)....");
-                var oldPathLength = getPathLength(Nodes);
-                var oldNodesCount = Nodes.Count;
+                Nodes = best_path;
 
-                var newNodes = new List<DrillNode>();
+            } else logger1.AddLine("Optimization test returned path longer or equal.");
 
-                var current_X = (float)(X_Axis_Location - X_Axis_Delta) / X_Scale;
-                var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
-                var current_Pos = new PointF(current_X, current_Y);
-                var dists = GetNodeDistances(Nodes, current_Pos);
-
-                var Closest = 0;
-                for (var i = 0; i < dists.Length; i++)
-                {
-                    if (dists[i] < dists[Closest]) Closest = i;
-                }
-
-                newNodes.Add(Nodes[Closest]);
-                Nodes.Remove(Nodes[Closest]);
-
-                for (var j = 0; j < oldNodesCount - 1; j++)
-                {
-                    current_Pos = newNodes[newNodes.Count - 1].location;
-                    dists = GetNodeDistances(Nodes, current_Pos);
-                    Closest = 0;
-                    for (var i = 0; i < dists.Length; i++)
-                    {
-                        if (dists[i] < dists[Closest]) Closest = i;
-                    }
-
-                    newNodes.Add(Nodes[Closest]);
-                    Nodes.Remove(Nodes[Closest]);
-                }
-
-                Nodes = newNodes;
-                foreach (var drillNode in Nodes)
-                {
-                    drillNode.status = DrillNode.DrillNodeStatus.Idle;
-                }
-
-                RebuildListBoxAndViewerFromNodes();
-                logger1.AddLine(Nodes.Count + "/" + oldNodesCount + " nodes done. All node status reset.");
-                logger1.AddLine("Path of "+getPathLength(Nodes).ToString("F4") + "\" / " + oldPathLength.ToString("F4"));
-
-            }
-            else logger1.AddLine("Not enough nodes to optimize path.");
-        }
-
-        private double getPathLength(List<DrillNode> nodes)
-        {
-            var current_X = (float)(X_Axis_Location - X_Axis_Delta) / X_Scale;
-            var current_Y = (float)(Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
-            var current_Pos = new PointF(current_X, current_Y);
-            var result = 0d;
-            for (var i = 0; i < nodes.Count; i++)
-            {
-                result += SqLength(current_Pos, nodes[i].location);
-                current_Pos = nodes[i].location;
-            }
-            return result;
+            RebuildListBoxAndViewerFromNodes();
         }
 
 
-        private static int X_Sort_Ascending_Predicate(DrillNode A, DrillNode B)
-        {
-            return (int)(10000 * (A.location.X - B.location.X));
-        }
-        private static int X_Sort_Descending_Predicate(DrillNode A, DrillNode B)
-        {
-            return (int)(10000 * (B.location.X - A.location.X));
-        }
-        private static int Y_Sort_Ascending_Predicate(DrillNode A, DrillNode B)
-        {
-            return (int)(10000 * (A.location.Y - B.location.Y));
-        }
-        private static int Y_Sort_Descending_Predicate(DrillNode A, DrillNode B)
-        {
-            return (int)(10000 * (B.location.Y - A.location.Y));
-        }
 
+        //todo split optimization methods into separate methods and call all of them when Button is pressed
+        //todo to run all methods and select shortest.
 
-        private void Optimize2Button_Click(object sender, EventArgs e)
-        {
-            if (Nodes.Count > 2)
-            {
-                logger1.AddLine("Optimizing node sequence (scanlines)....");
-                var oldPathLength = getPathLength(Nodes);
-                var oldNodesCount = Nodes.Count;
+        //todo double click in output label set position as current
+        //todo add grid, rulers and snapping to Viewer
+        //todo select node by clicking in viewer (mouse up without panning)
 
-                var newYNodes = new List<DrillNode>(Nodes);
-                //pre sort by axis
-                newYNodes.Sort(Y_Sort_Ascending_Predicate);
+        //todo offset nodes closer to margins / 6x6 table on load
 
-                var outputNodes = new List<DrillNode>();
+        //todo extract methods to other class / files to clean this file
 
-                var itteration = 0;
-                for (var i = 0; i < newYNodes.Count; i++)
-                {
-                    var target_Y = newYNodes[i].location.Y;
-                    var Y_list = newYNodes.Where(n => Math.Abs(n.location.Y - target_Y) < 0.001).ToList();
-
-                    if ((itteration%2) == 0)
-                    {
-                        Y_list.Sort(X_Sort_Ascending_Predicate);
-                    }
-                    else
-                    {
-                        Y_list.Sort(X_Sort_Descending_Predicate);
-                    }
-
-                    outputNodes.AddRange(Y_list);
-                    i += Y_list.Count - 1;
-                    itteration++;
-                }
-
-                if (outputNodes.Count == Nodes.Count)
-                {
-                    Nodes = outputNodes;
-                    foreach (var drillNode in Nodes)
-                    {
-                        drillNode.status = DrillNode.DrillNodeStatus.Idle;
-                    }
-
-                    RebuildListBoxAndViewerFromNodes();
-                    logger1.AddLine(Nodes.Count + "/" + oldNodesCount + " nodes done. All node status reset.");
-                    logger1.AddLine("Path of " + getPathLength(Nodes).ToString("F4") + "\" / " +
-                                    oldPathLength.ToString("F4"));
-                }
-                else logger1.AddLine("Failed to optimize: number of nodes mismatch:" + outputNodes.Count+"/"+ Nodes.Count);
-            }
-            else logger1.AddLine("Not enough nodes to optimize path.");
-        }
     }
 }

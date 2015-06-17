@@ -23,21 +23,11 @@ namespace CNC_Drill_Controller1
         public float PageWidth, PageHeight;
         public List<DrillNode> DrillNodes; 
         public float NodeEpsilon = 0.010f;
-        public string log;
-
-
-
-        private void AddLine(string s)
-        {
-            if (log != "") log = log + " / " + s;
-            else log = s;
-        }
-
 
         private List<rawShapeData> RemoveNonEllipses(List<rawShapeData> inData)
         {
             var nonelli = inData.RemoveAll(d => !d.isEllipse);
-            AddLine(nonelli + " NonEllipses");
+            ExtLog.AddLine(nonelli + " NonEllipses");
             return inData;
         }
 
@@ -48,7 +38,7 @@ namespace CNC_Drill_Controller1
                 inData[i].isZero = (Math.Abs(inData[i].x) < float.Epsilon) && (Math.Abs(inData[i].y) < float.Epsilon);
             }
             var zero = inData.RemoveAll(d => d.isZero);
-            AddLine(zero + " Zeros");
+            ExtLog.AddLine(zero + " Zeros");
             return inData;
         }
 
@@ -73,7 +63,7 @@ namespace CNC_Drill_Controller1
             }
 
             var nDup = inData.RemoveAll(d => d.isDuplicate);
-            AddLine(nDup + " Duplicates");
+            ExtLog.AddLine(nDup + " Duplicates");
             return inData;
         }
 
@@ -89,7 +79,6 @@ namespace CNC_Drill_Controller1
             if (File.Exists(FileName))
             {
                 //load and parse data;
-                log = "Loading:";
                 Shapes = new List<rawShapeData>();
                 PageWidth = 11.0f;
                 PageHeight = 11.0f; 
@@ -103,15 +92,15 @@ namespace CNC_Drill_Controller1
                 }
                 catch (IOException ex)
                 {
-                    AddLine(ex.Message);
+                    ExtLog.AddLine(ex.Message);
                     DrillNodes.Clear();
                     return;
                 }
 
-                AddLine(Shapes.Count.ToString("D") + " Shapes");
-                cleanList();    
-                AddLine("Page Width: " + PageWidth.ToString("F1"));
-                AddLine("Page Height: " + PageHeight.ToString("F1"));
+                ExtLog.AddLine(Shapes.Count.ToString("D") + " Shapes");
+                cleanList();
+                ExtLog.AddLine("Page Width: " + PageWidth.ToString("F1"));
+                ExtLog.AddLine("Page Height: " + PageHeight.ToString("F1"));
                 
                 foreach (var rawShape in Shapes)
                 {
