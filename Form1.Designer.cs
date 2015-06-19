@@ -93,11 +93,6 @@
             this.YOriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
             this.OptimizeButton = new System.Windows.Forms.Button();
-            this.Optimize2Button = new System.Windows.Forms.Button();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.SuspendLayout();
@@ -558,7 +553,7 @@
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(156, 446);
+            this.listBox1.Size = new System.Drawing.Size(156, 472);
             this.listBox1.TabIndex = 37;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
@@ -704,6 +699,7 @@
             this.SeekZeroButton.TabIndex = 47;
             this.SeekZeroButton.Text = "[Find Axis Origins]";
             this.SeekZeroButton.UseVisualStyleBackColor = true;
+            this.SeekZeroButton.Click += new System.EventHandler(this.SeekZeroButton_Click);
             // 
             // ReloadUSBbutton
             // 
@@ -760,7 +756,7 @@
             // OptimizeButton
             // 
             this.OptimizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.OptimizeButton.Location = new System.Drawing.Point(328, 516);
+            this.OptimizeButton.Location = new System.Drawing.Point(328, 542);
             this.OptimizeButton.Margin = new System.Windows.Forms.Padding(2);
             this.OptimizeButton.Name = "OptimizeButton";
             this.OptimizeButton.Size = new System.Drawing.Size(156, 21);
@@ -769,69 +765,11 @@
             this.OptimizeButton.UseVisualStyleBackColor = true;
             this.OptimizeButton.Click += new System.EventHandler(this.OptimizeButton_Click);
             // 
-            // Optimize2Button
-            // 
-            this.Optimize2Button.Location = new System.Drawing.Point(328, 542);
-            this.Optimize2Button.Name = "Optimize2Button";
-            this.Optimize2Button.Size = new System.Drawing.Size(156, 21);
-            this.Optimize2Button.TabIndex = 54;
-            this.Optimize2Button.Text = "Optimize / Scanline";
-            this.Optimize2Button.UseVisualStyleBackColor = true;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(146, 378);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(60, 17);
-            this.radioButton1.TabIndex = 55;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Original";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(145, 400);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(108, 17);
-            this.radioButton2.TabIndex = 56;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Nearest Neighbor";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(146, 424);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(128, 17);
-            this.radioButton3.TabIndex = 57;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Horizontal Scan Lines";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            // 
-            // radioButton4
-            // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(145, 446);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(85, 17);
-            this.radioButton4.TabIndex = 58;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "radioButton4";
-            this.radioButton4.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.radioButton4);
-            this.Controls.Add(this.radioButton3);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
-            this.Controls.Add(this.Optimize2Button);
             this.Controls.Add(this.OptimizeButton);
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YOriginTextbox);
@@ -953,11 +891,6 @@
         private System.Windows.Forms.TextBox YOriginTextbox;
         private System.Windows.Forms.TextBox XoriginTextbox;
         private System.Windows.Forms.Button OptimizeButton;
-        private System.Windows.Forms.Button Optimize2Button;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton4;
     }
 }
 

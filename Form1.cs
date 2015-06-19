@@ -865,9 +865,87 @@ namespace CNC_Drill_Controller1
             {
                 Nodes = best_path;
 
-            } else logger1.AddLine("Optimization test returned path longer or equal.");
+            }
+            else logger1.AddLine("Optimization test returned path longer or equal.");
 
             RebuildListBoxAndViewerFromNodes();
+        }
+
+        private void SeekZeroButton_Click(object sender, EventArgs e)
+        {
+            logger1.AddLine("Seeking Axis Origins...");
+
+            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch &&
+                !SwitchState.MaxYswitch && !SwitchState.MinYswitch && OutOfScopeUSB_IsOpen())
+            {
+                seekingLimits = true;
+                Enabled = false;
+                var failed = false;
+                var cur_pos_X = X_Axis_Location - X_Axis_Delta;
+                var cur_pos_Y = Y_Axis_Location - Y_Axis_Delta;
+
+                var delta_X = (cur_pos_X > 960) ? cur_pos_X - 960 : 0;
+                var delta_Y = (cur_pos_Y > 960) ? cur_pos_Y - 960 : 0;
+
+                moveBy(-delta_X, -delta_Y);
+                Refresh();
+                UIupdateTimer_Tick(this, null);
+
+                var maxTries = 48;
+                while (!SwitchState.MinXswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0))
+                {
+                    moveBy(-48, 0);
+                    maxTries--;
+                    Thread.Sleep(100);
+                    SwitchState = Transfer();
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    failed = maxTries <= 0;
+                }
+
+                maxTries = 48;
+                while (SwitchState.MinXswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
+                {
+                    moveBy(1, 0);
+                    Thread.Sleep(100);
+                    SwitchState = Transfer();
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    failed = maxTries <= 0;
+                }
+
+                maxTries = 48;
+                while (!SwitchState.MinYswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
+                {
+                    moveBy(0, -48);
+                    Thread.Sleep(100);
+                    SwitchState = Transfer();
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    failed = maxTries <= 0;
+                }
+
+                maxTries = 48;
+                while (SwitchState.MinYswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
+                {
+                    moveBy(0, 1);
+                    Thread.Sleep(100);
+                    SwitchState = Transfer();
+                    UIupdateTimer_Tick(this, null);
+                    Refresh();
+                    failed = maxTries <= 0;
+                }
+
+                if (!failed)
+                {
+                    zeroAllbutton_Click(sender, e);
+                    logger1.AddLine("Scripted Run Completed.");
+                }
+                else logger1.AddLine("Origin not found (out of reach)");
+            }
+            else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed.");
+            Enabled = true;
+            seekingLimits = false;
         }
 
 
