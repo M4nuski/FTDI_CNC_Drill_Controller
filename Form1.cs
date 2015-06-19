@@ -346,11 +346,11 @@ namespace CNC_Drill_Controller1
         private SwitchFeedBack readSwitches()
         {
             //todo: re-wire header as of now max and min limit switches are swapped
-            SwitchState.MaxXswitch = !getBit(InputBuffer[15], 1);
-            SwitchState.MinXswitch = !getBit(InputBuffer[17], 1);
+            SwitchState.MaxXswitch = !getBit(InputBuffer[17], 1);
+            SwitchState.MinXswitch = !getBit(InputBuffer[15], 1);
 
-            SwitchState.MaxYswitch = !getBit(InputBuffer[13], 1);
-            SwitchState.MinYswitch = !getBit(InputBuffer[11], 1);
+            SwitchState.MaxYswitch = !getBit(InputBuffer[11], 1);
+            SwitchState.MinYswitch = !getBit(InputBuffer[13], 1);
 
             SwitchState.TopSwitch = !getBit(InputBuffer[9], 1);
             SwitchState.BottomSwitch = !getBit(InputBuffer[7], 1);
@@ -399,6 +399,20 @@ namespace CNC_Drill_Controller1
             }
         }
         #endregion
+
+        private PointF GetViewCursorLocation()
+        {
+            var snapLocation = nodeViewer.MousePositionF;
+            if (SnapViewBox.Checked)
+            {
+                var snapSize = safeTextToFloat(SnapSizeTextBox.Text);
+                snapLocation.X = (float)Math.Round(snapLocation.X / snapSize) * snapSize;
+                snapLocation.Y = (float)Math.Round(snapLocation.Y / snapSize) * snapSize;
+            }
+
+            return snapLocation;
+        }
+
 
         private void UIupdateTimer_Tick(object sender, EventArgs e)
         {
@@ -468,12 +482,15 @@ namespace CNC_Drill_Controller1
             Xlabel.Text = "X: " + ((float)current_X / X_Scale).ToString("F4");
             Ylabel.Text = "Y: " + ((float)current_Y / Y_Scale).ToString("F4");
 
-            ViewXLabel.Text = nodeViewer.MousePositionF.X.ToString("F4");
-            ViewYLabel.Text = nodeViewer.MousePositionF.Y.ToString("F4");
+            var snapLocation = GetViewCursorLocation();
+            cursorCrossHair.UpdatePosition(snapLocation);
+            ViewXLabel.Text = snapLocation.X.ToString("F3");
+            ViewYLabel.Text = snapLocation.Y.ToString("F3");
+
             ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel * 100) + "%";
 
-            cursorCrossHair.UpdatePosition(nodeViewer.MousePositionF);
             drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
+
             OutputLabel.Refresh();
             #endregion
         }
@@ -605,7 +622,7 @@ namespace CNC_Drill_Controller1
             {
                 var mx = safeTextToFloat(axisdata[0].Trim(trimChars));
                 var my = safeTextToFloat(axisdata[1].Trim(trimChars));
-                logger1.AddLine("Moving to: " + mx.ToString("F5") + ", " + my.ToString("F5"));
+                logger1.AddLine("Moving to: " + mx.ToString("F4") + ", " + my.ToString("F4"));
                 MoveTo(mx, my);
             }
         }
@@ -672,8 +689,8 @@ namespace CNC_Drill_Controller1
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
             RebuildListBoxAndViewerFromNodes();
-            XoriginTextbox.Text = "0.0000";
-            YOriginTextbox.Text = "0.0000";
+            XoriginTextbox.Text = "0.000";
+            YOriginTextbox.Text = "0.000";
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -949,12 +966,39 @@ namespace CNC_Drill_Controller1
         }
 
 
+        #region View / Output Label Context Menu Methods
+        private void OutputLabel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ViewContextMenu.Show(OutputLabel,  OutputLabel.PointToClient(Cursor.Position));
+            }
+        }
+        private void ViewSetDRGOrigin_Click(object sender, EventArgs e)
+        {
+            var origOffset = GetViewCursorLocation();
+            for (var i = 0; i < Nodes.Count; i++)
+                Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.X, Nodes[i].location.Y - origOffset.Y);
+            RebuildListBoxAndViewerFromNodes();
+            XoriginTextbox.Text = "0.000";
+            YOriginTextbox.Text = "0.000";
+        }
+        private void ViewSetXYContext_Click(object sender, EventArgs e)
+        {
+            var newLocation = GetViewCursorLocation();
+            XCurrentPosTextBox.Text = newLocation.X.ToString("F4");
+            setXButton_Click(sender, e);
+            YCurrentPosTextBox.Text = newLocation.Y.ToString("F4");
+            SetYButton_Click(sender, e);
+        }
+        private void moveToToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var targetLocation = GetViewCursorLocation();
+            logger1.AddLine("Moving to: " + targetLocation.X.ToString("F4") + ", " + targetLocation.Y.ToString("F4"));
+            MoveTo(targetLocation.X, targetLocation.Y);
+        }
+        #endregion
 
-        //todo split optimization methods into separate methods and call all of them when Button is pressed
-        //todo to run all methods and select shortest.
-
-        //todo double click in output label set position as current
-        //todo add grid, rulers and snapping to Viewer
         //todo select node by clicking in viewer (mouse up without panning)
 
         //todo offset nodes closer to margins / 6x6 table on load

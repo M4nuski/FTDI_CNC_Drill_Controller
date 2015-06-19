@@ -93,8 +93,15 @@
             this.YOriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
             this.OptimizeButton = new System.Windows.Forms.Button();
+            this.ViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ViewSetXYContext = new System.Windows.Forms.ToolStripMenuItem();
+            this.ViewSetDRGOrigin = new System.Windows.Forms.ToolStripMenuItem();
+            this.SnapSizeTextBox = new System.Windows.Forms.TextBox();
+            this.SnapViewBox = new System.Windows.Forms.CheckBox();
+            this.moveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
+            this.ViewContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // USBdevicesComboBox
@@ -522,24 +529,24 @@
             // Xlabel
             // 
             this.Xlabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Xlabel.Font = new System.Drawing.Font("Lucida Console", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Xlabel.Location = new System.Drawing.Point(23, 299);
+            this.Xlabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Xlabel.Location = new System.Drawing.Point(23, 298);
             this.Xlabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Xlabel.Name = "Xlabel";
             this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this.Xlabel.Size = new System.Drawing.Size(100, 21);
+            this.Xlabel.Size = new System.Drawing.Size(110, 21);
             this.Xlabel.TabIndex = 35;
             this.Xlabel.Text = "X: 0.0000";
             // 
             // Ylabel
             // 
             this.Ylabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Ylabel.Font = new System.Drawing.Font("Lucida Console", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Ylabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Ylabel.Location = new System.Drawing.Point(23, 319);
             this.Ylabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Ylabel.Name = "Ylabel";
             this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this.Ylabel.Size = new System.Drawing.Size(100, 21);
+            this.Ylabel.Size = new System.Drawing.Size(110, 21);
             this.Ylabel.TabIndex = 36;
             this.Ylabel.Text = "Y: 0.0000";
             // 
@@ -622,6 +629,7 @@
             this.OutputLabel.Name = "OutputLabel";
             this.OutputLabel.Size = new System.Drawing.Size(500, 500);
             this.OutputLabel.TabIndex = 40;
+            this.OutputLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutputLabel_MouseDown);
             this.OutputLabel.MouseEnter += new System.EventHandler(this.OutputLabel_MouseEnter);
             this.OutputLabel.MouseLeave += new System.EventHandler(this.OutputLabel_MouseLeave);
             // 
@@ -648,30 +656,30 @@
             // ViewZoomLabel
             // 
             this.ViewZoomLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewZoomLabel.Location = new System.Drawing.Point(921, 33);
+            this.ViewZoomLabel.Location = new System.Drawing.Point(953, 33);
             this.ViewZoomLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewZoomLabel.Name = "ViewZoomLabel";
-            this.ViewZoomLabel.Size = new System.Drawing.Size(76, 19);
+            this.ViewZoomLabel.Size = new System.Drawing.Size(40, 19);
             this.ViewZoomLabel.TabIndex = 43;
             this.ViewZoomLabel.Text = "Zoom: ";
             // 
             // ViewXLabel
             // 
             this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewXLabel.Location = new System.Drawing.Point(500, 33);
+            this.ViewXLabel.Location = new System.Drawing.Point(496, 33);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
-            this.ViewXLabel.Size = new System.Drawing.Size(76, 19);
+            this.ViewXLabel.Size = new System.Drawing.Size(40, 19);
             this.ViewXLabel.TabIndex = 44;
             this.ViewXLabel.Text = "X: ";
             // 
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(580, 33);
+            this.ViewYLabel.Location = new System.Drawing.Point(540, 33);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
-            this.ViewYLabel.Size = new System.Drawing.Size(76, 19);
+            this.ViewYLabel.Size = new System.Drawing.Size(40, 19);
             this.ViewYLabel.TabIndex = 45;
             this.ViewYLabel.Text = "Y: ";
             // 
@@ -726,32 +734,32 @@
             // 
             // OffsetOriginBtton
             // 
-            this.OffsetOriginBtton.Location = new System.Drawing.Point(660, 32);
+            this.OffsetOriginBtton.Location = new System.Drawing.Point(720, 32);
             this.OffsetOriginBtton.Margin = new System.Windows.Forms.Padding(2);
             this.OffsetOriginBtton.Name = "OffsetOriginBtton";
             this.OffsetOriginBtton.Size = new System.Drawing.Size(139, 21);
             this.OffsetOriginBtton.TabIndex = 52;
-            this.OffsetOriginBtton.Text = "Offset Drawing Oriogin by:";
+            this.OffsetOriginBtton.Text = "Offset Drawing Origin by:";
             this.OffsetOriginBtton.UseVisualStyleBackColor = true;
             this.OffsetOriginBtton.Click += new System.EventHandler(this.OffsetOriginBtton_Click);
             // 
             // YOriginTextbox
             // 
-            this.YOriginTextbox.Location = new System.Drawing.Point(860, 32);
+            this.YOriginTextbox.Location = new System.Drawing.Point(907, 32);
             this.YOriginTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.YOriginTextbox.Name = "YOriginTextbox";
-            this.YOriginTextbox.Size = new System.Drawing.Size(57, 20);
+            this.YOriginTextbox.Size = new System.Drawing.Size(40, 20);
             this.YOriginTextbox.TabIndex = 51;
-            this.YOriginTextbox.Text = "0.0000";
+            this.YOriginTextbox.Text = "0.000";
             // 
             // XoriginTextbox
             // 
-            this.XoriginTextbox.Location = new System.Drawing.Point(799, 32);
+            this.XoriginTextbox.Location = new System.Drawing.Point(863, 32);
             this.XoriginTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.XoriginTextbox.Name = "XoriginTextbox";
-            this.XoriginTextbox.Size = new System.Drawing.Size(57, 20);
+            this.XoriginTextbox.Size = new System.Drawing.Size(40, 20);
             this.XoriginTextbox.TabIndex = 50;
-            this.XoriginTextbox.Text = "0.0000";
+            this.XoriginTextbox.Text = "0.000";
             // 
             // OptimizeButton
             // 
@@ -765,11 +773,64 @@
             this.OptimizeButton.UseVisualStyleBackColor = true;
             this.OptimizeButton.Click += new System.EventHandler(this.OptimizeButton_Click);
             // 
+            // ViewContextMenu
+            // 
+            this.ViewContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ViewSetXYContext,
+            this.ViewSetDRGOrigin,
+            this.moveToToolStripMenuItem});
+            this.ViewContextMenu.Name = "ViewContextMenu";
+            this.ViewContextMenu.Size = new System.Drawing.Size(190, 70);
+            // 
+            // ViewSetXYContext
+            // 
+            this.ViewSetXYContext.Name = "ViewSetXYContext";
+            this.ViewSetXYContext.Size = new System.Drawing.Size(189, 22);
+            this.ViewSetXYContext.Text = "Set As Current X-Y";
+            this.ViewSetXYContext.Click += new System.EventHandler(this.ViewSetXYContext_Click);
+            // 
+            // ViewSetDRGOrigin
+            // 
+            this.ViewSetDRGOrigin.Name = "ViewSetDRGOrigin";
+            this.ViewSetDRGOrigin.Size = new System.Drawing.Size(189, 22);
+            this.ViewSetDRGOrigin.Text = "Set As Drawing Origin";
+            this.ViewSetDRGOrigin.Click += new System.EventHandler(this.ViewSetDRGOrigin_Click);
+            // 
+            // SnapSizeTextBox
+            // 
+            this.SnapSizeTextBox.Location = new System.Drawing.Point(660, 32);
+            this.SnapSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.SnapSizeTextBox.Name = "SnapSizeTextBox";
+            this.SnapSizeTextBox.Size = new System.Drawing.Size(40, 20);
+            this.SnapSizeTextBox.TabIndex = 55;
+            this.SnapSizeTextBox.Text = "0.050";
+            // 
+            // SnapViewBox
+            // 
+            this.SnapViewBox.AutoSize = true;
+            this.SnapViewBox.Checked = true;
+            this.SnapViewBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SnapViewBox.Location = new System.Drawing.Point(585, 34);
+            this.SnapViewBox.Name = "SnapViewBox";
+            this.SnapViewBox.Size = new System.Drawing.Size(70, 17);
+            this.SnapViewBox.TabIndex = 56;
+            this.SnapViewBox.Text = "Snap To:";
+            this.SnapViewBox.UseVisualStyleBackColor = true;
+            // 
+            // moveToToolStripMenuItem
+            // 
+            this.moveToToolStripMenuItem.Name = "moveToToolStripMenuItem";
+            this.moveToToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.moveToToolStripMenuItem.Text = "Move To";
+            this.moveToToolStripMenuItem.Click += new System.EventHandler(this.moveToToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.SnapViewBox);
+            this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.OptimizeButton);
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YOriginTextbox);
@@ -821,6 +882,7 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.NodesContextMenu.ResumeLayout(false);
+            this.ViewContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -891,6 +953,12 @@
         private System.Windows.Forms.TextBox YOriginTextbox;
         private System.Windows.Forms.TextBox XoriginTextbox;
         private System.Windows.Forms.Button OptimizeButton;
+        private System.Windows.Forms.ContextMenuStrip ViewContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem ViewSetXYContext;
+        private System.Windows.Forms.ToolStripMenuItem ViewSetDRGOrigin;
+        private System.Windows.Forms.TextBox SnapSizeTextBox;
+        private System.Windows.Forms.CheckBox SnapViewBox;
+        private System.Windows.Forms.ToolStripMenuItem moveToToolStripMenuItem;
     }
 }
 
