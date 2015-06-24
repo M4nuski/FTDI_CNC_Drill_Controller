@@ -539,8 +539,7 @@ namespace CNC_Drill_Controller1
         #region Internal USB control methods
         private void moveBy(int DeltaX, int DeltaY)
         {
-            var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
-
+            //process directions
             var XStepDirection = 0;
             if (DeltaX > 0)
             {
@@ -561,28 +560,32 @@ namespace CNC_Drill_Controller1
                 YStepDirection = -1;
             }
 
+
+            //process backlash
             if (!IgnoreBacklashBox.Checked)
             {
-                //moveby backlash on required axis
                 if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
                 {
-                    X_Location += X_Backlash*XStepDirection;
-                    X_Delta += X_Backlash*XStepDirection;
+                    DeltaX += X_Backlash * XStepDirection;
+                    X_Delta += X_Backlash * XStepDirection;
                     X_Last_Direction = XStepDirection;
                 }
                 if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
                 {
-                    Y_Location += Y_Backlash*YStepDirection;
-                    Y_Delta += Y_Backlash*YStepDirection;
+                    DeltaY += Y_Backlash * YStepDirection;
+                    Y_Delta += Y_Backlash * YStepDirection;
                     Y_Last_Direction = YStepDirection;
                 }
-                Transfer();
             }
             else
             {
                 X_Last_Direction = XStepDirection;
                 Y_Last_Direction = YStepDirection;
             }
+
+
+            //process moves
+            var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
 
             //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
