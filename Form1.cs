@@ -19,7 +19,7 @@ namespace CNC_Drill_Controller1
         private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[512];
         private byte[] InputBuffer = new byte[512];
-        private const int max_steps_per_transfert = 48; //1 turn
+        private const int max_steps_per_cylce = 48; //1 turn //todo decrease to 1/2 turn ?
         //private const int steps_between_sync = 48; todo sync with drive rods's rotaty switches
         public int X_Scale = 961;
         public int Y_Scale = 961;
@@ -387,7 +387,6 @@ namespace CNC_Drill_Controller1
 
         private SwitchFeedBack readSwitches()
         {
-            //todo: re-wire header as of now max and min limit switches are swapped
             SwitchState.MaxXswitch = !getBit(InputBuffer[17], 1);
             SwitchState.MinXswitch = !getBit(InputBuffer[15], 1);
 
@@ -423,10 +422,9 @@ namespace CNC_Drill_Controller1
             {
                 logger1.AddLine("Failed to open device (error " + ftStatus + ")");
             }
-
-
+            
             logger1.AddLine("Setting default bauld rate");
-            ftStatus = USB_Interface.SetBaudRate(600);
+            ftStatus = USB_Interface.SetBaudRate(1200);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
@@ -533,6 +531,11 @@ namespace CNC_Drill_Controller1
             drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
 
             OutputLabel.Refresh();
+            Xlabel.Refresh();
+            Ylabel.Refresh();
+            statusStrip1.Refresh();
+            logger1.Refresh();
+
             #endregion
         }
 
@@ -583,13 +586,14 @@ namespace CNC_Drill_Controller1
                 Y_Last_Direction = YStepDirection;
             }
 
+            //todo stagger steps to smooth movement.
 
             //process moves
             var numMoves = (Math.Abs(DeltaX) >= Math.Abs(DeltaY)) ? Math.Abs(DeltaX) : Math.Abs(DeltaY);
 
             //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
-            var numCycle = (numMoves + max_steps_per_transfert - 1) / max_steps_per_transfert;
+            var numCycle = (numMoves + max_steps_per_cylce - 1) / max_steps_per_cylce;
             if (numCycle > 1)
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -598,7 +602,7 @@ namespace CNC_Drill_Controller1
 
             for (var i = 0; i < numCycle; i++)
             {
-                var num_moves_for_this_cycle = (numMoves > max_steps_per_transfert) ? max_steps_per_transfert : numMoves;
+                var num_moves_for_this_cycle = (numMoves > max_steps_per_cylce) ? max_steps_per_cylce : numMoves;
                 for (var j = 0; j < num_moves_for_this_cycle; j++)
                 {
                     if (Math.Abs(DeltaX) != 0)
@@ -615,7 +619,7 @@ namespace CNC_Drill_Controller1
                 }
                 toolStripProgressBar1.Value = i;
                 numMoves -= num_moves_for_this_cycle;
-                Refresh();
+                UIupdateTimer_Tick(this, null);
                 if (SwitchState.MaxXswitch || SwitchState.MinXswitch || SwitchState.MaxYswitch || SwitchState.MinYswitch)
                 {
                     if (!seekingLimits) logger1.AddLine("Limit switch triggered before end of move");
@@ -636,13 +640,14 @@ namespace CNC_Drill_Controller1
         private void MoveTo(float X, float Y)
         {
             var current_pos = CurrentLocation();
-            if ((current_pos.X < 5.900) && (current_pos.Y < 5.900))
+            if (!SwitchState.MaxXswitch && !SwitchState.MinXswitch && 
+                !SwitchState.MaxYswitch && !SwitchState.MinYswitch)
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
                 moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
             }
-            else logger1.AddLine("Move target out of range.");
+            else logger1.AddLine("Limit switch warning must be cleared before moving.");
         }
         #endregion
 
@@ -690,7 +695,7 @@ namespace CNC_Drill_Controller1
             {
                 var mx = safeTextToFloat(axisdata[0].Trim(trimChars));
                 var my = safeTextToFloat(axisdata[1].Trim(trimChars));
-                logger1.AddLine("Moving to: " + mx.ToString("F4") + ", " + my.ToString("F4"));
+                logger1.AddLine("Moving to: " + mx.ToString("F3") + ", " + my.ToString("F3"));
                 MoveTo(mx, my);
             }
         }
@@ -802,36 +807,36 @@ namespace CNC_Drill_Controller1
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
                 UpdateNodeColors();
                 logger1.AddLine("Moving to: " + Nodes[listBox1.SelectedIndex].Location);
-                Refresh();
+                UIupdateTimer_Tick(sender, e);
 
                 Enabled = false;
                 MoveTo(Nodes[listBox1.SelectedIndex].location.X, Nodes[listBox1.SelectedIndex].location.Y);
 
                 logger1.AddLine("Drilling...");
                 checkBoxT.Checked = true;
-                Refresh();
+                UIupdateTimer_Tick(sender, e);
 
-                var maxTries = 10;
+                var maxTries = 20;
                 while (SwitchState.TopSwitch && !failed)
                 {
                     SwitchState = Transfer();
                     failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     maxTries--;
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                 }
-                checkBoxT.Checked = false;
 
-                maxTries = 10;
+                checkBoxT.Checked = false;
+                Refresh();
+
+                maxTries = 20;
                 while (!SwitchState.TopSwitch && !failed)
                 {
                     SwitchState = Transfer();
                     failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     maxTries--;
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                 }
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
                 UpdateNodeColors();
@@ -859,44 +864,41 @@ namespace CNC_Drill_Controller1
                             Nodes[i].status = DrillNode.DrillNodeStatus.Next;
                             UpdateNodeColors();
                             logger1.AddLine("Moving to [" + i + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
-                            Refresh();
+                            UIupdateTimer_Tick(sender, e);
 
                             Enabled = false;
                             MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
 
                             logger1.AddLine("Drilling...");
                             checkBoxT.Checked = true;
-                            Refresh();
+                            UIupdateTimer_Tick(sender, e);
 
 
-                            var maxTries = 10;
+                            var maxTries = 20;
                             while (SwitchState.TopSwitch && !failed)
                             {
                                 SwitchState = Transfer();
                                 failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                                UIupdateTimer_Tick(this, null);
-                                Refresh();
+                                UIupdateTimer_Tick(sender, e);
                                 maxTries--;
-                                Thread.Sleep(100);
+                                Thread.Sleep(50);
                             }
 
                             checkBoxT.Checked = false;
                             Refresh();
 
-
-                            maxTries = 10;
+                            maxTries = 20;
                             while (!SwitchState.TopSwitch && !failed)
                             {
                                 SwitchState = Transfer();
                                 failed = !OutOfScopeUSB_IsOpen() || (maxTries < 0);
-                                UIupdateTimer_Tick(this, null);
-                                Refresh();
+                                UIupdateTimer_Tick(sender, e);
                                 maxTries--;
-                                Thread.Sleep(100);
+                                Thread.Sleep(50);
                             }
                             Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
                             UpdateNodeColors();
-                            Refresh();
+                            UIupdateTimer_Tick(sender, e);
                         }
                         else
                         {
@@ -924,9 +926,6 @@ namespace CNC_Drill_Controller1
             }
         }
 
-
-
-
         private void OptimizeButton_Click(object sender, EventArgs e)
         {
             var old_length = DrillNodeHelper.getPathLength(Nodes, CurrentLocation());
@@ -949,8 +948,8 @@ namespace CNC_Drill_Controller1
             if (best_length < old_length)
             {
                 Nodes = best_path;
-
             }
+
             else logger1.AddLine("Optimization test returned path longer or equal.");
 
             RebuildListBoxAndViewerFromNodes();
@@ -969,22 +968,20 @@ namespace CNC_Drill_Controller1
                 var cur_pos_X = X_Location - X_Delta;
                 var cur_pos_Y = Y_Location - Y_Delta;
 
-                var delta_X = (cur_pos_X > 960) ? cur_pos_X - 960 : 0;
-                var delta_Y = (cur_pos_Y > 960) ? cur_pos_Y - 960 : 0;
+                var delta_X = (cur_pos_X > X_Scale) ? cur_pos_X - X_Scale : 0;
+                var delta_Y = (cur_pos_Y > Y_Scale) ? cur_pos_Y - Y_Scale : 0;
 
                 moveBy(-delta_X, -delta_Y);
-                Refresh();
-                UIupdateTimer_Tick(this, null);
+                UIupdateTimer_Tick(sender, e);
 
                 var maxTries = 48;
                 while (!SwitchState.MinXswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0))
                 {
-                    moveBy(-48, 0);
+                    moveBy(-24, 0);
                     maxTries--;
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                     SwitchState = Transfer();
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     failed = maxTries <= 0;
                 }
 
@@ -992,21 +989,19 @@ namespace CNC_Drill_Controller1
                 while (SwitchState.MinXswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
                 {
                     moveBy(1, 0);
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                     SwitchState = Transfer();
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     failed = maxTries <= 0;
                 }
 
                 maxTries = 48;
                 while (!SwitchState.MinYswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
                 {
-                    moveBy(0, -48);
-                    Thread.Sleep(100);
+                    moveBy(0, -24);
+                    Thread.Sleep(50);
                     SwitchState = Transfer();
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     failed = maxTries <= 0;
                 }
 
@@ -1014,10 +1009,9 @@ namespace CNC_Drill_Controller1
                 while (SwitchState.MinYswitch && OutOfScopeUSB_IsOpen() && (maxTries > 0) && !failed)
                 {
                     moveBy(0, 1);
-                    Thread.Sleep(100);
+                    Thread.Sleep(50);
                     SwitchState = Transfer();
-                    UIupdateTimer_Tick(this, null);
-                    Refresh();
+                    UIupdateTimer_Tick(sender, e);
                     failed = maxTries <= 0;
                 }
 
@@ -1054,15 +1048,15 @@ namespace CNC_Drill_Controller1
         private void ViewSetXYContext_Click(object sender, EventArgs e)
         {
             var newLocation = GetViewCursorLocation();
-            XCurrentPosTextBox.Text = newLocation.X.ToString("F4");
+            XCurrentPosTextBox.Text = newLocation.X.ToString("F3");
             setXButton_Click(sender, e);
-            YCurrentPosTextBox.Text = newLocation.Y.ToString("F4");
+            YCurrentPosTextBox.Text = newLocation.Y.ToString("F3");
             SetYButton_Click(sender, e);
         }
         private void moveToToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var targetLocation = GetViewCursorLocation();
-            logger1.AddLine("Moving to: " + targetLocation.X.ToString("F4") + ", " + targetLocation.Y.ToString("F4"));
+            logger1.AddLine("Moving to: " + targetLocation.X.ToString("F3") + ", " + targetLocation.Y.ToString("F3"));
             MoveTo(targetLocation.X, targetLocation.Y);
         }
         #endregion
