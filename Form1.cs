@@ -521,9 +521,8 @@ namespace CNC_Drill_Controller1
             var current_Y = (Y_Location - Y_Delta);
             XStatusLabel.Text = current_X.ToString("D5");
             YStatusLabel.Text = current_Y.ToString("D5");
-            Xlabel.Text = "X: " + ((float)current_X / X_Scale).ToString("F4");
-            Ylabel.Text = "Y: " + ((float)current_Y / Y_Scale).ToString("F4");
-
+            Xlabel.Text = "X: " + ((float)current_X/ X_Scale).ToString("F3");
+            Ylabel.Text = "Y: " + ((float)current_Y/ Y_Scale).ToString("F3");
             var snapLocation = GetViewCursorLocation();
             cursorCrossHair.UpdatePosition(snapLocation);
             ViewXLabel.Text = snapLocation.X.ToString("F3");
@@ -562,21 +561,28 @@ namespace CNC_Drill_Controller1
                 YStepDirection = -1;
             }
 
-
-            //moveby backlash on required axis
-            if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
+            if (!IgnoreBacklashBox.Checked)
             {
-                X_Location += X_Backlash*XStepDirection;
-                X_Delta += X_Backlash*XStepDirection;
-                X_Last_Direction = XStepDirection;
+                //moveby backlash on required axis
+                if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
+                {
+                    X_Location += X_Backlash*XStepDirection;
+                    X_Delta += X_Backlash*XStepDirection;
+                    X_Last_Direction = XStepDirection;
+                }
+                if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
+                {
+                    Y_Location += Y_Backlash*YStepDirection;
+                    Y_Delta += Y_Backlash*YStepDirection;
+                    Y_Last_Direction = YStepDirection;
+                }
+                Transfer();
             }
-            if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
+            else
             {
-                Y_Location += Y_Backlash * YStepDirection;
-                Y_Delta += Y_Backlash * YStepDirection;
+                X_Last_Direction = XStepDirection;
                 Y_Last_Direction = YStepDirection;
-            } 
-            Transfer();
+            }
 
             //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
@@ -1062,12 +1068,14 @@ namespace CNC_Drill_Controller1
         {
             X_Scale = safeTextToInt(XScaleTextBox.Text);
             X_Backlash = safeTextToInt(XBacklastTextbox.Text);
+            logger1.AddLine("Set X Axis Scale to: " + X_Scale + " steps/inch, Backlash to: "+ X_Backlash + "steps.");
         }
 
         private void YSetTransformButton_Click(object sender, EventArgs e)
         {
             Y_Scale = safeTextToInt(YScaleTextBox.Text);
             Y_Backlash = safeTextToInt(YBacklastTextbox.Text);
+            logger1.AddLine("Set Y Axis Scale to: " + Y_Scale + " steps/inch, Backlash to: " + Y_Backlash + "steps.");
         }
 
         //todo offset nodes closer to margins / 6x6 table on load
