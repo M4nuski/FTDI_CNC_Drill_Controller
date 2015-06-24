@@ -17,11 +17,17 @@ namespace CNC_Drill_Controller1
         #region USB Interface Properties
 
         private FTDI USB_Interface = new FTDI();
-        private byte[] OutputBuffer = new byte[32000];
-        private byte[] InputBuffer = new byte[32000];
+        private byte[] OutputBuffer = new byte[512];
+        private byte[] InputBuffer = new byte[512];
         private const int max_steps_per_transfert = 48; //1 turn
-        public int X_Scale = 960;
-        public int Y_Scale = 960;
+        //private const int steps_between_sync = 48; todo sync with drive rods's rotaty switches
+        public int X_Scale = 961;
+        public int Y_Scale = 961;
+        public int X_Backlash = 4;
+        public int Y_Backlash = 4;
+        private int X_Location, Y_Location, AxisOffsetCount, X_Last_Direction, Y_Last_Direction;
+        public int X_Delta, Y_Delta;
+
         private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
 
         #endregion
@@ -30,11 +36,6 @@ namespace CNC_Drill_Controller1
 
         private DateTime lastUpdate = DateTime.Now;
         private bool CheckBoxInhibit;
-        //public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
-        //public bool TopSwitch, BottomSwitch;
-        private int X_Axis_Location, Y_Axis_Location, AxisOffsetCount;
-        public int X_Axis_Delta, Y_Axis_Delta;
-
         private struct SwitchFeedBack
         {
             public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
@@ -61,7 +62,7 @@ namespace CNC_Drill_Controller1
         #endregion
 
         private char[] trimChars = { ' ' };
-        private bool seekingLimits; //TODO: add limit switch auto seeking, ask for approximate location and creep toward minX and minY
+        private bool seekingLimits;
 
         #region Form Initialization
         public Form1()
@@ -73,6 +74,9 @@ namespace CNC_Drill_Controller1
         private void Form1_Load(object sender, EventArgs e)
         {
             ExtLog.Logger = logger1;
+
+            FormClosing += OnFormClosing;
+
             #region View initialization
 
             cursorCrossHair = new CrossHair(0, 0, Color.Blue);
@@ -80,6 +84,7 @@ namespace CNC_Drill_Controller1
             CNCTableBox = new Box(0, 0, 6, 6, Color.LightGray);
             drawingPageBox = new Box(0, 0, 8.5f, 11, Color.GhostWhite);
             nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
+            nodeViewer.OnSelect += OnSelect;
             lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
             lastSelectedIndex = -1;
             RebuildListBoxAndViewerFromNodes();
@@ -128,6 +133,27 @@ namespace CNC_Drill_Controller1
             }
             #endregion
         }
+
+        private void OnSelect(List<IViewerElements> selection)
+        {
+            if ((Nodes != null) && (Nodes.Count > 0))
+            for (var i = 0; i < selection.Count; i++)
+            {
+                for (var j = 0; j < Nodes.Count; j++)
+                {
+                    if (selection[i].ID == Nodes[j].ID)
+                    {
+                        listBox1.SelectedIndex = Nodes[j].ID;
+                    }
+                }
+            }
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
+        {
+            saveLogToolStripMenuItem_Click(sender, null);
+        }
+
         #endregion
 
         #region Direct USB UI control methods
@@ -142,7 +168,6 @@ namespace CNC_Drill_Controller1
         private void PlusYbutton_Click(object sender, EventArgs e)
         {
             moveBy(0, AxisOffsetCount);
-
         }
         private void MinusYbutton_Click(object sender, EventArgs e)
         {
@@ -167,11 +192,17 @@ namespace CNC_Drill_Controller1
             // (loc - delta) / scale = pos
             // loc - delta = (pos * scale)
             // loc - (pos * scale) = delta
-            X_Axis_Delta = (int)(X_Axis_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
+            X_Delta = (int)(X_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
         }
         private void SetYButton_Click(object sender, EventArgs e)
         {
-            Y_Axis_Delta = (int)(Y_Axis_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
+            Y_Delta = (int)(Y_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
+        }
+
+        private void SetAllButton_Click(object sender, EventArgs e)
+        {
+            setXButton_Click(sender, e);
+            SetYButton_Click(sender, e);
         }
 
         private void zeroXbutton_Click(object sender, EventArgs e)
@@ -213,6 +244,17 @@ namespace CNC_Drill_Controller1
             logger1.AddLine("Failed to convert value: " + text);
             return 0.0f;
         }
+        private int safeTextToInt(string text)
+        {
+            int res;
+            if (int.TryParse(text, out res))
+            {
+                return res;
+            }
+            logger1.AddLine("Failed to convert value: " + text);
+            return 0;
+        }
+
         #endregion
 
         #region Log methods
@@ -237,7 +279,7 @@ namespace CNC_Drill_Controller1
         {
             if (USB_Interface.IsOpen)
             {
-                var stepData = CreateStepByte(X_Axis_Location, Y_Axis_Location);
+                var stepData = CreateStepByte(X_Location, Y_Location);
                 var ctrlData = CreateControlByte(checkBoxX.Checked, checkBoxY.Checked, checkBoxT.Checked,
                     checkBoxB.Checked);
 
@@ -269,10 +311,10 @@ namespace CNC_Drill_Controller1
             return SwitchState;
         }
 
-        private byte CreateStepByte(int X_Location, int Y_Location)
+        private byte CreateStepByte(int X, int Y)
         {
-            var x = (byte)(X_Location & 0x03);
-            var y = (byte)(Y_Location & 0x03);
+            var x = (byte)(X & 0x03);
+            var y = (byte)(Y & 0x03);
             return (byte)((stepBytes[x] & 0x0F) | (stepBytes[y] & 0xF0));
         }
 
@@ -384,7 +426,7 @@ namespace CNC_Drill_Controller1
 
 
             logger1.AddLine("Setting default bauld rate");
-            ftStatus = USB_Interface.SetBaudRate(300);
+            ftStatus = USB_Interface.SetBaudRate(600);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 logger1.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
@@ -475,8 +517,8 @@ namespace CNC_Drill_Controller1
             #endregion
 
             #region UI update from internal properties / view
-            var current_X = (X_Axis_Location - X_Axis_Delta);
-            var current_Y = (Y_Axis_Location - Y_Axis_Delta);
+            var current_X = (X_Location - X_Delta);
+            var current_Y = (Y_Location - Y_Delta);
             XStatusLabel.Text = current_X.ToString("D5");
             YStatusLabel.Text = current_Y.ToString("D5");
             Xlabel.Text = "X: " + ((float)current_X / X_Scale).ToString("F4");
@@ -519,6 +561,23 @@ namespace CNC_Drill_Controller1
             {
                 YStepDirection = -1;
             }
+
+
+            //moveby backlash on required axis
+            if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
+            {
+                X_Location += X_Backlash*XStepDirection;
+                X_Delta += X_Backlash*XStepDirection;
+                X_Last_Direction = XStepDirection;
+            }
+            if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
+            {
+                Y_Location += Y_Backlash * YStepDirection;
+                Y_Delta += Y_Backlash * YStepDirection;
+                Y_Last_Direction = YStepDirection;
+            } 
+            Transfer();
+
             //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
             var numCycle = (numMoves + max_steps_per_transfert - 1) / max_steps_per_transfert;
@@ -535,12 +594,12 @@ namespace CNC_Drill_Controller1
                 {
                     if (Math.Abs(DeltaX) != 0)
                     {
-                        X_Axis_Location += XStepDirection;
+                        X_Location += XStepDirection;
                         DeltaX -= XStepDirection;
                     }
                     if (Math.Abs(DeltaY) != 0)
                     {
-                        Y_Axis_Location += YStepDirection;
+                        Y_Location += YStepDirection;
                         DeltaY -= YStepDirection;
                     }
                     Transfer();
@@ -560,8 +619,8 @@ namespace CNC_Drill_Controller1
 
         private PointF CurrentLocation()
         {
-            var current_X = ((float)X_Axis_Location - X_Axis_Delta) / X_Scale;
-            var current_Y = ((float)Y_Axis_Location - Y_Axis_Delta) / Y_Scale;
+            var current_X = ((float)X_Location - X_Delta) / X_Scale;
+            var current_Y = ((float)Y_Location - Y_Delta) / Y_Scale;
             return new PointF(current_X, current_Y);
         }
 
@@ -898,8 +957,8 @@ namespace CNC_Drill_Controller1
                 seekingLimits = true;
                 Enabled = false;
                 var failed = false;
-                var cur_pos_X = X_Axis_Location - X_Axis_Delta;
-                var cur_pos_Y = Y_Axis_Location - Y_Axis_Delta;
+                var cur_pos_X = X_Location - X_Delta;
+                var cur_pos_Y = Y_Location - Y_Delta;
 
                 var delta_X = (cur_pos_X > 960) ? cur_pos_X - 960 : 0;
                 var delta_Y = (cur_pos_Y > 960) ? cur_pos_Y - 960 : 0;
@@ -999,11 +1058,23 @@ namespace CNC_Drill_Controller1
         }
         #endregion
 
-        //todo select node by clicking in viewer (mouse up without panning)
+        private void XSetTransformButton_Click(object sender, EventArgs e)
+        {
+            X_Scale = safeTextToInt(XScaleTextBox.Text);
+            X_Backlash = safeTextToInt(XBacklastTextbox.Text);
+        }
+
+        private void YSetTransformButton_Click(object sender, EventArgs e)
+        {
+            Y_Scale = safeTextToInt(YScaleTextBox.Text);
+            Y_Backlash = safeTextToInt(YBacklastTextbox.Text);
+        }
 
         //todo offset nodes closer to margins / 6x6 table on load
 
-        //todo extract methods to other class / files to clean this file
+        //todo create constant to extract hard-coded values
+
+        //todo extract usb methods to other class / files to clean this file
 
     }
 }

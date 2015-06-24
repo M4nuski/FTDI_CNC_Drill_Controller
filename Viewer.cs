@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
@@ -8,14 +9,13 @@ namespace CNC_Drill_Controller1
 {
     class Viewer : IDisposable
     {
-
-        //public Point inMouseLocationPix; superseeded by mousemove events
-
         public PointF Size
         {
             get { return ViewData.Size; }
         }
 
+        public delegate void SelectionDelegate(List<IViewerElements> Selection);
+        public SelectionDelegate OnSelect;
         public PointF MousePositionF;
         public Point MousePosition;
         //public Color BackColor; //superseeded by Rectangle element
@@ -23,7 +23,7 @@ namespace CNC_Drill_Controller1
 
         private Control _outputControl;
 
-
+        public float LineSelectionWidth = 0.010f;
         private int maxPanX, maxPanY;
         private int minPanX, minPanY;
         private bool panning;
@@ -133,7 +133,10 @@ namespace CNC_Drill_Controller1
 
         private void OutputControlOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            //throw new NotImplementedException();
+            if (OnSelect != null)
+            {
+                OnSelect(Elements.Where(viewerElements => viewerElements.Selected(MousePositionF)).ToList());
+            }
         }
 
         private void OutputControlOnMouseUp(object sender, MouseEventArgs mouseEventArgs)
@@ -258,6 +261,7 @@ namespace CNC_Drill_Controller1
         int ID { get; }
         Color color { get; set; }
         void Draw(Viewer.viewData data);
+        bool Selected(PointF SelectionLocation);
     }
 
     class CrossHair : IViewerElements
@@ -304,6 +308,11 @@ namespace CNC_Drill_Controller1
             _y = Y;
         }
 
+        public bool Selected(PointF SelectionLocation)
+        {
+            return (Math.Abs(SelectionLocation.X - _x) < 0.010f) || (Math.Abs(SelectionLocation.Y - _y) < 0.010f);
+        }
+
     }
 
     class Node : IViewerElements
@@ -339,6 +348,12 @@ namespace CNC_Drill_Controller1
         {
             var out_pos = ViewerHelper.ScaleRectangle(_pos.X - _radius, _pos.Y - _radius, _diameter, _diameter, data);
             data.OutputGraphic.DrawEllipse(_color, out_pos);
+        }
+
+        public bool Selected(PointF SelectionLocation)
+        {
+            return (Math.Abs(_pos.X - SelectionLocation.X) < _diameter) &&
+                   (Math.Abs(_pos.Y - SelectionLocation.Y) < _diameter);
         }
     }
 
@@ -378,6 +393,11 @@ namespace CNC_Drill_Controller1
             var out_from = ViewerHelper.ScalePoint(_fx, _fy, data);
             var out_to = ViewerHelper.ScalePoint(_tx, _ty, data);
             data.OutputGraphic.DrawLine(_color, out_from, out_to);
+        }
+
+        public bool Selected(PointF SelectionLocation)
+        {
+            return false; //todo
         }
     }
 
@@ -432,6 +452,12 @@ namespace CNC_Drill_Controller1
             var out_rectangle = ViewerHelper.ScaleRectangle(_x, _y, _w, _h, data);
             data.OutputGraphic.DrawRectangle(_color, out_rectangle);
             data.OutputGraphic.FillRectangle(_fill, out_rectangle);
+        }
+
+        public bool Selected(PointF SelectionLocation)
+        {
+            return ((SelectionLocation.X > _x) && (SelectionLocation.Y > _y) && (SelectionLocation.X < (_x + _w)) &&
+                    (SelectionLocation.Y < (_y + _h)));
         }
     }
 

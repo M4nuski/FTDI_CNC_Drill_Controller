@@ -80,8 +80,8 @@
             this.NodeContextDRILED = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextTARGET = new System.Windows.Forms.ToolStripMenuItem();
             this.OutputLabel = new System.Windows.Forms.Label();
-            this.XScalebutton = new System.Windows.Forms.Button();
-            this.YScalebutton = new System.Windows.Forms.Button();
+            this.XSetTranformButton = new System.Windows.Forms.Button();
+            this.YSetTranformButton = new System.Windows.Forms.Button();
             this.ViewZoomLabel = new System.Windows.Forms.Label();
             this.ViewXLabel = new System.Windows.Forms.Label();
             this.ViewYLabel = new System.Windows.Forms.Label();
@@ -96,9 +96,14 @@
             this.ViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ViewSetXYContext = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewSetDRGOrigin = new System.Windows.Forms.ToolStripMenuItem();
+            this.moveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SnapSizeTextBox = new System.Windows.Forms.TextBox();
             this.SnapViewBox = new System.Windows.Forms.CheckBox();
-            this.moveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetAllButton = new System.Windows.Forms.Button();
+            this.YBacklastTextbox = new System.Windows.Forms.TextBox();
+            this.XBacklastTextbox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -399,7 +404,7 @@
             this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.AxisOffsetComboBox.MaxDropDownItems = 16;
             this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
-            this.AxisOffsetComboBox.Size = new System.Drawing.Size(134, 21);
+            this.AxisOffsetComboBox.Size = new System.Drawing.Size(127, 21);
             this.AxisOffsetComboBox.TabIndex = 13;
             this.AxisOffsetComboBox.SelectedIndexChanged += new System.EventHandler(this.AxisOffsetComboBox_SelectedIndexChanged);
             // 
@@ -409,7 +414,7 @@
             this.bevel1.Location = new System.Drawing.Point(4, 58);
             this.bevel1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.bevel1.Name = "bevel1";
-            this.bevel1.Size = new System.Drawing.Size(147, 291);
+            this.bevel1.Size = new System.Drawing.Size(142, 291);
             this.bevel1.TabIndex = 14;
             // 
             // UIupdateTimer
@@ -420,7 +425,7 @@
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(328, 32);
+            this.loadFileButton.Location = new System.Drawing.Point(328, 31);
             this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(156, 21);
@@ -435,27 +440,29 @@
             // 
             // XScaleTextBox
             // 
-            this.XScaleTextBox.Location = new System.Drawing.Point(218, 32);
+            this.XScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.XScaleTextBox.Location = new System.Drawing.Point(77, 523);
             this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.ReadOnly = true;
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.XScaleTextBox.TabIndex = 16;
-            this.XScaleTextBox.Text = "960";
+            this.XScaleTextBox.Text = "961";
             // 
             // YScaleTextBox
             // 
-            this.YScaleTextBox.Location = new System.Drawing.Point(219, 55);
+            this.YScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.YScaleTextBox.Location = new System.Drawing.Point(77, 546);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.ReadOnly = true;
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.YScaleTextBox.TabIndex = 17;
-            this.YScaleTextBox.Text = "960";
+            this.YScaleTextBox.Text = "961";
             // 
             // XCurrentPosTextBox
             // 
-            this.XCurrentPosTextBox.Location = new System.Drawing.Point(218, 102);
+            this.XCurrentPosTextBox.Location = new System.Drawing.Point(76, 404);
             this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -464,7 +471,7 @@
             // 
             // YCurrentPosTextBox
             // 
-            this.YCurrentPosTextBox.Location = new System.Drawing.Point(218, 125);
+            this.YCurrentPosTextBox.Location = new System.Drawing.Point(76, 427);
             this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -473,7 +480,7 @@
             // 
             // setXButton
             // 
-            this.setXButton.Location = new System.Drawing.Point(158, 102);
+            this.setXButton.Location = new System.Drawing.Point(16, 404);
             this.setXButton.Margin = new System.Windows.Forms.Padding(2);
             this.setXButton.Name = "setXButton";
             this.setXButton.Size = new System.Drawing.Size(56, 19);
@@ -484,7 +491,7 @@
             // 
             // SetYButton
             // 
-            this.SetYButton.Location = new System.Drawing.Point(158, 125);
+            this.SetYButton.Location = new System.Drawing.Point(16, 427);
             this.SetYButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetYButton.Name = "SetYButton";
             this.SetYButton.Size = new System.Drawing.Size(56, 19);
@@ -495,7 +502,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(158, 78);
+            this.zeroXbutton.Location = new System.Drawing.Point(16, 361);
             this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
@@ -506,7 +513,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(218, 78);
+            this.zeroYbutton.Location = new System.Drawing.Point(76, 361);
             this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
@@ -517,10 +524,10 @@
             // 
             // zeroAllbutton
             // 
-            this.zeroAllbutton.Location = new System.Drawing.Point(158, 149);
+            this.zeroAllbutton.Location = new System.Drawing.Point(16, 381);
             this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
-            this.zeroAllbutton.Size = new System.Drawing.Size(118, 19);
+            this.zeroAllbutton.Size = new System.Drawing.Size(117, 19);
             this.zeroAllbutton.TabIndex = 26;
             this.zeroAllbutton.Text = "Zero All";
             this.zeroAllbutton.UseVisualStyleBackColor = true;
@@ -530,23 +537,23 @@
             // 
             this.Xlabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Xlabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Xlabel.Location = new System.Drawing.Point(23, 298);
+            this.Xlabel.Location = new System.Drawing.Point(9, 298);
             this.Xlabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Xlabel.Name = "Xlabel";
             this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this.Xlabel.Size = new System.Drawing.Size(110, 21);
+            this.Xlabel.Size = new System.Drawing.Size(133, 21);
             this.Xlabel.TabIndex = 35;
-            this.Xlabel.Text = "X: 0.0000";
+            this.Xlabel.Text = "X: -0.0000";
             // 
             // Ylabel
             // 
             this.Ylabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Ylabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Ylabel.Location = new System.Drawing.Point(23, 319);
+            this.Ylabel.Location = new System.Drawing.Point(9, 319);
             this.Ylabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Ylabel.Name = "Ylabel";
             this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
-            this.Ylabel.Size = new System.Drawing.Size(110, 21);
+            this.Ylabel.Size = new System.Drawing.Size(133, 21);
             this.Ylabel.TabIndex = 36;
             this.Ylabel.Text = "Y: 0.0000";
             // 
@@ -556,11 +563,11 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.listBox1.ContextMenuStrip = this.NodesContextMenu;
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(328, 63);
+            this.listBox1.Location = new System.Drawing.Point(328, 83);
             this.listBox1.Margin = new System.Windows.Forms.Padding(2);
             this.listBox1.Name = "listBox1";
             this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(156, 472);
+            this.listBox1.Size = new System.Drawing.Size(156, 485);
             this.listBox1.TabIndex = 37;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
@@ -633,30 +640,34 @@
             this.OutputLabel.MouseEnter += new System.EventHandler(this.OutputLabel_MouseEnter);
             this.OutputLabel.MouseLeave += new System.EventHandler(this.OutputLabel_MouseLeave);
             // 
-            // XScalebutton
+            // XSetTranformButton
             // 
-            this.XScalebutton.Location = new System.Drawing.Point(158, 32);
-            this.XScalebutton.Margin = new System.Windows.Forms.Padding(2);
-            this.XScalebutton.Name = "XScalebutton";
-            this.XScalebutton.Size = new System.Drawing.Size(56, 19);
-            this.XScalebutton.TabIndex = 41;
-            this.XScalebutton.Text = "X Scale";
-            this.XScalebutton.UseVisualStyleBackColor = true;
+            this.XSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.XSetTranformButton.Location = new System.Drawing.Point(16, 523);
+            this.XSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
+            this.XSetTranformButton.Name = "XSetTranformButton";
+            this.XSetTranformButton.Size = new System.Drawing.Size(56, 19);
+            this.XSetTranformButton.TabIndex = 41;
+            this.XSetTranformButton.Text = "Set X";
+            this.XSetTranformButton.UseVisualStyleBackColor = true;
+            this.XSetTranformButton.Click += new System.EventHandler(this.XSetTransformButton_Click);
             // 
-            // YScalebutton
+            // YSetTranformButton
             // 
-            this.YScalebutton.Location = new System.Drawing.Point(158, 55);
-            this.YScalebutton.Margin = new System.Windows.Forms.Padding(2);
-            this.YScalebutton.Name = "YScalebutton";
-            this.YScalebutton.Size = new System.Drawing.Size(56, 19);
-            this.YScalebutton.TabIndex = 42;
-            this.YScalebutton.Text = "Y Scale";
-            this.YScalebutton.UseVisualStyleBackColor = true;
+            this.YSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.YSetTranformButton.Location = new System.Drawing.Point(16, 546);
+            this.YSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
+            this.YSetTranformButton.Name = "YSetTranformButton";
+            this.YSetTranformButton.Size = new System.Drawing.Size(56, 19);
+            this.YSetTranformButton.TabIndex = 42;
+            this.YSetTranformButton.Text = "Set Y";
+            this.YSetTranformButton.UseVisualStyleBackColor = true;
+            this.YSetTranformButton.Click += new System.EventHandler(this.YSetTransformButton_Click);
             // 
             // ViewZoomLabel
             // 
             this.ViewZoomLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewZoomLabel.Location = new System.Drawing.Point(953, 33);
+            this.ViewZoomLabel.Location = new System.Drawing.Point(953, 32);
             this.ViewZoomLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewZoomLabel.Name = "ViewZoomLabel";
             this.ViewZoomLabel.Size = new System.Drawing.Size(40, 19);
@@ -666,7 +677,7 @@
             // ViewXLabel
             // 
             this.ViewXLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewXLabel.Location = new System.Drawing.Point(496, 33);
+            this.ViewXLabel.Location = new System.Drawing.Point(496, 32);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
             this.ViewXLabel.Size = new System.Drawing.Size(40, 19);
@@ -676,7 +687,7 @@
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(540, 33);
+            this.ViewYLabel.Location = new System.Drawing.Point(540, 32);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
             this.ViewYLabel.Size = new System.Drawing.Size(40, 19);
@@ -685,12 +696,11 @@
             // 
             // RunButton
             // 
-            this.RunButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(12, 537);
+            this.RunButton.Location = new System.Drawing.Point(159, 83);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(158, 22);
+            this.RunButton.Size = new System.Drawing.Size(156, 21);
             this.RunButton.TabIndex = 46;
             this.RunButton.Text = "[Drill All Nodes]";
             this.RunButton.UseVisualStyleBackColor = true;
@@ -698,12 +708,11 @@
             // 
             // SeekZeroButton
             // 
-            this.SeekZeroButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(12, 484);
+            this.SeekZeroButton.Location = new System.Drawing.Point(159, 31);
             this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
             this.SeekZeroButton.Name = "SeekZeroButton";
-            this.SeekZeroButton.Size = new System.Drawing.Size(158, 22);
+            this.SeekZeroButton.Size = new System.Drawing.Size(156, 21);
             this.SeekZeroButton.TabIndex = 47;
             this.SeekZeroButton.Text = "[Find Axis Origins]";
             this.SeekZeroButton.UseVisualStyleBackColor = true;
@@ -711,7 +720,7 @@
             // 
             // ReloadUSBbutton
             // 
-            this.ReloadUSBbutton.Location = new System.Drawing.Point(80, 32);
+            this.ReloadUSBbutton.Location = new System.Drawing.Point(76, 32);
             this.ReloadUSBbutton.Margin = new System.Windows.Forms.Padding(2);
             this.ReloadUSBbutton.Name = "ReloadUSBbutton";
             this.ReloadUSBbutton.Size = new System.Drawing.Size(70, 19);
@@ -722,11 +731,10 @@
             // 
             // DrillButton
             // 
-            this.DrillButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillButton.Location = new System.Drawing.Point(12, 510);
+            this.DrillButton.Location = new System.Drawing.Point(159, 57);
             this.DrillButton.Name = "DrillButton";
-            this.DrillButton.Size = new System.Drawing.Size(158, 22);
+            this.DrillButton.Size = new System.Drawing.Size(156, 21);
             this.DrillButton.TabIndex = 49;
             this.DrillButton.Text = "[Drill Selected Node]";
             this.DrillButton.UseVisualStyleBackColor = true;
@@ -734,7 +742,7 @@
             // 
             // OffsetOriginBtton
             // 
-            this.OffsetOriginBtton.Location = new System.Drawing.Point(720, 32);
+            this.OffsetOriginBtton.Location = new System.Drawing.Point(720, 31);
             this.OffsetOriginBtton.Margin = new System.Windows.Forms.Padding(2);
             this.OffsetOriginBtton.Name = "OffsetOriginBtton";
             this.OffsetOriginBtton.Size = new System.Drawing.Size(139, 21);
@@ -745,7 +753,7 @@
             // 
             // YOriginTextbox
             // 
-            this.YOriginTextbox.Location = new System.Drawing.Point(907, 32);
+            this.YOriginTextbox.Location = new System.Drawing.Point(907, 31);
             this.YOriginTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.YOriginTextbox.Name = "YOriginTextbox";
             this.YOriginTextbox.Size = new System.Drawing.Size(40, 20);
@@ -754,7 +762,7 @@
             // 
             // XoriginTextbox
             // 
-            this.XoriginTextbox.Location = new System.Drawing.Point(863, 32);
+            this.XoriginTextbox.Location = new System.Drawing.Point(863, 31);
             this.XoriginTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.XoriginTextbox.Name = "XoriginTextbox";
             this.XoriginTextbox.Size = new System.Drawing.Size(40, 20);
@@ -763,8 +771,7 @@
             // 
             // OptimizeButton
             // 
-            this.OptimizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.OptimizeButton.Location = new System.Drawing.Point(328, 542);
+            this.OptimizeButton.Location = new System.Drawing.Point(328, 57);
             this.OptimizeButton.Margin = new System.Windows.Forms.Padding(2);
             this.OptimizeButton.Name = "OptimizeButton";
             this.OptimizeButton.Size = new System.Drawing.Size(156, 21);
@@ -796,9 +803,16 @@
             this.ViewSetDRGOrigin.Text = "Set As Drawing Origin";
             this.ViewSetDRGOrigin.Click += new System.EventHandler(this.ViewSetDRGOrigin_Click);
             // 
+            // moveToToolStripMenuItem
+            // 
+            this.moveToToolStripMenuItem.Name = "moveToToolStripMenuItem";
+            this.moveToToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.moveToToolStripMenuItem.Text = "Move To";
+            this.moveToToolStripMenuItem.Click += new System.EventHandler(this.moveToToolStripMenuItem_Click);
+            // 
             // SnapSizeTextBox
             // 
-            this.SnapSizeTextBox.Location = new System.Drawing.Point(660, 32);
+            this.SnapSizeTextBox.Location = new System.Drawing.Point(660, 31);
             this.SnapSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.SnapSizeTextBox.Name = "SnapSizeTextBox";
             this.SnapSizeTextBox.Size = new System.Drawing.Size(40, 20);
@@ -810,25 +824,72 @@
             this.SnapViewBox.AutoSize = true;
             this.SnapViewBox.Checked = true;
             this.SnapViewBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SnapViewBox.Location = new System.Drawing.Point(585, 34);
+            this.SnapViewBox.Location = new System.Drawing.Point(585, 33);
             this.SnapViewBox.Name = "SnapViewBox";
             this.SnapViewBox.Size = new System.Drawing.Size(70, 17);
             this.SnapViewBox.TabIndex = 56;
             this.SnapViewBox.Text = "Snap To:";
             this.SnapViewBox.UseVisualStyleBackColor = true;
             // 
-            // moveToToolStripMenuItem
+            // SetAllButton
             // 
-            this.moveToToolStripMenuItem.Name = "moveToToolStripMenuItem";
-            this.moveToToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.moveToToolStripMenuItem.Text = "Move To";
-            this.moveToToolStripMenuItem.Click += new System.EventHandler(this.moveToToolStripMenuItem_Click);
+            this.SetAllButton.Location = new System.Drawing.Point(15, 451);
+            this.SetAllButton.Margin = new System.Windows.Forms.Padding(2);
+            this.SetAllButton.Name = "SetAllButton";
+            this.SetAllButton.Size = new System.Drawing.Size(116, 19);
+            this.SetAllButton.TabIndex = 57;
+            this.SetAllButton.Text = "Set All";
+            this.SetAllButton.UseVisualStyleBackColor = true;
+            this.SetAllButton.Click += new System.EventHandler(this.SetAllButton_Click);
+            // 
+            // YBacklastTextbox
+            // 
+            this.YBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.YBacklastTextbox.Location = new System.Drawing.Point(138, 545);
+            this.YBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
+            this.YBacklastTextbox.Name = "YBacklastTextbox";
+            this.YBacklastTextbox.ReadOnly = true;
+            this.YBacklastTextbox.Size = new System.Drawing.Size(57, 20);
+            this.YBacklastTextbox.TabIndex = 59;
+            this.YBacklastTextbox.Text = "4";
+            // 
+            // XBacklastTextbox
+            // 
+            this.XBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.XBacklastTextbox.Location = new System.Drawing.Point(138, 522);
+            this.XBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
+            this.XBacklastTextbox.Name = "XBacklastTextbox";
+            this.XBacklastTextbox.ReadOnly = true;
+            this.XBacklastTextbox.Size = new System.Drawing.Size(57, 20);
+            this.XBacklastTextbox.TabIndex = 58;
+            this.XBacklastTextbox.Text = "4";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(76, 504);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(57, 17);
+            this.label2.TabIndex = 60;
+            this.label2.Text = "Scale:";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(138, 504);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(57, 17);
+            this.label3.TabIndex = 61;
+            this.label3.Text = "Backlash:";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.YBacklastTextbox);
+            this.Controls.Add(this.XBacklastTextbox);
+            this.Controls.Add(this.SetAllButton);
             this.Controls.Add(this.SnapViewBox);
             this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.OptimizeButton);
@@ -842,8 +903,8 @@
             this.Controls.Add(this.ViewYLabel);
             this.Controls.Add(this.ViewXLabel);
             this.Controls.Add(this.ViewZoomLabel);
-            this.Controls.Add(this.YScalebutton);
-            this.Controls.Add(this.XScalebutton);
+            this.Controls.Add(this.YSetTranformButton);
+            this.Controls.Add(this.XSetTranformButton);
             this.Controls.Add(this.OutputLabel);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.Ylabel);
@@ -933,8 +994,8 @@
         private System.Windows.Forms.Label Ylabel;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label OutputLabel;
-        private System.Windows.Forms.Button XScalebutton;
-        private System.Windows.Forms.Button YScalebutton;
+        private System.Windows.Forms.Button XSetTranformButton;
+        private System.Windows.Forms.Button YSetTranformButton;
         private System.Windows.Forms.Label ViewZoomLabel;
         private System.Windows.Forms.Label ViewXLabel;
         private System.Windows.Forms.Label ViewYLabel;
@@ -959,6 +1020,11 @@
         private System.Windows.Forms.TextBox SnapSizeTextBox;
         private System.Windows.Forms.CheckBox SnapViewBox;
         private System.Windows.Forms.ToolStripMenuItem moveToToolStripMenuItem;
+        private System.Windows.Forms.Button SetAllButton;
+        private System.Windows.Forms.TextBox YBacklastTextbox;
+        private System.Windows.Forms.TextBox XBacklastTextbox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }
 
