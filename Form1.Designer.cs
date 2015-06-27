@@ -442,22 +442,22 @@
             // XScaleTextBox
             // 
             this.XScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XScaleTextBox.Location = new System.Drawing.Point(77, 523);
+            this.XScaleTextBox.Location = new System.Drawing.Point(73, 523);
             this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.XScaleTextBox.TabIndex = 16;
-            this.XScaleTextBox.Text = "961";
+            this.XScaleTextBox.Text = "960";
             // 
             // YScaleTextBox
             // 
             this.YScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YScaleTextBox.Location = new System.Drawing.Point(77, 546);
+            this.YScaleTextBox.Location = new System.Drawing.Point(73, 546);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.YScaleTextBox.TabIndex = 17;
-            this.YScaleTextBox.Text = "961";
+            this.YScaleTextBox.Text = "960";
             // 
             // XCurrentPosTextBox
             // 
@@ -466,7 +466,7 @@
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
             this.XCurrentPosTextBox.TabIndex = 18;
-            this.XCurrentPosTextBox.Text = "0.0000";
+            this.XCurrentPosTextBox.Text = "0.000";
             // 
             // YCurrentPosTextBox
             // 
@@ -475,7 +475,7 @@
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
             this.YCurrentPosTextBox.TabIndex = 19;
-            this.YCurrentPosTextBox.Text = "0.0000";
+            this.YCurrentPosTextBox.Text = "0.000";
             // 
             // setXButton
             // 
@@ -642,7 +642,7 @@
             // XSetTranformButton
             // 
             this.XSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XSetTranformButton.Location = new System.Drawing.Point(16, 523);
+            this.XSetTranformButton.Location = new System.Drawing.Point(12, 523);
             this.XSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
             this.XSetTranformButton.Name = "XSetTranformButton";
             this.XSetTranformButton.Size = new System.Drawing.Size(56, 19);
@@ -654,7 +654,7 @@
             // YSetTranformButton
             // 
             this.YSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YSetTranformButton.Location = new System.Drawing.Point(16, 546);
+            this.YSetTranformButton.Location = new System.Drawing.Point(12, 546);
             this.YSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
             this.YSetTranformButton.Name = "YSetTranformButton";
             this.YSetTranformButton.Size = new System.Drawing.Size(56, 19);
@@ -844,7 +844,7 @@
             // YBacklastTextbox
             // 
             this.YBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YBacklastTextbox.Location = new System.Drawing.Point(138, 545);
+            this.YBacklastTextbox.Location = new System.Drawing.Point(134, 545);
             this.YBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.YBacklastTextbox.Name = "YBacklastTextbox";
             this.YBacklastTextbox.Size = new System.Drawing.Size(57, 20);
@@ -854,7 +854,7 @@
             // XBacklastTextbox
             // 
             this.XBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XBacklastTextbox.Location = new System.Drawing.Point(138, 522);
+            this.XBacklastTextbox.Location = new System.Drawing.Point(134, 522);
             this.XBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.XBacklastTextbox.Name = "XBacklastTextbox";
             this.XBacklastTextbox.Size = new System.Drawing.Size(57, 20);
@@ -863,8 +863,9 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(76, 504);
+            this.label2.Location = new System.Drawing.Point(72, 507);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 60;
@@ -872,8 +873,9 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(138, 504);
+            this.label3.Location = new System.Drawing.Point(137, 507);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(54, 13);
             this.label3.TabIndex = 61;

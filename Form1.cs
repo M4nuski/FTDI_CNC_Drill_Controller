@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using FTD2XX_NET;
-using M4nuskomponents;
 
 namespace CNC_Drill_Controller1
 {
@@ -19,17 +15,9 @@ namespace CNC_Drill_Controller1
         private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[512];
         private byte[] InputBuffer = new byte[512];
-        private const int max_steps_per_cylce = 48; //1 turn //todo decrease to 1/2 turn ?
-        //private const int steps_between_sync = 48; todo sync with drive rods's rotaty switches
-        public int X_Scale = 961;
-        public int Y_Scale = 961;
-        public int X_Backlash = 4;
-        public int Y_Backlash = 4;
+        
         private int X_Location, Y_Location, AxisOffsetCount, X_Last_Direction, Y_Last_Direction;
         public int X_Delta, Y_Delta;
-
-        private byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
-
         #endregion
 
         #region USB to UI properties
@@ -68,7 +56,13 @@ namespace CNC_Drill_Controller1
         public Form1()
         {
             InitializeComponent();
-            AxisOffsetCount = 1;
+            
+
+            GlobalProperties.Logfile_Filename = (string)Properties.Settings.Default["Logfile_Filename"];
+            GlobalProperties.X_Scale = (int)Properties.Settings.Default["X_Scale"];
+            GlobalProperties.Y_Scale = (int)Properties.Settings.Default["Y_Scale"];
+            GlobalProperties.X_Backlash = (int)Properties.Settings.Default["X_Backlash"];
+            GlobalProperties.Y_Backlash = (int)Properties.Settings.Default["Y_Backlash"];
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -91,7 +85,17 @@ namespace CNC_Drill_Controller1
 
             #endregion
 
+
+            #region UI Initialization
+
             AxisOffsetComboBox.SelectedIndex = 0;
+            AxisOffsetCount = 1;
+            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("D");
+            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("D");
+            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("D");
+            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("D");
+
+            #endregion
 
             #region USB interface initialization
 
@@ -152,6 +156,13 @@ namespace CNC_Drill_Controller1
         private void OnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
         {
             saveLogToolStripMenuItem_Click(sender, null);
+
+            Properties.Settings.Default["Logfile_Filename"] = GlobalProperties.Logfile_Filename;
+            Properties.Settings.Default["X_Scale"] = GlobalProperties.X_Scale;
+            Properties.Settings.Default["Y_Scale"] = GlobalProperties.Y_Scale;
+            Properties.Settings.Default["X_Backlash"] = GlobalProperties.X_Backlash;
+            Properties.Settings.Default["Y_Backlash"] = GlobalProperties.Y_Backlash;
+            Properties.Settings.Default.Save();
         }
 
         #endregion
@@ -192,11 +203,11 @@ namespace CNC_Drill_Controller1
             // (loc - delta) / scale = pos
             // loc - delta = (pos * scale)
             // loc - (pos * scale) = delta
-            X_Delta = (int)(X_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * X_Scale));
+            X_Delta = (int)(X_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * GlobalProperties.X_Scale));
         }
         private void SetYButton_Click(object sender, EventArgs e)
         {
-            Y_Delta = (int)(Y_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * Y_Scale));
+            Y_Delta = (int)(Y_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * GlobalProperties.Y_Scale));
         }
 
         private void SetAllButton_Click(object sender, EventArgs e)
@@ -207,12 +218,12 @@ namespace CNC_Drill_Controller1
 
         private void zeroXbutton_Click(object sender, EventArgs e)
         {
-            XCurrentPosTextBox.Text = "0.0000";
+            XCurrentPosTextBox.Text = "0.000";
             setXButton_Click(this, e);
         }
         private void zeroYbutton_Click(object sender, EventArgs e)
         {
-            YCurrentPosTextBox.Text = "0.0000";
+            YCurrentPosTextBox.Text = "0.000";
             SetYButton_Click(this, e);
         }
         private void zeroAllbutton_Click(object sender, EventArgs e)
@@ -265,7 +276,8 @@ namespace CNC_Drill_Controller1
 
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var logfile = File.AppendText("CNC_Drill_CTRL.log");
+
+            var logfile = (File.Exists(GlobalProperties.Logfile_Filename)) ? File.AppendText(GlobalProperties.Logfile_Filename) : File.CreateText(GlobalProperties.Logfile_Filename);
             logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F") + "]");
             logfile.Write(logger1.Text);
             logfile.WriteLine("");
@@ -315,7 +327,7 @@ namespace CNC_Drill_Controller1
         {
             var x = (byte)(X & 0x03);
             var y = (byte)(Y & 0x03);
-            return (byte)((stepBytes[x] & 0x0F) | (stepBytes[y] & 0xF0));
+            return (byte)((GlobalProperties.stepBytes[x] & 0x0F) | (GlobalProperties.stepBytes[y] & 0xF0));
         }
 
         private void Serialize(byte Steps, byte Ctrl)
@@ -519,8 +531,8 @@ namespace CNC_Drill_Controller1
             var current_Y = (Y_Location - Y_Delta);
             XStatusLabel.Text = current_X.ToString("D5");
             YStatusLabel.Text = current_Y.ToString("D5");
-            Xlabel.Text = "X: " + ((float)current_X/ X_Scale).ToString("F3");
-            Ylabel.Text = "Y: " + ((float)current_Y/ Y_Scale).ToString("F3");
+            Xlabel.Text = "X: " + ((float)current_X / GlobalProperties.X_Scale).ToString("F3");
+            Ylabel.Text = "Y: " + ((float)current_Y / GlobalProperties.Y_Scale).ToString("F3");
             var snapLocation = GetViewCursorLocation();
             cursorCrossHair.UpdatePosition(snapLocation);
             ViewXLabel.Text = snapLocation.X.ToString("F3");
@@ -528,7 +540,7 @@ namespace CNC_Drill_Controller1
 
             ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel * 100) + "%";
 
-            drillCrossHair.UpdatePosition((float)current_X / X_Scale, (float)current_Y / Y_Scale);
+            drillCrossHair.UpdatePosition((float)current_X / GlobalProperties.X_Scale, (float)current_Y / GlobalProperties.Y_Scale);
 
             OutputLabel.Refresh();
             Xlabel.Refresh();
@@ -569,14 +581,14 @@ namespace CNC_Drill_Controller1
             {
                 if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
                 {
-                    DeltaX += X_Backlash * XStepDirection;
-                    X_Delta += X_Backlash * XStepDirection;
+                    DeltaX += GlobalProperties.X_Backlash * XStepDirection;
+                    X_Delta += GlobalProperties.X_Backlash * XStepDirection;
                     X_Last_Direction = XStepDirection;
                 }
                 if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
                 {
-                    DeltaY += Y_Backlash * YStepDirection;
-                    Y_Delta += Y_Backlash * YStepDirection;
+                    DeltaY += GlobalProperties.Y_Backlash * YStepDirection;
+                    Y_Delta += GlobalProperties.Y_Backlash * YStepDirection;
                     Y_Last_Direction = YStepDirection;
                 }
             }
@@ -593,7 +605,7 @@ namespace CNC_Drill_Controller1
 
             //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
             //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
-            var numCycle = (numMoves + max_steps_per_cylce - 1) / max_steps_per_cylce;
+            var numCycle = (numMoves + GlobalProperties.max_steps_per_cylce - 1) / GlobalProperties.max_steps_per_cylce;
             if (numCycle > 1)
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -602,7 +614,7 @@ namespace CNC_Drill_Controller1
 
             for (var i = 0; i < numCycle; i++)
             {
-                var num_moves_for_this_cycle = (numMoves > max_steps_per_cylce) ? max_steps_per_cylce : numMoves;
+                var num_moves_for_this_cycle = (numMoves > GlobalProperties.max_steps_per_cylce) ? GlobalProperties.max_steps_per_cylce : numMoves;
                 for (var j = 0; j < num_moves_for_this_cycle; j++)
                 {
                     if (Math.Abs(DeltaX) != 0)
@@ -632,8 +644,8 @@ namespace CNC_Drill_Controller1
 
         private PointF CurrentLocation()
         {
-            var current_X = ((float)X_Location - X_Delta) / X_Scale;
-            var current_Y = ((float)Y_Location - Y_Delta) / Y_Scale;
+            var current_X = ((float)X_Location - X_Delta) / GlobalProperties.X_Scale;
+            var current_Y = ((float)Y_Location - Y_Delta) / GlobalProperties.Y_Scale;
             return new PointF(current_X, current_Y);
         }
 
@@ -645,7 +657,7 @@ namespace CNC_Drill_Controller1
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
-                moveBy((int)(deltaX * X_Scale), (int)(deltaY * Y_Scale));
+                moveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
             }
             else logger1.AddLine("Limit switch warning must be cleared before moving.");
         }
@@ -965,11 +977,12 @@ namespace CNC_Drill_Controller1
                 seekingLimits = true;
                 Enabled = false;
                 var failed = false;
+
                 var cur_pos_X = X_Location - X_Delta;
                 var cur_pos_Y = Y_Location - Y_Delta;
 
-                var delta_X = (cur_pos_X > X_Scale) ? cur_pos_X - X_Scale : 0;
-                var delta_Y = (cur_pos_Y > Y_Scale) ? cur_pos_Y - Y_Scale : 0;
+                var delta_X = (cur_pos_X > GlobalProperties.X_Scale) ? cur_pos_X - GlobalProperties.X_Scale : 0;
+                var delta_Y = (cur_pos_Y > GlobalProperties.Y_Scale) ? cur_pos_Y - GlobalProperties.Y_Scale : 0;
 
                 moveBy(-delta_X, -delta_Y);
                 UIupdateTimer_Tick(sender, e);
@@ -1017,10 +1030,12 @@ namespace CNC_Drill_Controller1
 
                 if (!failed)
                 {
+                    var loc = CurrentLocation();
+                    logger1.AddLine("Origin found at X=" + loc.X.ToString("F3") + " Y="+loc.Y.ToString("F3"));
                     zeroAllbutton_Click(sender, e);
                     logger1.AddLine("Scripted Run Completed.");
                 }
-                else logger1.AddLine("Origin not found (out of reach)");
+                else logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
             }
             else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed.");
             Enabled = true;
@@ -1063,16 +1078,16 @@ namespace CNC_Drill_Controller1
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
         {
-            X_Scale = safeTextToInt(XScaleTextBox.Text);
-            X_Backlash = safeTextToInt(XBacklastTextbox.Text);
-            logger1.AddLine("Set X Axis Scale to: " + X_Scale + " steps/inch, Backlash to: "+ X_Backlash + "steps.");
+            GlobalProperties.X_Scale = safeTextToInt(XScaleTextBox.Text);
+            GlobalProperties.X_Backlash = safeTextToInt(XBacklastTextbox.Text);
+            logger1.AddLine("Set X Axis Scale to: " + GlobalProperties.X_Scale + " steps/inch, Backlash to: " + GlobalProperties.X_Backlash + "steps.");
         }
 
         private void YSetTransformButton_Click(object sender, EventArgs e)
         {
-            Y_Scale = safeTextToInt(YScaleTextBox.Text);
-            Y_Backlash = safeTextToInt(YBacklastTextbox.Text);
-            logger1.AddLine("Set Y Axis Scale to: " + Y_Scale + " steps/inch, Backlash to: " + Y_Backlash + "steps.");
+            GlobalProperties.Y_Scale = safeTextToInt(YScaleTextBox.Text);
+            GlobalProperties.Y_Backlash = safeTextToInt(YBacklastTextbox.Text);
+            logger1.AddLine("Set Y Axis Scale to: " + GlobalProperties.Y_Scale + " steps/inch, Backlash to: " + GlobalProperties.Y_Backlash + "steps.");
         }
 
         //todo offset nodes closer to margins / 6x6 table on load

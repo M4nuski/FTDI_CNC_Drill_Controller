@@ -17,6 +17,7 @@ namespace CNC_Drill_Controller1
             public DrawingType Type;
             public bool Inverted;
         }
+
         public DrawingConfigStruct DrawingConfig; // output structure
         
         public DrawingTypeDialog()

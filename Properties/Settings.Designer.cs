@@ -22,5 +22,65 @@ namespace CNC_Drill_Controller1.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("961")]
+        public int X_Scale {
+            get {
+                return ((int)(this["X_Scale"]));
+            }
+            set {
+                this["X_Scale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("961")]
+        public int Y_Scale {
+            get {
+                return ((int)(this["Y_Scale"]));
+            }
+            set {
+                this["Y_Scale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int X_Backlash {
+            get {
+                return ((int)(this["X_Backlash"]));
+            }
+            set {
+                this["X_Backlash"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int Y_Backlash {
+            get {
+                return ((int)(this["Y_Backlash"]));
+            }
+            set {
+                this["Y_Backlash"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CNC_Drill_CTRL.log")]
+        public string Logfile_Filename {
+            get {
+                return ((string)(this["Logfile_Filename"]));
+            }
+            set {
+                this["Logfile_Filename"] = value;
+            }
+        }
     }
 }

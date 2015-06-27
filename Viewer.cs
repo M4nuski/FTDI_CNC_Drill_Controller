@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -18,7 +17,6 @@ namespace CNC_Drill_Controller1
         public SelectionDelegate OnSelect;
         public PointF MousePositionF;
         public Point MousePosition;
-        //public Color BackColor; //superseeded by Rectangle element
         public List<IViewerElements> Elements;
 
         private Control _outputControl;
