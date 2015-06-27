@@ -1,6 +1,6 @@
 ﻿namespace CNC_Drill_Controller1
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.USBdevicesComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.logger1 = new M4nuskomponents.Logger();
@@ -224,9 +224,10 @@
             // 
             // toolStripProgressBar1
             // 
-            this.toolStripProgressBar1.Maximum = 4096;
+            this.toolStripProgressBar1.MarqueeAnimationSpeed = 10;
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(75, 19);
+            this.toolStripProgressBar1.Step = 1;
             // 
             // XMinStatusLabel
             // 
@@ -891,7 +892,7 @@
             this.IgnoreBacklashBox.Text = "Ignore Backlash";
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -948,7 +949,7 @@
             this.Controls.Add(this.bevel1);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
             this.Load += new System.EventHandler(this.Form1_Load);
