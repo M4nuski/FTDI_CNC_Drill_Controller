@@ -163,6 +163,10 @@ namespace CNC_Drill_Controller1
         {
             Form1_Load(this, e);
         }
+        private void IgnoreBacklashBox_CheckedChanged(object sender, EventArgs e)
+        {
+            USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
+        }
 
         private void setXButton_Click(object sender, EventArgs e)
         {

@@ -891,6 +891,7 @@
             this.IgnoreBacklashBox.TabIndex = 62;
             this.IgnoreBacklashBox.Text = "Ignore Backlash";
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
+            this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
             // MainForm
             // 
