@@ -105,6 +105,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
+            this.XSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.YSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -149,7 +151,7 @@
             this.logger1.Name = "logger1";
             this.logger1.ReadOnly = true;
             this.logger1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.logger1.Size = new System.Drawing.Size(1006, 110);
+            this.logger1.Size = new System.Drawing.Size(1006, 102);
             this.logger1.TabIndex = 2;
             this.logger1.TimeStamp = true;
             this.logger1.TimeStampFormat = "HH-mm-ss";
@@ -212,6 +214,8 @@
             this.YMaxStatusLabel,
             this.TopStatusLabel,
             this.BottomStatusLabel,
+            this.XSyncStatusLabel,
+            this.YSyncStatusLabel,
             this.XStatusLabel,
             this.YStatusLabel,
             this.toolStripDropDownButton1});
@@ -235,7 +239,7 @@
             this.XMinStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.XMinStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.XMinStatusLabel.Name = "XMinStatusLabel";
-            this.XMinStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.XMinStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.XMinStatusLabel.Text = "X - Min";
             // 
             // XMaxStatusLabel
@@ -244,7 +248,7 @@
             this.XMaxStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.XMaxStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.XMaxStatusLabel.Name = "XMaxStatusLabel";
-            this.XMaxStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.XMaxStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.XMaxStatusLabel.Text = "X - Max";
             // 
             // YMinStatusLabel
@@ -253,7 +257,7 @@
             this.YMinStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.YMinStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.YMinStatusLabel.Name = "YMinStatusLabel";
-            this.YMinStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.YMinStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.YMinStatusLabel.Text = "Y - Min";
             // 
             // YMaxStatusLabel
@@ -262,7 +266,7 @@
             this.YMaxStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.YMaxStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.YMaxStatusLabel.Name = "YMaxStatusLabel";
-            this.YMaxStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.YMaxStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.YMaxStatusLabel.Text = "Y - Max";
             // 
             // TopStatusLabel
@@ -271,7 +275,7 @@
             this.TopStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.TopStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.TopStatusLabel.Name = "TopStatusLabel";
-            this.TopStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.TopStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.TopStatusLabel.Text = "Top";
             // 
             // BottomStatusLabel
@@ -280,7 +284,7 @@
             this.BottomStatusLabel.BackColor = System.Drawing.Color.Lime;
             this.BottomStatusLabel.Margin = new System.Windows.Forms.Padding(2, 3, 2, 2);
             this.BottomStatusLabel.Name = "BottomStatusLabel";
-            this.BottomStatusLabel.Size = new System.Drawing.Size(100, 20);
+            this.BottomStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.BottomStatusLabel.Text = "Bottom";
             // 
             // XStatusLabel
@@ -312,14 +316,14 @@
             // saveLogToolStripMenuItem
             // 
             this.saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
-            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveLogToolStripMenuItem.Text = "Save Log";
             this.saveLogToolStripMenuItem.Click += new System.EventHandler(this.saveLogToolStripMenuItem_Click);
             // 
             // clearLogToolStripMenuItem
             // 
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
             // 
@@ -893,6 +897,22 @@
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
+            // XSyncStatusLabel
+            // 
+            this.XSyncStatusLabel.AutoSize = false;
+            this.XSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.XSyncStatusLabel.Name = "XSyncStatusLabel";
+            this.XSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
+            this.XSyncStatusLabel.Text = "X - Sync";
+            // 
+            // YSyncStatusLabel
+            // 
+            this.YSyncStatusLabel.AutoSize = false;
+            this.YSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.YSyncStatusLabel.Name = "YSyncStatusLabel";
+            this.YSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
+            this.YSyncStatusLabel.Text = "Y - Sync";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1040,6 +1060,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
+        private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
     }
 }
 

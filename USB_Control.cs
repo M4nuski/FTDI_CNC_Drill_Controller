@@ -8,8 +8,8 @@ namespace CNC_Drill_Controller1
     class USB_Control
     {
         private FTDI USB_Interface = new FTDI();
-        private byte[] OutputBuffer = new byte[512];
-        private byte[] InputBuffer = new byte[512];
+        private byte[] OutputBuffer = new byte[64];
+        private byte[] InputBuffer = new byte[64];
 
         public bool IsOpen { get { return USB_Interface.IsOpen; } }
         public DateTime LastUpdate = DateTime.Now;
@@ -18,6 +18,7 @@ namespace CNC_Drill_Controller1
         {
             public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
             public bool TopSwitch, BottomSwitch;
+            public bool SyncXswitch, SyncYswitch;
         }
         public InputSwitchStruct SwitchesInput;
 
@@ -206,7 +207,7 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 3, getBit(Ctrl, i));
             }
 
-            //strobe b4
+            //strobe b4 up
             OutputBuffer[18] = 0x10 + 0x20;
             OutputBuffer[19] = 0x00 + 0x20;
         }
@@ -231,6 +232,10 @@ namespace CNC_Drill_Controller1
 
             SwitchesInput.TopSwitch = !getBit(InputBuffer[9], 1);
             SwitchesInput.BottomSwitch = !getBit(InputBuffer[7], 1);
+
+            SwitchesInput.SyncXswitch = !getBit(InputBuffer[3], 1);
+            SwitchesInput.SyncYswitch = !getBit(InputBuffer[5], 1);
+
             return SwitchesInput;
         }
 

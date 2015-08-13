@@ -23,8 +23,8 @@ Inbuffer:
 
 4 Drill top switch (0 active | bottom, 1 Top position reached)
 5 Drill bottom switch (0 active | top, 1 Bottom position reached)
-6 N/C
-7 N/C //Pause?
+6 X Sync Switch
+7 Y Sync Switch
 
 
 StepBuffer:
@@ -95,7 +95,8 @@ Default State :
 5 Out Latch Input to USB	Up
 6 N/C
 7 N/C
-all down, set byte to 0 at the end of transfert
+
+all down except b5, set byte to 0 at the end of transfert
 
 Transfert Sequence:
 Latch input to input-shift-register

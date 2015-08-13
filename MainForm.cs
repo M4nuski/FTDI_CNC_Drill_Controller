@@ -10,7 +10,7 @@ namespace CNC_Drill_Controller1
     public partial class MainForm : Form
     {
         #region USB Interface Properties
-
+        //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private USB_Control USB = new USB_Control();
         private int AxisOffsetCount;
 
@@ -49,14 +49,13 @@ namespace CNC_Drill_Controller1
             GlobalProperties.Y_Scale = (int)Properties.Settings.Default["Y_Scale"];
             GlobalProperties.X_Backlash = (int)Properties.Settings.Default["X_Backlash"];
             GlobalProperties.Y_Backlash = (int)Properties.Settings.Default["Y_Backlash"];
+            FormClosing += OnFormClosing;
+            USB.OnProgress += OnProgress;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             ExtLog.Logger = logger1;
-
-            FormClosing += OnFormClosing;
-            USB.OnProgress += OnProgress;
 
             #region View initialization
 
@@ -96,6 +95,11 @@ namespace CNC_Drill_Controller1
                 USBdevicesComboBox.SelectedIndex = 0;
             }
             else USBdevicesComboBox.Items.Add("[None]");
+
+            USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
+            USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
+            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;
+            USB.SwitchesOutput.Cycle_Bottom = checkBoxB.Checked;
 
             #endregion
         }
@@ -153,6 +157,10 @@ namespace CNC_Drill_Controller1
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
+            USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
+            USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
+            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;
+            USB.SwitchesOutput.Cycle_Bottom = checkBoxB.Checked;
             if (!CheckBoxInhibit) USB.Transfer();
         }
         private void Sendbutton_Click(object sender, EventArgs e)
@@ -343,6 +351,10 @@ namespace CNC_Drill_Controller1
                     BottomStatusLabel.BackColor = SystemColors.Control;
                 }
                 else BottomStatusLabel.BackColor = Color.Lime;
+
+                XSyncStatusLabel.BackColor = !USB.SwitchesInput.SyncXswitch ? Color.Lime : SystemColors.Control;
+                YSyncStatusLabel.BackColor = !USB.SwitchesInput.SyncYswitch ? Color.Lime : SystemColors.Control;
+
                 CheckBoxInhibit = false;
             }
             #endregion
@@ -676,7 +688,7 @@ namespace CNC_Drill_Controller1
                         {
                             Nodes[i].status = DrillNode.DrillNodeStatus.Next;
                             UpdateNodeColors();
-                            logger1.AddLine("Moving to [" + i + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
+                            logger1.AddLine("Moving to [" + (i+1) + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
                             UIupdateTimer_Tick(sender, e);
 
                             Enabled = false;
@@ -715,7 +727,7 @@ namespace CNC_Drill_Controller1
                         }
                         else
                         {
-                            logger1.AddLine("Node [" + i + "/" + listBox1.Items.Count + "] already drilled.");
+                            logger1.AddLine("Node [" + (i+1) + "/" + listBox1.Items.Count + "] already drilled.");
                         }
                     }
                 }
@@ -763,7 +775,7 @@ namespace CNC_Drill_Controller1
                     UIupdateTimer_Tick(sender, e);
                     failed = maxTries <= 0;
                 }
-
+                Refresh();
                 maxTries = 48;
                 while (!USB.SwitchesInput.MinYswitch && USB.IsOpen && (maxTries > 0) && !failed)
                 {
@@ -800,6 +812,8 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
+
         //todo offset nodes closer to margins / 6x6 table on load
+        //todo OnIdle loop for scripts / moveby
     }
 }
