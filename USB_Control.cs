@@ -31,17 +31,20 @@ namespace CNC_Drill_Controller1
 
         public int X_Abs_Location, Y_Abs_Location;
 
-        public int X_Delta, Y_Delta;
+        public int X_Delta, Y_Delta; //todo save to application context
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
 
         private int X_Last_Direction, Y_Last_Direction;
         public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
 
+        public int X_Sync_Modulus, Y_Sync_Modulus;
+        public int Sync_Divisor = 48;
+
         public delegate void ProgressEvent(int Progress, bool Done);
         public ProgressEvent OnProgress;
 
-        private void UpdateProgress(int Progress, bool Done)
+        private void UpdateProgress(int Progress, bool Done) //todo change to workerthread
         {
             if (OnProgress != null) OnProgress(Progress, Done);
         }
@@ -143,6 +146,8 @@ namespace CNC_Drill_Controller1
                 {
                     LastUpdate = DateTime.Now;
                     SwitchesInput = DecodeSwitches();
+                    //todo check sync and adjust if failed
+                    //while checking sync CALL UPGRADE PROGRESS
                 }
             }
             return SwitchesInput;
@@ -212,12 +217,12 @@ namespace CNC_Drill_Controller1
             OutputBuffer[19] = 0x00 + 0x20;
         }
 
-        private bool getBit(byte data, int bit)
+        private static bool getBit(byte data, int bit)
         {
             return ((data & (byte)Math.Pow(2, bit)) > 0);
         }
 
-        private byte setBit(byte input, byte bitToSet, bool set)
+        private static byte setBit(byte input, byte bitToSet, bool set)
         {
             return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
         }
@@ -250,39 +255,25 @@ namespace CNC_Drill_Controller1
         #region Internal USB control methods
         public void MoveBy(int byX, int byY)
         {
-            //process directions
-            var XStepDirection = 0;
-            if (byX > 0)
-            {
-                XStepDirection = 1;
-            }
-            else if (byX < 0)
-            {
-                XStepDirection = -1;
-            }
+            var abyX = Math.Abs(byX);
+            var abyY = Math.Abs(byY);
 
-            var YStepDirection = 0;
-            if (byY > 0)
-            {
-                YStepDirection = 1;
-            }
-            else if (byY < 0)
-            {
-                YStepDirection = -1;
-            }
+            //process directions
+            var XStepDirection = (byX == 0) ? 0 : byX / abyX;
+            var YStepDirection = (byY == 0) ? 0 : byY / abyY;
 
             //process backlash
             if (!Inhibit_Backlash_Compensation)
             {
                 if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
                 {
-                    byX += GlobalProperties.X_Backlash * XStepDirection;
+                    abyX += GlobalProperties.X_Backlash;
                     X_Delta += GlobalProperties.X_Backlash * XStepDirection;
                     X_Last_Direction = XStepDirection;
                 }
                 if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
                 {
-                    byY += GlobalProperties.Y_Backlash * YStepDirection;
+                    abyY += GlobalProperties.Y_Backlash;
                     Y_Delta += GlobalProperties.Y_Backlash * YStepDirection;
                     Y_Last_Direction = YStepDirection;
                 }
@@ -293,46 +284,56 @@ namespace CNC_Drill_Controller1
                 Y_Last_Direction = YStepDirection;
             }
 
-            //todo stagger steps to smooth movement.
 
             //process moves
-            var numMoves = (Math.Abs(byX) >= Math.Abs(byY)) ? Math.Abs(byX) : Math.Abs(byY);
+            var numMoves = (abyX >= abyY) ? abyX : abyY;
 
-            //from http://stackoverflow.com/questions/17944/how-to-round-up-the-result-of-integer-division
-            //int pageCount = (records + recordsPerPage - 1) / recordsPerPage;
-            var numCycle = (numMoves + GlobalProperties.max_steps_per_cylce - 1) / GlobalProperties.max_steps_per_cylce;
-            if (numCycle > 1)
-            {
-                UpdateProgress(0, false);
-            }
+            var stridex = 1.0f; //default maximum stride
+            var stridey = 1.0f;
 
-            for (var i = 0; i < numCycle; i++)
+            if ((abyX != 0) || (abyY != 0)) //adjust stride
             {
-                var num_moves_for_this_cycle = (numMoves > GlobalProperties.max_steps_per_cylce) ? GlobalProperties.max_steps_per_cylce : numMoves;
-                for (var j = 0; j < num_moves_for_this_cycle; j++)
+                if (abyX > abyY) 
                 {
-                    if (Math.Abs(byX) != 0)
-                    {
-                        X_Abs_Location += XStepDirection;
-                        byX -= XStepDirection;
-                    }
-                    if (Math.Abs(byY) != 0)
-                    {
-                        Y_Abs_Location += YStepDirection;
-                        byY -= YStepDirection;
-                    }
-                    Transfer();
+                    stridey = (float)abyY / abyY;
                 }
-
-                UpdateProgress(100 * i / numCycle, false);
-                numMoves -= num_moves_for_this_cycle;
-
-                if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch || SwitchesInput.MinYswitch)
+                else if (abyY > abyX)
                 {
-                    if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
-                    i = numCycle; //if limit reached exit loop
+                    stridex = (float)abyX / abyY;
                 }
             }
+
+            var fractx = 0.0f;
+            var fracty = 0.0f;
+
+            for (var i = 0; i < numMoves; i++)
+            {
+                fractx += stridex;
+                fracty += stridey;
+
+                if (fractx >= 1.0f)
+                {
+                    X_Abs_Location += XStepDirection;
+                    fractx -= 1.0f;
+                }
+
+                if (fracty >= 1.0f)
+                {
+                    Y_Abs_Location += YStepDirection;
+                    fracty -= 1.0f;
+                }
+
+                Transfer();
+            }
+
+
+            //if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch ||
+            //    SwitchesInput.MinYswitch)
+            //{
+            //    if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
+
+            //} //todo move to sync switch test and report progress
+
             UpdateProgress(100, true);
         }
 

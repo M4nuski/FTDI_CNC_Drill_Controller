@@ -352,8 +352,8 @@ namespace CNC_Drill_Controller1
                 }
                 else BottomStatusLabel.BackColor = Color.Lime;
 
-                XSyncStatusLabel.BackColor = !USB.SwitchesInput.SyncXswitch ? Color.Lime : SystemColors.Control;
-                YSyncStatusLabel.BackColor = !USB.SwitchesInput.SyncYswitch ? Color.Lime : SystemColors.Control;
+                XSyncStatusLabel.BackColor = USB.SwitchesInput.SyncXswitch ? Color.Lime : SystemColors.Control;
+                YSyncStatusLabel.BackColor = USB.SwitchesInput.SyncYswitch ? Color.Lime : SystemColors.Control;
 
                 CheckBoxInhibit = false;
             }
