@@ -125,7 +125,14 @@ namespace CNC_Drill_Controller1
 
         private void OnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
         {
-            saveLogToolStripMenuItem_Click(sender, null);
+            try
+            {
+                saveLogToolStripMenuItem_Click(sender, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error while saving logfile", MessageBoxButtons.OK);
+            }
 
             Properties.Settings.Default["Logfile_Filename"] = GlobalProperties.Logfile_Filename;
             Properties.Settings.Default["X_Scale"] = GlobalProperties.X_Scale;

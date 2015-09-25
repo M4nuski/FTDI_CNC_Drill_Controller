@@ -31,15 +31,16 @@ namespace CNC_Drill_Controller1
 
         public int X_Abs_Location, Y_Abs_Location;
 
-        public int X_Delta, Y_Delta; //todo save to application context
+        public int X_Delta, Y_Delta; 
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
 
-        private int X_Last_Direction, Y_Last_Direction;
+        private int X_Last_Direction, Y_Last_Direction;//todo save to application context
         public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
 
         public int X_Sync_Modulus, Y_Sync_Modulus;
         public int Sync_Divisor = 48;
+        private bool X_Sync_Found, Y_Sync_Found;
 
         public delegate void ProgressEvent(int Progress, bool Done);
         public ProgressEvent OnProgress;
@@ -123,34 +124,88 @@ namespace CNC_Drill_Controller1
                 var stepData = CreateStepByte();
                 var ctrlData = CreateControlByte();
 
-                //serialize
                 Serialize(stepData, ctrlData);
-                //send/read
 
-                uint res = 0;
-                var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
-                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+                if (SendToUSB())
                 {
-                    USB_Interface.Close();
-                    ExtLog.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/20)");
-                }
-                //de-serialize
+                    SwitchesInput = DeSerialize();
+                    if (X_Sync_Found && Y_Sync_Found)
+                    {
+                        var recheck = false;
+                        if (X_Abs_Location % Sync_Divisor == X_Sync_Modulus)
+                        {
+                            SendToUSB();
+                            recheck = true;
+                            SwitchesInput = DeSerialize();
+                            if (!SwitchesInput.SyncXswitch) ResyncX();
 
+                        }
+                        if (Y_Abs_Location % Sync_Divisor == Y_Sync_Modulus)
+                        {
+                            if (!recheck) SendToUSB();
+                            SwitchesInput = DeSerialize();
+                            if (!SwitchesInput.SyncYswitch) ResyncY();
+                        }
+                    }
+                    else
+                    {
+                        //re-pool data and set properties if sync   
+                        SendToUSB();
+                        SwitchesInput = DeSerialize();
+                        if (!X_Sync_Found && SwitchesInput.SyncXswitch)
+                        {
+                            X_Sync_Modulus = X_Abs_Location % Sync_Divisor;
+                            X_Sync_Found = true;
+                            ExtLog.AddLine("X_Sync Found");
+                        }
+                        if (!Y_Sync_Found && SwitchesInput.SyncYswitch)
+                        {
+                            Y_Sync_Modulus = Y_Abs_Location % Sync_Divisor;
+                            Y_Sync_Found = true;
+                            ExtLog.AddLine("Y_Sync Found");
+                        }
+                    }                        
+                    LastUpdate = DateTime.Now;
+                }
+            }
+            return SwitchesInput;
+        }
+
+        private void ResyncX()
+        {
+            X_Sync_Found = false;
+            //todo keep running same direction until switch trigger
+            ExtLog.AddLine("X_Sync Lost");
+        }
+        private void ResyncY()
+        {
+            Y_Sync_Found = false;
+            ExtLog.AddLine("Y_Sync Lost");
+        }
+
+
+        private bool SendToUSB()
+        {
+            var result = true;
+            uint res = 0;
+            var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
+            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+            {
+                USB_Interface.Close();
+                ExtLog.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/20)");
+                result = false;
+            }
+            else
+            {
                 ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
                 if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
                 {
                     USB_Interface.Close();
                     ExtLog.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
-                }
-                else
-                {
-                    LastUpdate = DateTime.Now;
-                    SwitchesInput = DecodeSwitches();
-                    //todo check sync and adjust if failed
-                    //while checking sync CALL UPGRADE PROGRESS
+                    result = false;
                 }
             }
-            return SwitchesInput;
+            return result;
         }
 
         private byte CreateStepByte()
@@ -227,7 +282,7 @@ namespace CNC_Drill_Controller1
             return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
         }
 
-        private InputSwitchStruct DecodeSwitches()
+        private InputSwitchStruct DeSerialize()
         {
             SwitchesInput.MaxXswitch = !getBit(InputBuffer[17], 1);
             SwitchesInput.MinXswitch = !getBit(InputBuffer[15], 1);
@@ -295,7 +350,7 @@ namespace CNC_Drill_Controller1
             {
                 if (abyX > abyY) 
                 {
-                    stridey = (float)abyY / abyY;
+                    stridey = (float)abyY / abyX;
                 }
                 else if (abyY > abyX)
                 {
@@ -311,28 +366,27 @@ namespace CNC_Drill_Controller1
                 fractx += stridex;
                 fracty += stridey;
 
-                if (fractx >= 1.0f)
+                if (fractx >= 0.5f)
                 {
                     X_Abs_Location += XStepDirection;
                     fractx -= 1.0f;
                 }
 
-                if (fracty >= 1.0f)
+                if (fracty >= 0.5f)
                 {
                     Y_Abs_Location += YStepDirection;
                     fracty -= 1.0f;
                 }
 
                 Transfer();
+                UpdateProgress(100 * i / numMoves, true);
+                if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch ||
+                    SwitchesInput.MinYswitch)
+                {
+                    if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
+                    numMoves = i; //exit loop
+                }
             }
-
-
-            //if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch ||
-            //    SwitchesInput.MinYswitch)
-            //{
-            //    if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
-
-            //} //todo move to sync switch test and report progress
 
             UpdateProgress(100, true);
         }
