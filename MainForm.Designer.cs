@@ -45,6 +45,8 @@
             this.YMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TopStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.BottomStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.XSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.YSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -52,7 +54,7 @@
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkBoxX = new System.Windows.Forms.CheckBox();
             this.checkBoxY = new System.Windows.Forms.CheckBox();
-            this.checkBoxT = new System.Windows.Forms.CheckBox();
+            this.checkBoxD = new System.Windows.Forms.CheckBox();
             this.checkBoxB = new System.Windows.Forms.CheckBox();
             this.forcePullButton = new System.Windows.Forms.Button();
             this.AxisOffsetComboBox = new System.Windows.Forms.ComboBox();
@@ -105,8 +107,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
-            this.XSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.YSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.IgnoreSyncCheckBox = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -287,6 +288,22 @@
             this.BottomStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.BottomStatusLabel.Text = "Bottom";
             // 
+            // XSyncStatusLabel
+            // 
+            this.XSyncStatusLabel.AutoSize = false;
+            this.XSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.XSyncStatusLabel.Name = "XSyncStatusLabel";
+            this.XSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
+            this.XSyncStatusLabel.Text = "X - Sync";
+            // 
+            // YSyncStatusLabel
+            // 
+            this.YSyncStatusLabel.AutoSize = false;
+            this.YSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.YSyncStatusLabel.Name = "YSyncStatusLabel";
+            this.YSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
+            this.YSyncStatusLabel.Text = "Y - Sync";
+            // 
             // XStatusLabel
             // 
             this.XStatusLabel.AutoSize = false;
@@ -316,14 +333,14 @@
             // saveLogToolStripMenuItem
             // 
             this.saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
-            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.saveLogToolStripMenuItem.Text = "Save Log";
             this.saveLogToolStripMenuItem.Click += new System.EventHandler(this.saveLogToolStripMenuItem_Click);
             // 
             // clearLogToolStripMenuItem
             // 
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
             // 
@@ -355,17 +372,17 @@
             this.checkBoxY.UseVisualStyleBackColor = true;
             this.checkBoxY.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
-            // checkBoxT
+            // checkBoxD
             // 
-            this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Location = new System.Drawing.Point(15, 106);
-            this.checkBoxT.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxT.Name = "checkBoxT";
-            this.checkBoxT.Size = new System.Drawing.Size(117, 17);
-            this.checkBoxT.TabIndex = 10;
-            this.checkBoxT.Text = "Drill Cycle from Top";
-            this.checkBoxT.UseVisualStyleBackColor = true;
-            this.checkBoxT.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            this.checkBoxD.AutoSize = true;
+            this.checkBoxD.Location = new System.Drawing.Point(15, 106);
+            this.checkBoxD.Margin = new System.Windows.Forms.Padding(2);
+            this.checkBoxD.Name = "checkBoxD";
+            this.checkBoxD.Size = new System.Drawing.Size(72, 17);
+            this.checkBoxD.TabIndex = 10;
+            this.checkBoxD.Text = "Drill Cycle";
+            this.checkBoxD.UseVisualStyleBackColor = true;
+            this.checkBoxD.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
             // checkBoxB
             // 
@@ -406,7 +423,7 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.AxisOffsetComboBox.Location = new System.Drawing.Point(12, 282);
+            this.AxisOffsetComboBox.Location = new System.Drawing.Point(11, 261);
             this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.AxisOffsetComboBox.MaxDropDownItems = 16;
             this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
@@ -889,7 +906,7 @@
             // IgnoreBacklashBox
             // 
             this.IgnoreBacklashBox.AutoSize = true;
-            this.IgnoreBacklashBox.Location = new System.Drawing.Point(21, 261);
+            this.IgnoreBacklashBox.Location = new System.Drawing.Point(16, 287);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(103, 17);
             this.IgnoreBacklashBox.TabIndex = 62;
@@ -897,27 +914,25 @@
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
-            // XSyncStatusLabel
+            // IgnoreSyncCheckBox
             // 
-            this.XSyncStatusLabel.AutoSize = false;
-            this.XSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.XSyncStatusLabel.Name = "XSyncStatusLabel";
-            this.XSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.XSyncStatusLabel.Text = "X - Sync";
-            // 
-            // YSyncStatusLabel
-            // 
-            this.YSyncStatusLabel.AutoSize = false;
-            this.YSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.YSyncStatusLabel.Name = "YSyncStatusLabel";
-            this.YSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.YSyncStatusLabel.Text = "Y - Sync";
+            this.IgnoreSyncCheckBox.AutoSize = true;
+            this.IgnoreSyncCheckBox.Checked = true;
+            this.IgnoreSyncCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IgnoreSyncCheckBox.Location = new System.Drawing.Point(16, 302);
+            this.IgnoreSyncCheckBox.Name = "IgnoreSyncCheckBox";
+            this.IgnoreSyncCheckBox.Size = new System.Drawing.Size(83, 17);
+            this.IgnoreSyncCheckBox.TabIndex = 63;
+            this.IgnoreSyncCheckBox.Text = "Ignore Sync";
+            this.IgnoreSyncCheckBox.UseVisualStyleBackColor = true;
+            this.IgnoreSyncCheckBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.IgnoreSyncCheckBox);
             this.Controls.Add(this.IgnoreBacklashBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -956,7 +971,7 @@
             this.Controls.Add(this.AxisOffsetComboBox);
             this.Controls.Add(this.forcePullButton);
             this.Controls.Add(this.checkBoxB);
-            this.Controls.Add(this.checkBoxT);
+            this.Controls.Add(this.checkBoxD);
             this.Controls.Add(this.checkBoxY);
             this.Controls.Add(this.checkBoxX);
             this.Controls.Add(this.statusStrip1);
@@ -1002,7 +1017,7 @@
         private System.Windows.Forms.ToolStripStatusLabel BottomStatusLabel;
         private System.Windows.Forms.CheckBox checkBoxX;
         private System.Windows.Forms.CheckBox checkBoxY;
-        private System.Windows.Forms.CheckBox checkBoxT;
+        private System.Windows.Forms.CheckBox checkBoxD;
         private System.Windows.Forms.CheckBox checkBoxB;
         private System.Windows.Forms.ToolStripStatusLabel XStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YStatusLabel;
@@ -1062,6 +1077,7 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
+        private System.Windows.Forms.CheckBox IgnoreSyncCheckBox;
     }
 }
 

@@ -104,8 +104,7 @@ namespace CNC_Drill_Controller1
 
             USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
             USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
-            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;
-            USB.SwitchesOutput.Cycle_Bottom = checkBoxB.Checked;
+            USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
 
             #endregion
         }
@@ -172,8 +171,8 @@ namespace CNC_Drill_Controller1
         {
             USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
             USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
-            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;//todo update with 1 switch for both cycles
-            USB.SwitchesOutput.Cycle_Bottom = checkBoxB.Checked;
+            USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
+
             if (!CheckBoxInhibit) USB.Transfer();
         }
         private void Sendbutton_Click(object sender, EventArgs e)
@@ -188,6 +187,11 @@ namespace CNC_Drill_Controller1
         {
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
         }
+        private void IgnoreSyncCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            USB.Inhibit_Sync = IgnoreSyncCheckBox.Checked;
+        }
+
 
         private void setXButton_Click(object sender, EventArgs e)
         {
@@ -346,9 +350,9 @@ namespace CNC_Drill_Controller1
                 //top drill limit switch
                 if (!USB.SwitchesInput.TopSwitch)
                 {
-                    if (checkBoxT.Checked)
+                    if (checkBoxD.Checked)
                     {
-                        checkBoxT.Checked = false;
+                        checkBoxD.Checked = false;
                     }
                     TopStatusLabel.BackColor = SystemColors.Control;
                 }
@@ -651,7 +655,7 @@ namespace CNC_Drill_Controller1
                 USB.MoveTo(Nodes[listBox1.SelectedIndex].location.X, Nodes[listBox1.SelectedIndex].location.Y);
 
                 logger1.AddLine("Drilling...");
-                checkBoxT.Checked = true;
+                checkBoxD.Checked = true;
                 UIupdateTimer_Tick(sender, e);
 
                 var maxTries = 20;
@@ -664,7 +668,7 @@ namespace CNC_Drill_Controller1
                     Thread.Sleep(50);
                 }
 
-                checkBoxT.Checked = false;
+                checkBoxD.Checked = false;
                 Refresh();
 
                 maxTries = 20;
@@ -708,7 +712,7 @@ namespace CNC_Drill_Controller1
                             USB.MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
 
                             logger1.AddLine("Drilling...");
-                            checkBoxT.Checked = true;
+                            checkBoxD.Checked = true;
                             UIupdateTimer_Tick(sender, e);
 
 
@@ -722,7 +726,7 @@ namespace CNC_Drill_Controller1
                                 Thread.Sleep(50);
                             }
 
-                            checkBoxT.Checked = false;
+                            checkBoxD.Checked = false;
                             Refresh();
 
                             maxTries = 20;
@@ -826,7 +830,8 @@ namespace CNC_Drill_Controller1
         #endregion
 
 
+
+
         //todo offset nodes closer to margins / 6x6 table on load
-        //todo OnIdle loop for scripts / moveby
     }
 }

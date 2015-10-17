@@ -26,8 +26,8 @@ namespace CNC_Drill_Controller1
         public struct OutputSwitchStruct
         {
             public bool X_Driver, Y_Driver;
-            public bool Cycle_Top, Cycle_Bottom;
-        }//todo remove cycle-bottom and merge with cycle-top
+            public bool Cycle_Drill;
+        }
         
         public OutputSwitchStruct SwitchesOutput;
 
@@ -38,8 +38,7 @@ namespace CNC_Drill_Controller1
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
 
         private int X_Last_Direction, Y_Last_Direction;//todo save to application context
-        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
-        //todo add sync inhibit
+        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning, Inhibit_Sync;
         public int X_Sync_Modulus, Y_Sync_Modulus;
         public int Sync_Divisor = 8;
         private bool X_Sync_Found, Y_Sync_Found;
@@ -131,48 +130,57 @@ namespace CNC_Drill_Controller1
                 if (SendToUSB())
                 {
                     SwitchesInput = DeSerialize();
-                    if (X_Sync_Found && Y_Sync_Found)
-                    {
-                        var recheck = false;
-                        if (X_Abs_Location % Sync_Divisor == X_Sync_Modulus)
-                        {
-                            Thread.Sleep(5);
-                            SendToUSB();
-                            recheck = true;
-                            SwitchesInput = DeSerialize();
-                            if (!SwitchesInput.SyncXswitch) ResyncX();
 
-                        }
-                        if (Y_Abs_Location % Sync_Divisor == Y_Sync_Modulus)
+
+
+
+                    if (!Inhibit_Sync)
+                    {
+                        if (X_Sync_Found && Y_Sync_Found)
                         {
-                            if (!recheck)
+                            var recheck = false;
+                            if (X_Abs_Location%Sync_Divisor == X_Sync_Modulus)
                             {
                                 Thread.Sleep(5);
                                 SendToUSB();
+                                recheck = true;
+                                SwitchesInput = DeSerialize();
+                                if (!SwitchesInput.SyncXswitch) ResyncX();
+
                             }
+                            if (Y_Abs_Location%Sync_Divisor == Y_Sync_Modulus)
+                            {
+                                if (!recheck)
+                                {
+                                    Thread.Sleep(5);
+                                    SendToUSB();
+                                }
+                                SwitchesInput = DeSerialize();
+                                if (!SwitchesInput.SyncYswitch) ResyncY();
+                            }
+                        }
+                        else
+                        {
+                            //re-pool data and set properties if sync  
+                            Thread.Sleep(5);
+                            SendToUSB();
                             SwitchesInput = DeSerialize();
-                            if (!SwitchesInput.SyncYswitch) ResyncY();
+                            if (!X_Sync_Found && SwitchesInput.SyncXswitch)
+                            {
+                                X_Sync_Modulus = X_Abs_Location%Sync_Divisor;
+                                X_Sync_Found = true;
+                                ExtLog.AddLine("X_Sync Found");
+                            }
+                            if (!Y_Sync_Found && SwitchesInput.SyncYswitch)
+                            {
+                                Y_Sync_Modulus = Y_Abs_Location%Sync_Divisor;
+                                Y_Sync_Found = true;
+                                ExtLog.AddLine("Y_Sync Found");
+                            }
                         }
-                    }
-                    else
-                    {
-                        //re-pool data and set properties if sync  
-                        Thread.Sleep(5);
-                        SendToUSB();
-                        SwitchesInput = DeSerialize();
-                        if (!X_Sync_Found && SwitchesInput.SyncXswitch)
-                        {
-                            X_Sync_Modulus = X_Abs_Location % Sync_Divisor;
-                            X_Sync_Found = true;
-                            ExtLog.AddLine("X_Sync Found");
-                        }
-                        if (!Y_Sync_Found && SwitchesInput.SyncYswitch)
-                        {
-                            Y_Sync_Modulus = Y_Abs_Location % Sync_Divisor;
-                            Y_Sync_Found = true;
-                            ExtLog.AddLine("Y_Sync Found");
-                        }
-                    }                        
+                    }//end sync
+
+
                     LastUpdate = DateTime.Now;
                 }
             }
@@ -269,13 +277,12 @@ namespace CNC_Drill_Controller1
         {
             //0 Activate X Axis Step Controller
             //1 Activate Y Axis Step Controller
-            //2 Activate Drill From Top
-            //3 Activate Drill From Bottom
+            //2 Activate Drill
+
             byte output = 0;
             if (SwitchesOutput.X_Driver) output = (byte)(output | 1);
             if (SwitchesOutput.Y_Driver) output = (byte)(output | 2);
-            if (SwitchesOutput.Cycle_Top) output = (byte)(output | 4);
-            if (SwitchesOutput.Cycle_Bottom) output = (byte)(output | 8);
+            if (SwitchesOutput.Cycle_Drill) output = (byte)(output | 4);
             return output;
         }
 

@@ -42,8 +42,8 @@ StepBuffer:
 CtrlBuffer:
 0 Activate X Axis Step Controller
 1 Activate Y Axis Step Controller
-2 Activate Drill From Top
-3 Activate Drill From Bottom
+2 Activate Drill //now all on same control line //From Top
+//3 Activate Drill From Bottom
 
 
 USB interface:
