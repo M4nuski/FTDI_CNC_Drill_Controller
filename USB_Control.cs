@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using FTD2XX_NET;
 
 namespace CNC_Drill_Controller1

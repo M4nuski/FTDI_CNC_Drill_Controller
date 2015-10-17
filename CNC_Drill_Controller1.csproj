@@ -27,7 +27,7 @@
     <PublisherName>Emmanuel Charette</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>14</ApplicationRevision>
+    <ApplicationRevision>15</ApplicationRevision>
     <ApplicationVersion>1.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -73,8 +73,10 @@
   <ItemGroup>
     <Reference Include="ClassLibrary40">
       <HintPath>..\..\M4nuskomponents\ClassLibrary40\bin\Release\ClassLibrary40.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="FTD2XX_NET">
+    <Reference Include="FTD2XX_NET, Version=1.0.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FTD2XX_NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
