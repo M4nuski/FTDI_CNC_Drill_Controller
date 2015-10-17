@@ -99,6 +99,7 @@ Default State :
 all down except b5, set byte to 0 at the end of transfert
 
 Transfert Sequence:
+Read-modify-write
 Latch input to input-shift-register
 
 B5 Down
@@ -130,3 +131,55 @@ B4 Down
 (also reads the last bit of input shift-register
 
 about 20 bytes to transfert.
+
+
+
+
+New sequence to use write - modify - read
+
+cycle clock 8 times and send data to fifos
+
+set B2 and B3 to Bit 7 of Step and Ctrl
+B0 up down
+//2
+set B2 and B3 to Bit 6 of Step and Ctrl
+B0 up down
+//4
+set B2 and B3 to Bit 5 of Step and Ctrl
+B0 up down
+//6
+set B2 and B3 to Bit 4 of Step and Ctrl
+B0 up down
+//8
+
+set B2 and B3 to Bit 3 of Step and Ctrl
+B0 up down
+//10
+set B2 and B3 to Bit 2 of Step and Ctrl
+B0 up down
+//12
+set B2 and B3 to Bit 1 of Step and Ctrl
+B0 up down
+//14
+set B2 and B3 to Bit 0 of Step and Ctrl
+B0 up down
+//16
+
+Latch output to 574 D-latches
+B4 Up
+B4 Down
+//18
+
+Delay for switches
+baud rate at 1200 for 15ms delay = 0.015 * 1200 = 18
+//36
+
+B5 Down
+B5 Up
+//38
+
+cycle clock 8 times
+//54
+
+cycle clock 2 times to read last byte from usb buffer
+//56

@@ -27,7 +27,8 @@ namespace CNC_Drill_Controller1
         {
             public bool X_Driver, Y_Driver;
             public bool Cycle_Top, Cycle_Bottom;
-        }
+        }//todo remove cycle-bottom and merge with cycle-top
+        
         public OutputSwitchStruct SwitchesOutput;
 
         public int X_Abs_Location, Y_Abs_Location;
@@ -38,7 +39,7 @@ namespace CNC_Drill_Controller1
 
         private int X_Last_Direction, Y_Last_Direction;//todo save to application context
         public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
-
+        //todo add sync inhibit
         public int X_Sync_Modulus, Y_Sync_Modulus;
         public int Sync_Divisor = 8;
         private bool X_Sync_Found, Y_Sync_Found;
@@ -98,7 +99,7 @@ namespace CNC_Drill_Controller1
                 return false;
             }
 
-            ExtLog.AddLine("Setting default bauld rate");
+            ExtLog.AddLine("Setting default bauld rate (1200)");
             ftStatus = USB_Interface.SetBaudRate(1200);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
@@ -237,20 +238,20 @@ namespace CNC_Drill_Controller1
         {
             var result = true;
             uint res = 0;
-            var ftStatus = USB_Interface.Write(OutputBuffer, 20, ref res);
-            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+            var ftStatus = USB_Interface.Write(OutputBuffer, 64, ref res);
+            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 64))
             {
                 USB_Interface.Close();
-                ExtLog.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/20)");
+                ExtLog.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/64)");
                 result = false;
             }
             else
             {
-                ftStatus = USB_Interface.Read(InputBuffer, 20, ref res);
-                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 20))
+                ftStatus = USB_Interface.Read(InputBuffer, 64, ref res);
+                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 64))
                 {
                     USB_Interface.Close();
-                    ExtLog.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/20)");
+                    ExtLog.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/64)");
                     result = false;
                 }
             }
@@ -285,29 +286,34 @@ namespace CNC_Drill_Controller1
             //50                40
             //  7766554433221100
             //  
+
+//          0 Out Clock					Down 0x01
+//          1 In Inbuffer				N/A  0x02
+//          2 Out StepBuffer			N/A  0x04
+//          3 Out CtrlBuffer			N/A  0x08
+
+//          4 Out Latch USB to Outputs	Down 0x10
+//          5 Out Latch Input to USB	Up   0x20
+
             //clear buffer
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 64; i++)
             {
-                OutputBuffer[i] = 0x20;
+                OutputBuffer[i] = 0x20; //b5 up by default
             }
 
-            //create clock
-            for (var i = 0; i < 18; i++)
+            //create clock to write 8 bits 0-15
+            for (var i = 0; i < 16; i++)
             {
-                OutputBuffer[i] = (byte)((i % 2) + 0x20);
+                OutputBuffer[i] = setBit(OutputBuffer[i], 1, (i % 2) == 0);
             }
 
-            //strobe b5 down with clock cycle to load data
-            OutputBuffer[0] = 0x00;
-            OutputBuffer[1] = 0x01;
-
+            //write data
             //msb first
             //bit2 steps
             //bit3 ctrl
-
             for (var i = 7; i >= 0; i--)
             {
-                var offset = 2 + ((7 - i) * 2);
+                var offset = ((7 - i) * 2);
 
                 OutputBuffer[offset] = setBit(OutputBuffer[offset], 2, getBit(Steps, i));
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 2, getBit(Steps, i));
@@ -316,9 +322,28 @@ namespace CNC_Drill_Controller1
                 OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 3, getBit(Ctrl, i));
             }
 
-            //strobe b4 up
-            OutputBuffer[18] = 0x10 + 0x20;
-            OutputBuffer[19] = 0x00 + 0x20;
+
+            //strobe b4 up 16-17
+            OutputBuffer[16] = 0x10 + 0x20;
+            OutputBuffer[17] = 0x00 + 0x20;
+
+            //delay of at least 18 for move and switches feedback 18-42
+
+            //strobe b5 down with a clock cycle to load data 43-45
+            OutputBuffer[43] = 0x00;
+            OutputBuffer[44] = 0x01;
+            OutputBuffer[45] = 0x00;
+
+            //create clock to read 8 bits 46-61
+            for (var i = 0; i < 16; i++)
+            {
+                OutputBuffer[46+i] = setBit(OutputBuffer[46+i], 1, (i % 2) == 0);
+            }//46 47 48 49
+             //50 51 52 53
+             //54 55 56 57
+             //58 59 60 61
+
+            //add to clocks to make sure the interface's buffer have been sent 62 - 63
         }
 
         private static bool getBit(byte data, int bit)
@@ -333,17 +358,17 @@ namespace CNC_Drill_Controller1
 
         private InputSwitchStruct DeSerialize()
         {
-            SwitchesInput.MaxXswitch = !getBit(InputBuffer[17], 1);
-            SwitchesInput.MinXswitch = !getBit(InputBuffer[15], 1);
+            SwitchesInput.MaxXswitch = !getBit(InputBuffer[61], 1);
+            SwitchesInput.MinXswitch = !getBit(InputBuffer[59], 1);
 
-            SwitchesInput.MaxYswitch = !getBit(InputBuffer[11], 1);
-            SwitchesInput.MinYswitch = !getBit(InputBuffer[13], 1);
+            SwitchesInput.MinYswitch = !getBit(InputBuffer[57], 1);
+            SwitchesInput.MaxYswitch = !getBit(InputBuffer[55], 1);
 
-            SwitchesInput.TopSwitch = !getBit(InputBuffer[9], 1);
-            SwitchesInput.BottomSwitch = !getBit(InputBuffer[7], 1);
-
-            SwitchesInput.SyncXswitch = !getBit(InputBuffer[3], 1);
-            SwitchesInput.SyncYswitch = !getBit(InputBuffer[5], 1);
+            SwitchesInput.TopSwitch = !getBit(InputBuffer[53], 1);
+            SwitchesInput.BottomSwitch = !getBit(InputBuffer[51], 1);
+            
+            SwitchesInput.SyncYswitch = !getBit(InputBuffer[49], 1);
+            SwitchesInput.SyncXswitch = !getBit(InputBuffer[47], 1);
 
             return SwitchesInput;
         }
