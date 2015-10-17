@@ -10,7 +10,7 @@ namespace CNC_Drill_Controller1
     {
         private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[64];
-        private byte[] InputBuffer = new byte[64];
+        public byte[] InputBuffer = new byte[64];
 
         public bool IsOpen { get { return USB_Interface.IsOpen; } }
         public DateTime LastUpdate = DateTime.Now;
@@ -28,12 +28,12 @@ namespace CNC_Drill_Controller1
             public bool X_Driver, Y_Driver;
             public bool Cycle_Drill;
         }
-        
+
         public OutputSwitchStruct SwitchesOutput;
 
         public int X_Abs_Location, Y_Abs_Location;
 
-        public int X_Delta, Y_Delta; 
+        public int X_Delta, Y_Delta;
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
 
@@ -98,8 +98,8 @@ namespace CNC_Drill_Controller1
                 return false;
             }
 
-            ExtLog.AddLine("Setting default bauld rate (1200)");
-            ftStatus = USB_Interface.SetBaudRate(1200);
+            ExtLog.AddLine("Setting default bauld rate (300)");
+            ftStatus = USB_Interface.SetBaudRate(300);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 ExtLog.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
@@ -139,7 +139,7 @@ namespace CNC_Drill_Controller1
                         if (X_Sync_Found && Y_Sync_Found)
                         {
                             var recheck = false;
-                            if (X_Abs_Location%Sync_Divisor == X_Sync_Modulus)
+                            if (X_Abs_Location % Sync_Divisor == X_Sync_Modulus)
                             {
                                 Thread.Sleep(5);
                                 SendToUSB();
@@ -148,7 +148,7 @@ namespace CNC_Drill_Controller1
                                 if (!SwitchesInput.SyncXswitch) ResyncX();
 
                             }
-                            if (Y_Abs_Location%Sync_Divisor == Y_Sync_Modulus)
+                            if (Y_Abs_Location % Sync_Divisor == Y_Sync_Modulus)
                             {
                                 if (!recheck)
                                 {
@@ -167,13 +167,13 @@ namespace CNC_Drill_Controller1
                             SwitchesInput = DeSerialize();
                             if (!X_Sync_Found && SwitchesInput.SyncXswitch)
                             {
-                                X_Sync_Modulus = X_Abs_Location%Sync_Divisor;
+                                X_Sync_Modulus = X_Abs_Location % Sync_Divisor;
                                 X_Sync_Found = true;
                                 ExtLog.AddLine("X_Sync Found");
                             }
                             if (!Y_Sync_Found && SwitchesInput.SyncYswitch)
                             {
-                                Y_Sync_Modulus = Y_Abs_Location%Sync_Divisor;
+                                Y_Sync_Modulus = Y_Abs_Location % Sync_Divisor;
                                 Y_Sync_Found = true;
                                 ExtLog.AddLine("Y_Sync Found");
                             }
@@ -196,7 +196,7 @@ namespace CNC_Drill_Controller1
 
             X_Abs_Location -= offset;
             var max_test = Sync_Divisor + 4;
-            while (!SwitchesInput.SyncXswitch && (max_test >=0))
+            while (!SwitchesInput.SyncXswitch && (max_test >= 0))
             {
                 Serialize(CreateStepByte(), CreateControlByte());
                 SendToUSB();
@@ -294,13 +294,13 @@ namespace CNC_Drill_Controller1
             //  7766554433221100
             //  
 
-//          0 Out Clock					Down 0x01
-//          1 In Inbuffer				N/A  0x02
-//          2 Out StepBuffer			N/A  0x04
-//          3 Out CtrlBuffer			N/A  0x08
+            //          0 Out Clock					Down 0x01
+            //          1 In Inbuffer				N/A  0x02
+            //          2 Out StepBuffer			N/A  0x04
+            //          3 Out CtrlBuffer			N/A  0x08
 
-//          4 Out Latch USB to Outputs	Down 0x10
-//          5 Out Latch Input to USB	Up   0x20
+            //          4 Out Latch USB to Outputs	Down 0x10
+            //          5 Out Latch Input to USB	Up   0x20
 
             //clear buffer
             for (var i = 0; i < 64; i++)
@@ -311,7 +311,7 @@ namespace CNC_Drill_Controller1
             //create clock to write 8 bits 0-15
             for (var i = 0; i < 16; i++)
             {
-                OutputBuffer[i] = setBit(OutputBuffer[i], 1, (i % 2) == 0);
+                OutputBuffer[i] = (byte)((i % 2) + 0x20);
             }
 
             //write data
@@ -344,11 +344,11 @@ namespace CNC_Drill_Controller1
             //create clock to read 8 bits 46-61
             for (var i = 0; i < 16; i++)
             {
-                OutputBuffer[46+i] = setBit(OutputBuffer[46+i], 1, (i % 2) == 0);
+                OutputBuffer[46 + i] = (byte)((i % 2) + 0x20);
             }//46 47 48 49
-             //50 51 52 53
-             //54 55 56 57
-             //58 59 60 61
+            //50 51 52 53
+            //54 55 56 57
+            //58 59 60 61
 
             //add to clocks to make sure the interface's buffer have been sent 62 - 63
         }
@@ -373,7 +373,7 @@ namespace CNC_Drill_Controller1
 
             SwitchesInput.TopSwitch = !getBit(InputBuffer[53], 1);
             SwitchesInput.BottomSwitch = !getBit(InputBuffer[51], 1);
-            
+
             SwitchesInput.SyncYswitch = !getBit(InputBuffer[49], 1);
             SwitchesInput.SyncXswitch = !getBit(InputBuffer[47], 1);
 
@@ -429,7 +429,7 @@ namespace CNC_Drill_Controller1
 
             if ((abyX != 0) || (abyY != 0)) //adjust stride
             {
-                if (abyX > abyY) 
+                if (abyX > abyY)
                 {
                     stridey = (float)abyY / abyX;
                 }

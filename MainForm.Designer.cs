@@ -107,7 +107,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
-            this.IgnoreSyncCheckBox = new System.Windows.Forms.CheckBox();
+            this.IgnoreSyncBox = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -414,8 +415,11 @@
             this.AxisOffsetComboBox.Items.AddRange(new object[] {
             "1",
             "3",
+            "4",
             "6",
+            "8",
             "12",
+            "16",
             "24 (0.025 / 0.5T)",
             "48 (0.050 / 1T) ",
             "96 (0.100 / 2T)",
@@ -914,25 +918,37 @@
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
-            // IgnoreSyncCheckBox
+            // IgnoreSyncBox
             // 
-            this.IgnoreSyncCheckBox.AutoSize = true;
-            this.IgnoreSyncCheckBox.Checked = true;
-            this.IgnoreSyncCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.IgnoreSyncCheckBox.Location = new System.Drawing.Point(16, 302);
-            this.IgnoreSyncCheckBox.Name = "IgnoreSyncCheckBox";
-            this.IgnoreSyncCheckBox.Size = new System.Drawing.Size(83, 17);
-            this.IgnoreSyncCheckBox.TabIndex = 63;
-            this.IgnoreSyncCheckBox.Text = "Ignore Sync";
-            this.IgnoreSyncCheckBox.UseVisualStyleBackColor = true;
-            this.IgnoreSyncCheckBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
+            this.IgnoreSyncBox.AutoSize = true;
+            this.IgnoreSyncBox.Checked = true;
+            this.IgnoreSyncBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IgnoreSyncBox.Location = new System.Drawing.Point(16, 302);
+            this.IgnoreSyncBox.Name = "IgnoreSyncBox";
+            this.IgnoreSyncBox.Size = new System.Drawing.Size(83, 17);
+            this.IgnoreSyncBox.TabIndex = 63;
+            this.IgnoreSyncBox.Text = "Ignore Sync";
+            this.IgnoreSyncBox.UseVisualStyleBackColor = true;
+            this.IgnoreSyncBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(19, 487);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(104, 17);
+            this.checkBox1.TabIndex = 64;
+            this.checkBox1.Text = "Show Raw Data";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.IgnoreSyncCheckBox);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.IgnoreSyncBox);
             this.Controls.Add(this.IgnoreBacklashBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -1077,7 +1093,8 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
-        private System.Windows.Forms.CheckBox IgnoreSyncCheckBox;
+        private System.Windows.Forms.CheckBox IgnoreSyncBox;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

@@ -23,6 +23,7 @@ namespace CNC_Drill_Controller1
         private DrillNode.DrillNodeStatus lastSelectedStatus;
         private int lastSelectedIndex;
         private char[] trimChars = { ' ' };
+        private RawUSBForm RawUsbForm = new RawUSBForm();
 
         #endregion
 
@@ -105,6 +106,9 @@ namespace CNC_Drill_Controller1
             USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
             USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
             USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
+
+            USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
+            USB.Inhibit_Sync = IgnoreSyncBox.Checked;
 
             #endregion
         }
@@ -189,7 +193,7 @@ namespace CNC_Drill_Controller1
         }
         private void IgnoreSyncCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            USB.Inhibit_Sync = IgnoreSyncCheckBox.Checked;
+            USB.Inhibit_Sync = IgnoreSyncBox.Checked;
         }
 
 
@@ -323,6 +327,8 @@ namespace CNC_Drill_Controller1
                 {
                     USB.Transfer();
                 }
+
+                if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
 
                 if (USB.SwitchesInput.MinXswitch && USB.SwitchesInput.MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
                 {
@@ -828,6 +834,11 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            RawUsbForm.Visible = checkBox1.Checked;
+        }
 
 
 
