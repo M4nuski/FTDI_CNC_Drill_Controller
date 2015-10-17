@@ -106,8 +106,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
-            this.TorqueAssistBox = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxT = new System.Windows.Forms.CheckBox();
+            this.showRawCheckbox = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -905,37 +905,37 @@
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
-            // TorqueAssistBox
+            // checkBoxT
             // 
-            this.TorqueAssistBox.AutoSize = true;
-            this.TorqueAssistBox.Checked = true;
-            this.TorqueAssistBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TorqueAssistBox.Location = new System.Drawing.Point(15, 106);
-            this.TorqueAssistBox.Name = "TorqueAssistBox";
-            this.TorqueAssistBox.Size = new System.Drawing.Size(121, 17);
-            this.TorqueAssistBox.TabIndex = 63;
-            this.TorqueAssistBox.Text = "Torque Assist Driver";
-            this.TorqueAssistBox.UseVisualStyleBackColor = true;
-            this.TorqueAssistBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
+            this.checkBoxT.AutoSize = true;
+            this.checkBoxT.Checked = true;
+            this.checkBoxT.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxT.Location = new System.Drawing.Point(15, 106);
+            this.checkBoxT.Name = "checkBoxT";
+            this.checkBoxT.Size = new System.Drawing.Size(121, 17);
+            this.checkBoxT.TabIndex = 63;
+            this.checkBoxT.Text = "Torque Assist Driver";
+            this.checkBoxT.UseVisualStyleBackColor = true;
+            this.checkBoxT.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
-            // checkBox1
+            // showRawCheckbox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(15, 173);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(104, 17);
-            this.checkBox1.TabIndex = 64;
-            this.checkBox1.Text = "Show Raw Data";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.showRawCheckbox.AutoSize = true;
+            this.showRawCheckbox.Location = new System.Drawing.Point(15, 173);
+            this.showRawCheckbox.Name = "showRawCheckbox";
+            this.showRawCheckbox.Size = new System.Drawing.Size(104, 17);
+            this.showRawCheckbox.TabIndex = 64;
+            this.showRawCheckbox.Text = "Show Raw Data";
+            this.showRawCheckbox.UseVisualStyleBackColor = true;
+            this.showRawCheckbox.CheckedChanged += new System.EventHandler(this.showRawCheckbox_CheckedChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.TorqueAssistBox);
+            this.Controls.Add(this.showRawCheckbox);
+            this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.IgnoreBacklashBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -1078,8 +1078,8 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
-        private System.Windows.Forms.CheckBox TorqueAssistBox;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBoxT;
+        private System.Windows.Forms.CheckBox showRawCheckbox;
     }
 }
 

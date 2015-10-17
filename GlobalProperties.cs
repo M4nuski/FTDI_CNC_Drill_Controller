@@ -5,16 +5,16 @@ namespace CNC_Drill_Controller1
 {
     static class GlobalProperties
     {
-        //Hardware config
-        public const int max_steps_per_cylce = 48; //1 turn
+        //Hardware config //48 steps per turn, double phase
         public static byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
         public static int numStepBytes = 4;
         public static byte numStepMask = 0x03;//b'0000 0011'
+        
 
         //Interface config
-        public static int baudRate = 1200;
+        public static uint baudRate = 1200;
         public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
-        
+
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";
         public static int X_Scale = 961;
@@ -30,18 +30,19 @@ namespace CNC_Drill_Controller1
         public static int X_Delta = 0;
         public static int Y_Delta = 0;
 
+        public static DateTime LastSave;
 
         static GlobalProperties()
         {
             //USB interface state
             try
             {
-                X_Dir = (int) Properties.Settings.Default["X_Last_Direction"];
-                Y_Dir = (int) Properties.Settings.Default["Y_Last_Direction"];
-                X_Pos = (int) Properties.Settings.Default["X_Abs_Position"];
-                Y_Pos = (int) Properties.Settings.Default["Y_Abs_Position"];
-                X_Delta = (int) Properties.Settings.Default["X_Delta"];
-                Y_Delta = (int) Properties.Settings.Default["Y_Delta"];
+                X_Dir = (int)Properties.Settings.Default["X_Last_Direction"];
+                Y_Dir = (int)Properties.Settings.Default["Y_Last_Direction"];
+                X_Pos = (int)Properties.Settings.Default["X_Abs_Position"];
+                Y_Pos = (int)Properties.Settings.Default["Y_Abs_Position"];
+                X_Delta = (int)Properties.Settings.Default["X_Delta"];
+                Y_Delta = (int)Properties.Settings.Default["Y_Delta"];
             }
             catch (Exception ex)
             {
@@ -51,11 +52,11 @@ namespace CNC_Drill_Controller1
             //UI settings
             try
             {
-                Logfile_Filename = (string) Properties.Settings.Default["Logfile_Filename"];
-                X_Scale = (int) Properties.Settings.Default["X_Scale"];
-                Y_Scale = (int) Properties.Settings.Default["Y_Scale"];
-                X_Backlash = (int) Properties.Settings.Default["X_Backlash"];
-                Y_Backlash = (int) Properties.Settings.Default["Y_Backlash"];
+                Logfile_Filename = (string)Properties.Settings.Default["Logfile_Filename"];
+                X_Scale = (int)Properties.Settings.Default["X_Scale"];
+                Y_Scale = (int)Properties.Settings.Default["Y_Scale"];
+                X_Backlash = (int)Properties.Settings.Default["X_Backlash"];
+                Y_Backlash = (int)Properties.Settings.Default["Y_Backlash"];
             }
             catch (Exception ex)
             {
@@ -95,6 +96,8 @@ namespace CNC_Drill_Controller1
             }
 
             Properties.Settings.Default.Save();
+
+            LastSave = DateTime.Now;
         }
     }
 }

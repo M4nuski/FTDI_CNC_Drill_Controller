@@ -2,18 +2,34 @@
 1/4-20 = 20 turns / inch
 960 steps / inch
 
-		//{0x11, 0x22, 0x44, 0x88};//single phase
-		//double phase
-		//51 = 0x33 = b'00110011'
-		//102 = 0x66 = b'01100110'
-		//204 = 0xCC = b'11001100'
-		//153 = 0x99 = b'10011001'
+Single phase
+17  = 0x11 = b'00010001'
+34  = 0x22 = b'00100010'
+68  = 0x44 = b'01000100'
+136 = 0x88 = b'10001000'
+{0x11, 0x22, 0x44, 0x88};
 
+Double phase
+51  = 0x33 = b'00110011'
+102 = 0x66 = b'01100110'
+204 = 0xCC = b'11001100'
+153 = 0x99 = b'10011001'
+{0x33, 0x66, 0xCC, 0x99};
+
+Quad phase
+17  = 0x11 = b'00010001'
+51  = 0x33 = b'00110011'
+34  = 0x22 = b'00100010'
+102 = 0x66 = b'01100110'
+68  = 0x44 = b'01000100'
+204 = 0xCC = b'11001100'
+136 = 0x88 = b'10001000'
+153 = 0x99 = b'10011001'
+{0x11, 0x33, 0x22, 0x66, 0x44, 0xCC, 0x88, 0x99};
 
 InBuffer: 74LS166
 StepBuffer: 74LS164 -> 74LS574
 CtrlBuffer: 74LS164 -> 74LS574
-
 
 Inbuffer:
 0 X min limit switch
@@ -23,9 +39,8 @@ Inbuffer:
 
 4 Drill top switch (0 active | bottom, 1 Top position reached)
 5 Drill bottom switch (0 active | top, 1 Bottom position reached)
-6 X Sync Switch
-7 Y Sync Switch
-
+6
+7
 
 StepBuffer:
 0 X axis phase 1 
@@ -38,13 +53,16 @@ StepBuffer:
 6 Y axis phase 3
 7 Y axis phase 4
 
-
 CtrlBuffer:
-0 Activate X Axis Step Controller
-1 Activate Y Axis Step Controller
-2 Activate Drill //now all on same control line //From Top
-//3 Activate Drill From Bottom
+0 Activate X Axis Step Driver
+1 Activate Y Axis Step Driver
+2 Activate Drill
+3 Activate Torque Assist Driver
 
+4 X Torque Assist Positive Torque
+5 X Torque Assist Negative Torque
+6 Y Torque Assist Positive Torque
+7 Y Torque Assist Negative Torque
 
 USB interface:
 0 Out Clock
