@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 using FTD2XX_NET;
 
 namespace CNC_Drill_Controller1
@@ -39,7 +40,7 @@ namespace CNC_Drill_Controller1
         public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
 
         public int X_Sync_Modulus, Y_Sync_Modulus;
-        public int Sync_Divisor = 48;
+        public int Sync_Divisor = 8;
         private bool X_Sync_Found, Y_Sync_Found;
 
         public delegate void ProgressEvent(int Progress, bool Done);
@@ -134,6 +135,7 @@ namespace CNC_Drill_Controller1
                         var recheck = false;
                         if (X_Abs_Location % Sync_Divisor == X_Sync_Modulus)
                         {
+                            Thread.Sleep(5);
                             SendToUSB();
                             recheck = true;
                             SwitchesInput = DeSerialize();
@@ -142,14 +144,19 @@ namespace CNC_Drill_Controller1
                         }
                         if (Y_Abs_Location % Sync_Divisor == Y_Sync_Modulus)
                         {
-                            if (!recheck) SendToUSB();
+                            if (!recheck)
+                            {
+                                Thread.Sleep(5);
+                                SendToUSB();
+                            }
                             SwitchesInput = DeSerialize();
                             if (!SwitchesInput.SyncYswitch) ResyncY();
                         }
                     }
                     else
                     {
-                        //re-pool data and set properties if sync   
+                        //re-pool data and set properties if sync  
+                        Thread.Sleep(5);
                         SendToUSB();
                         SwitchesInput = DeSerialize();
                         if (!X_Sync_Found && SwitchesInput.SyncXswitch)
@@ -174,13 +181,55 @@ namespace CNC_Drill_Controller1
         private void ResyncX()
         {
             X_Sync_Found = false;
-            //todo keep running same direction until switch trigger
             ExtLog.AddLine("X_Sync Lost");
+
+            var offset = X_Last_Direction * 4;
+
+            X_Abs_Location -= offset;
+            var max_test = Sync_Divisor + 4;
+            while (!SwitchesInput.SyncXswitch && (max_test >=0))
+            {
+                Serialize(CreateStepByte(), CreateControlByte());
+                SendToUSB();
+                Thread.Sleep(5);
+                SendToUSB();
+                SwitchesInput = DeSerialize();
+                max_test--;
+                if (!SwitchesInput.SyncXswitch) X_Abs_Location += X_Last_Direction;
+            }
+            if (SwitchesInput.SyncXswitch)
+            {
+                X_Sync_Found = true;
+                ExtLog.AddLine("X_Sync found");
+            }
+            else ExtLog.AddLine("Could not recover X_Sync");
         }
+
         private void ResyncY()
         {
             Y_Sync_Found = false;
             ExtLog.AddLine("Y_Sync Lost");
+
+            var offset = Y_Last_Direction * 4;
+
+            Y_Abs_Location -= offset;
+            var max_test = Sync_Divisor + 4;
+            while (!SwitchesInput.SyncYswitch && (max_test >= 0))
+            {
+                Serialize(CreateStepByte(), CreateControlByte());
+                SendToUSB();
+                Thread.Sleep(5);
+                SendToUSB();
+                SwitchesInput = DeSerialize();
+                max_test--;
+                if (!SwitchesInput.SyncYswitch) Y_Abs_Location += Y_Last_Direction;
+            }
+            if (SwitchesInput.SyncYswitch)
+            {
+                Y_Sync_Found = true;
+                ExtLog.AddLine("Y_Sync found");
+            }
+            else ExtLog.AddLine("Could not recover Y_Sync");
         }
 
 

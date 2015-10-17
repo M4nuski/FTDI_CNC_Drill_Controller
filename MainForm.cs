@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -51,11 +52,16 @@ namespace CNC_Drill_Controller1
             GlobalProperties.Y_Backlash = (int)Properties.Settings.Default["Y_Backlash"];
             FormClosing += OnFormClosing;
             USB.OnProgress += OnProgress;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             ExtLog.Logger = logger1;
+            Text +=Assembly.GetExecutingAssembly()
+                                           .GetName()
+                                           .Version
+                                           .ToString();
 
             #region View initialization
 
@@ -166,7 +172,7 @@ namespace CNC_Drill_Controller1
         {
             USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
             USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
-            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;
+            USB.SwitchesOutput.Cycle_Top = checkBoxT.Checked;//todo update with 1 switch for both cycles
             USB.SwitchesOutput.Cycle_Bottom = checkBoxB.Checked;
             if (!CheckBoxInhibit) USB.Transfer();
         }
