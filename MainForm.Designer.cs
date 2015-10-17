@@ -55,7 +55,6 @@
             this.checkBoxX = new System.Windows.Forms.CheckBox();
             this.checkBoxY = new System.Windows.Forms.CheckBox();
             this.checkBoxD = new System.Windows.Forms.CheckBox();
-            this.checkBoxB = new System.Windows.Forms.CheckBox();
             this.forcePullButton = new System.Windows.Forms.Button();
             this.AxisOffsetComboBox = new System.Windows.Forms.ComboBox();
             this.bevel1 = new System.Windows.Forms.Label();
@@ -107,7 +106,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
-            this.IgnoreSyncBox = new System.Windows.Forms.CheckBox();
+            this.TorqueAssistBox = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
@@ -161,7 +160,7 @@
             // MinusYbutton
             // 
             this.MinusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MinusYbutton.Location = new System.Drawing.Point(59, 150);
+            this.MinusYbutton.Location = new System.Drawing.Point(57, 196);
             this.MinusYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.MinusYbutton.Name = "MinusYbutton";
             this.MinusYbutton.Size = new System.Drawing.Size(34, 34);
@@ -173,7 +172,7 @@
             // PlusYbutton
             // 
             this.PlusYbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PlusYbutton.Location = new System.Drawing.Point(59, 223);
+            this.PlusYbutton.Location = new System.Drawing.Point(57, 269);
             this.PlusYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.PlusYbutton.Name = "PlusYbutton";
             this.PlusYbutton.Size = new System.Drawing.Size(34, 34);
@@ -185,7 +184,7 @@
             // PlusXbutton
             // 
             this.PlusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PlusXbutton.Location = new System.Drawing.Point(103, 186);
+            this.PlusXbutton.Location = new System.Drawing.Point(101, 232);
             this.PlusXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.PlusXbutton.Name = "PlusXbutton";
             this.PlusXbutton.Size = new System.Drawing.Size(34, 34);
@@ -197,7 +196,7 @@
             // MinusXbutton
             // 
             this.MinusXbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MinusXbutton.Location = new System.Drawing.Point(16, 186);
+            this.MinusXbutton.Location = new System.Drawing.Point(14, 232);
             this.MinusXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.MinusXbutton.Name = "MinusXbutton";
             this.MinusXbutton.Size = new System.Drawing.Size(34, 34);
@@ -376,7 +375,7 @@
             // checkBoxD
             // 
             this.checkBoxD.AutoSize = true;
-            this.checkBoxD.Location = new System.Drawing.Point(15, 106);
+            this.checkBoxD.Location = new System.Drawing.Point(15, 128);
             this.checkBoxD.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxD.Name = "checkBoxD";
             this.checkBoxD.Size = new System.Drawing.Size(72, 17);
@@ -384,18 +383,6 @@
             this.checkBoxD.Text = "Drill Cycle";
             this.checkBoxD.UseVisualStyleBackColor = true;
             this.checkBoxD.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
-            // 
-            // checkBoxB
-            // 
-            this.checkBoxB.AutoSize = true;
-            this.checkBoxB.Location = new System.Drawing.Point(15, 128);
-            this.checkBoxB.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxB.Name = "checkBoxB";
-            this.checkBoxB.Size = new System.Drawing.Size(131, 17);
-            this.checkBoxB.TabIndex = 11;
-            this.checkBoxB.Text = "Drill Cycle from Bottom";
-            this.checkBoxB.UseVisualStyleBackColor = true;
-            this.checkBoxB.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
             // forcePullButton
             // 
@@ -427,7 +414,7 @@
             "240 (0.250 / 5T)",
             "480 (0.500 / 10T)",
             "960 (1.000 / 20T)"});
-            this.AxisOffsetComboBox.Location = new System.Drawing.Point(11, 261);
+            this.AxisOffsetComboBox.Location = new System.Drawing.Point(9, 307);
             this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.AxisOffsetComboBox.MaxDropDownItems = 16;
             this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
@@ -441,7 +428,7 @@
             this.bevel1.Location = new System.Drawing.Point(4, 58);
             this.bevel1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.bevel1.Name = "bevel1";
-            this.bevel1.Size = new System.Drawing.Size(142, 313);
+            this.bevel1.Size = new System.Drawing.Size(142, 270);
             this.bevel1.TabIndex = 14;
             // 
             // UIupdateTimer
@@ -487,7 +474,7 @@
             // 
             // XCurrentPosTextBox
             // 
-            this.XCurrentPosTextBox.Location = new System.Drawing.Point(79, 416);
+            this.XCurrentPosTextBox.Location = new System.Drawing.Point(78, 435);
             this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -496,7 +483,7 @@
             // 
             // YCurrentPosTextBox
             // 
-            this.YCurrentPosTextBox.Location = new System.Drawing.Point(79, 439);
+            this.YCurrentPosTextBox.Location = new System.Drawing.Point(78, 458);
             this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
@@ -505,7 +492,7 @@
             // 
             // setXButton
             // 
-            this.setXButton.Location = new System.Drawing.Point(19, 416);
+            this.setXButton.Location = new System.Drawing.Point(18, 435);
             this.setXButton.Margin = new System.Windows.Forms.Padding(2);
             this.setXButton.Name = "setXButton";
             this.setXButton.Size = new System.Drawing.Size(56, 19);
@@ -516,7 +503,7 @@
             // 
             // SetYButton
             // 
-            this.SetYButton.Location = new System.Drawing.Point(19, 439);
+            this.SetYButton.Location = new System.Drawing.Point(18, 458);
             this.SetYButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetYButton.Name = "SetYButton";
             this.SetYButton.Size = new System.Drawing.Size(56, 19);
@@ -527,7 +514,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(19, 373);
+            this.zeroXbutton.Location = new System.Drawing.Point(18, 392);
             this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
@@ -538,7 +525,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(79, 373);
+            this.zeroYbutton.Location = new System.Drawing.Point(78, 392);
             this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
@@ -549,7 +536,7 @@
             // 
             // zeroAllbutton
             // 
-            this.zeroAllbutton.Location = new System.Drawing.Point(19, 393);
+            this.zeroAllbutton.Location = new System.Drawing.Point(18, 412);
             this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
             this.zeroAllbutton.Size = new System.Drawing.Size(117, 19);
@@ -562,7 +549,7 @@
             // 
             this.Xlabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Xlabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Xlabel.Location = new System.Drawing.Point(11, 322);
+            this.Xlabel.Location = new System.Drawing.Point(10, 341);
             this.Xlabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Xlabel.Name = "Xlabel";
             this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
@@ -574,7 +561,7 @@
             // 
             this.Ylabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Ylabel.Font = new System.Drawing.Font("Lucida Console", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Ylabel.Location = new System.Drawing.Point(11, 343);
+            this.Ylabel.Location = new System.Drawing.Point(10, 362);
             this.Ylabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.Ylabel.Name = "Ylabel";
             this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
@@ -858,7 +845,7 @@
             // 
             // SetAllButton
             // 
-            this.SetAllButton.Location = new System.Drawing.Point(18, 463);
+            this.SetAllButton.Location = new System.Drawing.Point(17, 482);
             this.SetAllButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetAllButton.Name = "SetAllButton";
             this.SetAllButton.Size = new System.Drawing.Size(116, 19);
@@ -910,7 +897,7 @@
             // IgnoreBacklashBox
             // 
             this.IgnoreBacklashBox.AutoSize = true;
-            this.IgnoreBacklashBox.Location = new System.Drawing.Point(16, 287);
+            this.IgnoreBacklashBox.Location = new System.Drawing.Point(15, 150);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(103, 17);
             this.IgnoreBacklashBox.TabIndex = 62;
@@ -918,23 +905,23 @@
             this.IgnoreBacklashBox.UseVisualStyleBackColor = true;
             this.IgnoreBacklashBox.CheckedChanged += new System.EventHandler(this.IgnoreBacklashBox_CheckedChanged);
             // 
-            // IgnoreSyncBox
+            // TorqueAssistBox
             // 
-            this.IgnoreSyncBox.AutoSize = true;
-            this.IgnoreSyncBox.Checked = true;
-            this.IgnoreSyncBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.IgnoreSyncBox.Location = new System.Drawing.Point(16, 302);
-            this.IgnoreSyncBox.Name = "IgnoreSyncBox";
-            this.IgnoreSyncBox.Size = new System.Drawing.Size(83, 17);
-            this.IgnoreSyncBox.TabIndex = 63;
-            this.IgnoreSyncBox.Text = "Ignore Sync";
-            this.IgnoreSyncBox.UseVisualStyleBackColor = true;
-            this.IgnoreSyncBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
+            this.TorqueAssistBox.AutoSize = true;
+            this.TorqueAssistBox.Checked = true;
+            this.TorqueAssistBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.TorqueAssistBox.Location = new System.Drawing.Point(15, 106);
+            this.TorqueAssistBox.Name = "TorqueAssistBox";
+            this.TorqueAssistBox.Size = new System.Drawing.Size(121, 17);
+            this.TorqueAssistBox.TabIndex = 63;
+            this.TorqueAssistBox.Text = "Torque Assist Driver";
+            this.TorqueAssistBox.UseVisualStyleBackColor = true;
+            this.TorqueAssistBox.CheckedChanged += new System.EventHandler(this.IgnoreSyncCheckBox_CheckedChanged);
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(19, 487);
+            this.checkBox1.Location = new System.Drawing.Point(15, 173);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(104, 17);
             this.checkBox1.TabIndex = 64;
@@ -948,7 +935,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.IgnoreSyncBox);
+            this.Controls.Add(this.TorqueAssistBox);
             this.Controls.Add(this.IgnoreBacklashBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -986,7 +973,6 @@
             this.Controls.Add(this.loadFileButton);
             this.Controls.Add(this.AxisOffsetComboBox);
             this.Controls.Add(this.forcePullButton);
-            this.Controls.Add(this.checkBoxB);
             this.Controls.Add(this.checkBoxD);
             this.Controls.Add(this.checkBoxY);
             this.Controls.Add(this.checkBoxX);
@@ -1034,7 +1020,6 @@
         private System.Windows.Forms.CheckBox checkBoxX;
         private System.Windows.Forms.CheckBox checkBoxY;
         private System.Windows.Forms.CheckBox checkBoxD;
-        private System.Windows.Forms.CheckBox checkBoxB;
         private System.Windows.Forms.ToolStripStatusLabel XStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YStatusLabel;
         private System.Windows.Forms.Button forcePullButton;
@@ -1093,7 +1078,7 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
-        private System.Windows.Forms.CheckBox IgnoreSyncBox;
+        private System.Windows.Forms.CheckBox TorqueAssistBox;
         private System.Windows.Forms.CheckBox checkBox1;
     }
 }

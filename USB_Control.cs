@@ -19,33 +19,28 @@ namespace CNC_Drill_Controller1
         {
             public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
             public bool TopSwitch, BottomSwitch;
-            public bool SyncXswitch, SyncYswitch;
         }
         public InputSwitchStruct SwitchesInput;
 
         public struct OutputSwitchStruct
         {
-            public bool X_Driver, Y_Driver;
+            public bool X_Driver, Y_Driver, T_Driver;
             public bool Cycle_Drill;
         }
 
         public OutputSwitchStruct SwitchesOutput;
 
-        public int X_Abs_Location, Y_Abs_Location;
+        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning, Inhibit_Sync;
 
+        public int X_Abs_Location, Y_Abs_Location;
         public int X_Delta, Y_Delta;
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
-
-        private int X_Last_Direction, Y_Last_Direction;//todo save to application context
-        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning, Inhibit_Sync;
-        public int X_Sync_Modulus, Y_Sync_Modulus;
-        public int Sync_Divisor = 8;
-        private bool X_Sync_Found, Y_Sync_Found;
+        public int X_Last_Direction { get; private set; }
+        public int Y_Last_Direction { get; private set; }
 
         public delegate void ProgressEvent(int Progress, bool Done);
         public ProgressEvent OnProgress;
-
         private void UpdateProgress(int Progress, bool Done) //todo change to workerthread
         {
             if (OnProgress != null) OnProgress(Progress, Done);
@@ -207,7 +202,7 @@ namespace CNC_Drill_Controller1
                 SendToUSB();
                 SwitchesInput = DeSerialize();
                 max_test--;
-                if (!SwitchesInput.SyncXswitch) X_Abs_Location += X_Last_Direction;
+                if (!SwitchesInput.SyncXswitch) X_Abs_Location += X_Last_Dir;
             }
             if (SwitchesInput.SyncXswitch)
             {

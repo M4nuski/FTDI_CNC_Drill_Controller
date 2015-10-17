@@ -124,7 +124,9 @@ namespace CNC_Drill_Controller1
             USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
-            USB.Inhibit_Sync = IgnoreSyncBox.Checked;
+            USB.Inhibit_Sync = TorqueAssistBox.Checked;
+
+
 
             #endregion
         }
@@ -159,12 +161,7 @@ namespace CNC_Drill_Controller1
                 MessageBox.Show(ex.Message, "Error while saving logfile", MessageBoxButtons.OK);
             }
 
-            Properties.Settings.Default["Logfile_Filename"] = GlobalProperties.Logfile_Filename;
-            Properties.Settings.Default["X_Scale"] = GlobalProperties.X_Scale;
-            Properties.Settings.Default["Y_Scale"] = GlobalProperties.Y_Scale;
-            Properties.Settings.Default["X_Backlash"] = GlobalProperties.X_Backlash;
-            Properties.Settings.Default["Y_Backlash"] = GlobalProperties.Y_Backlash;
-            Properties.Settings.Default.Save();
+            GlobalProperties.SaveProperties();
         }
         
         #endregion
@@ -209,7 +206,7 @@ namespace CNC_Drill_Controller1
         }
         private void IgnoreSyncCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            USB.Inhibit_Sync = IgnoreSyncBox.Checked;
+            USB.Inhibit_Sync = TorqueAssistBox.Checked;
         }
 
 
