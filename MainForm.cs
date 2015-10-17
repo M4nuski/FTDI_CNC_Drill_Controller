@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -59,10 +60,25 @@ namespace CNC_Drill_Controller1
         private void Form1_Load(object sender, EventArgs e)
         {
             ExtLog.Logger = logger1;
-            Text +=Assembly.GetExecutingAssembly()
-                                           .GetName()
-                                           .Version
-                                           .ToString();
+            try
+            {
+                if (ApplicationDeployment.IsNetworkDeployed)
+                {
+                    Text += ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
+                }
+                else
+                {
+                    Text += Assembly.GetExecutingAssembly()
+                        .GetName()
+                        .Version
+                        .ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger1.AddLine("Error geting version info.");
+            }
+
 
             #region View initialization
 
@@ -838,6 +854,7 @@ namespace CNC_Drill_Controller1
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             RawUsbForm.Visible = checkBox1.Checked;
+            if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
         }
 
 

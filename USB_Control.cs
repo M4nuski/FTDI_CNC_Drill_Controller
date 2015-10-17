@@ -135,6 +135,9 @@ namespace CNC_Drill_Controller1
 
 
                     if (!Inhibit_Sync)
+                        //at every step check if switches matches sync location
+                        //if discrepency wait and repool
+                        //if still off seek correct sync
                     {
                         if (X_Sync_Found && Y_Sync_Found)
                         {

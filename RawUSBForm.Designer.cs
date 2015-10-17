@@ -40,7 +40,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(145, 730);
+            this.textBox1.Size = new System.Drawing.Size(145, 700);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "00001111";
             // 
@@ -52,7 +52,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(145, 730);
+            this.textBox2.Size = new System.Drawing.Size(145, 700);
             this.textBox2.TabIndex = 1;
             this.textBox2.Text = "00001111";
             // 
@@ -60,7 +60,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(288, 729);
+            this.ClientSize = new System.Drawing.Size(288, 702);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
