@@ -49,6 +49,9 @@ namespace CNC_Drill_Controller1
         private BackgroundWorker asyncWorker = new BackgroundWorker();
         private DoWorkEventHandler lastTask;
 
+        private delegate void CleanupEvent(bool failed);
+        private CleanupEvent TaskCleanup;
+
         #region Form Initialization
 
         public MainForm()
@@ -788,60 +791,18 @@ namespace CNC_Drill_Controller1
         private void SeekZeroButton_Click(object sender, EventArgs e)
         {
             logger1.AddLine("Seeking Axis Origins...");
-
             if (Check_Limit_Switches() && USB.IsOpen)
             {
                 USB.Inhibit_LimitSwitches_Warning = true;
                 Enabled = false;
-                var failed = false;
+                
+                GetCloserToOrigin();
 
-                var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
-                var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
-
-                USB.MoveBy(-delta_X, -delta_Y);
-                UIupdateTimer_Tick(sender, e);
-
-                var maxTries = 48;
-
-                while (!USB.SwitchesInput.MinXswitch && USB.IsOpen && (maxTries > 0))
-                {
-                    USB.MoveBy(-24, 0);
-                    maxTries--;
-                    Thread.Sleep(50);
-                    USB.Transfer();
-                    UIupdateTimer_Tick(sender, e);
-                    failed = maxTries <= 0;
-                }
-
-                maxTries = 48;
-                while (USB.SwitchesInput.MinXswitch && USB.IsOpen && (maxTries > 0) && !failed)
-                {
-                    USB.MoveBy(1, 0);
-                    Thread.Sleep(50);
-                    USB.Transfer();
-                    UIupdateTimer_Tick(sender, e);
-                    failed = maxTries <= 0;
-                }
+                var failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, false, -30, 0);
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, true, 1, 0);
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, false, 0, -30);
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, true, 0, 1);
                 Refresh();
-                maxTries = 48;
-                while (!USB.SwitchesInput.MinYswitch && USB.IsOpen && (maxTries > 0) && !failed)
-                {
-                    USB.MoveBy(0, -24);
-                    Thread.Sleep(50);
-                    USB.Transfer();
-                    UIupdateTimer_Tick(sender, e);
-                    failed = maxTries <= 0;
-                }
-
-                maxTries = 48;
-                while (USB.SwitchesInput.MinYswitch && USB.IsOpen && (maxTries > 0) && !failed)
-                {
-                    USB.MoveBy(0, 1);
-                    Thread.Sleep(50);
-                    USB.Transfer();
-                    UIupdateTimer_Tick(sender, e);
-                    failed = maxTries <= 0;
-                }
 
                 if (!failed)
                 {
@@ -851,12 +812,14 @@ namespace CNC_Drill_Controller1
                     logger1.AddLine("Scripted Run Completed.");
                 }
                 else logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
-            }
+
+                }
             else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed.");
+
             Enabled = true;
             USB.Inhibit_LimitSwitches_Warning = false;
         }
-
+        
         #endregion
         
         #region Async Tasks and Handlers
@@ -869,79 +832,36 @@ namespace CNC_Drill_Controller1
                 asyncWorker.CancelAsync();
             }
         }
-
-        private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
+        
+        private void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, CleanupEvent asyncCleanup)
         {
             if (!asyncWorker.IsBusy)
             {
-                logger1.AddLine("Starting Async Task");
-                try
+                if (Check_Limit_Switches() && USB.IsOpen)
                 {
-                    asyncWorker.DoWork += asyncWorkerDoWork_FindAxisOrigin;
-                    lastTask = asyncWorkerDoWork_FindAxisOrigin;
-                    asyncWorker.RunWorkerAsync();
+                    logger1.AddLine("Starting Async Task");
+
+                    USB.Inhibit_LimitSwitches_Warning = true;
+                    Enabled = false;
+
+                    try
+                    {
+                        logger1.AddLine(desc);
+                        asyncWorker.DoWork += asyncWork;
+                        lastTask = asyncWork;
+                        TaskCleanup = asyncCleanup;
+
+                        asyncWorker.RunWorkerAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger1.AddLine("Async Task failed: " + ex.Message);
+                    }
+                    logger1.AddLine("Async Started");
                 }
-                catch (Exception ex)
-                {
-                    logger1.AddLine("Async Task failed: " + ex.Message);
-                }
-                logger1.AddLine("Async Started");
+                else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed.");
             }
             else logger1.AddLine("Async Task Already Running");
-        }
-
-        private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
-        {
-            if (!asyncWorker.CancellationPending)
-            {
-                Thread.Sleep(500);
-                asyncWorker.ReportProgress(20);
-            }
-            else
-            {
-                doWorkEventArgs.Cancel = true;
-            }
-
-            if (!asyncWorker.CancellationPending)
-            {
-                Thread.Sleep(500);
-                asyncWorker.ReportProgress(40);
-            }
-            else
-            {
-                doWorkEventArgs.Cancel = true;
-            }
-
-            if (!asyncWorker.CancellationPending)
-            {
-                Thread.Sleep(500);
-                asyncWorker.ReportProgress(60);
-            }
-            else
-            {
-                doWorkEventArgs.Cancel = true;
-            }
-
-            if (!asyncWorker.CancellationPending)
-            {
-                Thread.Sleep(500);
-                asyncWorker.ReportProgress(80);
-            }
-            else
-            {
-                doWorkEventArgs.Cancel = true;
-            }
-
-            if (!asyncWorker.CancellationPending)
-            {
-                Thread.Sleep(200);
-                asyncWorker.ReportProgress(100);
-            }
-            else
-            {
-                doWorkEventArgs.Cancel = true;
-            }
-
         }
 
         private void asyncWorkerProgressChange(object sender, ProgressChangedEventArgs e)
@@ -951,17 +871,107 @@ namespace CNC_Drill_Controller1
 
         private void asyncWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
         {
-// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            asyncWorker.DoWork -= lastTask;
+
             if (e.Cancelled)
             {
                 logger1.AddLine("Task Cancelled.");
             }
             else
             {
-                logger1.AddLine("task done");
+                logger1.AddLine("Task Completed.");
+                var failed = e.UserState as bool? ?? false;
+                TaskCleanup(failed);
             }
-            asyncWorker.DoWork -= lastTask;
+
+            Enabled = true;
+            USB.Inhibit_LimitSwitches_Warning = false;
         }
+
+        #region Async Find Axis Origin
+        private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
+        {
+            startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
+                asyncWorkerDoWork_FindAxisOrigin,
+                asyncWorkerDoWork_FindAxisOrigin_Cleanup);
+        }
+
+        private void GetCloserToOrigin()
+        {
+            var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
+            var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
+            USB.MoveBy(-delta_X, -delta_Y);
+        }
+        private bool SeekSwitch(ref bool AxisSwitch, bool AxisDirection, int byX, int byY)
+        {
+            var success = true;
+            var maxTries = GlobalProperties.numStepsPerTurns;
+            while ((AxisSwitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
+            {
+                USB.MoveBy(byX, byY);
+                maxTries--;
+                Thread.Sleep(50);
+                USB.Transfer();
+                success = maxTries > 0;
+            }
+            return success;
+        }
+        private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            var failed = false;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                GetCloserToOrigin();
+                asyncWorker.ReportProgress(30, false);
+            }
+            else doWorkEventArgs.Cancel = true;
+            
+            if (!asyncWorker.CancellationPending)
+            {
+                failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, false, -30, 0); //1.5in
+                asyncWorker.ReportProgress(45, failed);
+            }
+            else doWorkEventArgs.Cancel = true;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, true, 1, 0); //1 turn
+                asyncWorker.ReportProgress(60, failed);
+            } else doWorkEventArgs.Cancel = true;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, false, 0, -30);
+                asyncWorker.ReportProgress(75, failed);
+            } else doWorkEventArgs.Cancel = true;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, true, 0, 1);
+                asyncWorker.ReportProgress(90, failed);
+            } else doWorkEventArgs.Cancel = true;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                asyncWorker.ReportProgress(100, failed);
+            }
+        }
+        private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool failed)
+        {
+            if (failed)
+            {
+                logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
+            }
+            else
+            {
+                var loc = USB.CurrentLocation();
+                logger1.AddLine("Location Set to Zero, Origin was found at X=" + loc.X.ToString("F3") + " Y=" + loc.Y.ToString("F3"));
+                zeroAllbutton_Click(this, null);
+            }
+        }
+        #endregion
+
         #endregion
 
         //todo offset nodes closer to margins / 6x6 table on load
