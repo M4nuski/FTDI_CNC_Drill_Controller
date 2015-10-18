@@ -38,7 +38,7 @@
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.Red;
-            this.button1.Location = new System.Drawing.Point(17, 125);
+            this.button1.Location = new System.Drawing.Point(17, 108);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(129, 37);
             this.button1.TabIndex = 0;
@@ -65,7 +65,7 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(243, 125);
+            this.button2.Location = new System.Drawing.Point(243, 108);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(129, 37);
             this.button2.TabIndex = 3;
@@ -77,7 +77,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(388, 174);
+            this.ClientSize = new System.Drawing.Size(388, 161);
             this.ControlBox = false;
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label1);
@@ -89,7 +89,7 @@
             this.MinimizeBox = false;
             this.Name = "TaskDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "TaskDialog";
+            this.Text = "Task Status and Control";
             this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();

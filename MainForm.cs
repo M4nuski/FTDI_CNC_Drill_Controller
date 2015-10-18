@@ -185,7 +185,7 @@ namespace CNC_Drill_Controller1
         }
         private void progressCallback(int progress, bool done)
         {
-            toolStripShortProgressBar.Value = progress;
+            toolStripProgressBar.Value = progress;
             UIupdateTimer_Tick(this, null);
         }
 
@@ -888,7 +888,6 @@ namespace CNC_Drill_Controller1
         private void asyncWorkerProgressChange(object sender, ProgressChangedEventArgs e)
         {
             logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
-            toolStripLongProgressBar.Value = e.ProgressPercentage;
             taskDialog.update(e.ProgressPercentage);
         }
 

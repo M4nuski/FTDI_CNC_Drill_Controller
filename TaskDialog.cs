@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -18,15 +12,26 @@ namespace CNC_Drill_Controller1
 
         public new DialogResult ShowDialog()
         {
-            button1.Enabled = true;
-            button2.Enabled = false;
-            label1.Text = "Running Task:";
+            undone();
             return base.ShowDialog();
+        }
+
+        public new DialogResult ShowDialog(IWin32Window owner)
+        {
+            undone();
+            return base.ShowDialog(owner);
         }
 
         public void update(int progress)
         {
             progressBar1.Value = progress;
+        }
+
+        private void undone()
+        {
+            button1.Enabled = true;
+            button2.Enabled = false;
+            label1.Text = "Running Task:";            
         }
 
         public void done()
@@ -45,5 +50,6 @@ namespace CNC_Drill_Controller1
         {
             DialogResult = DialogResult.OK;
         }
+
     }
 }

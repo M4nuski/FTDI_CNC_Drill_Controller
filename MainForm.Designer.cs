@@ -38,7 +38,7 @@
             this.PlusXbutton = new System.Windows.Forms.Button();
             this.MinusXbutton = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripShortProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.XMinStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.XMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YMinStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -108,7 +108,6 @@
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
             this.abortButton = new System.Windows.Forms.Button();
             this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
-            this.toolStripLongProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -209,8 +208,7 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripShortProgressBar,
-            this.toolStripLongProgressBar,
+            this.toolStripProgressBar,
             this.XMinStatusLabel,
             this.XMaxStatusLabel,
             this.YMinStatusLabel,
@@ -227,12 +225,12 @@
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripShortProgressBar
+            // toolStripProgressBar
             // 
-            this.toolStripShortProgressBar.MarqueeAnimationSpeed = 10;
-            this.toolStripShortProgressBar.Name = "toolStripShortProgressBar";
-            this.toolStripShortProgressBar.Size = new System.Drawing.Size(75, 19);
-            this.toolStripShortProgressBar.Step = 1;
+            this.toolStripProgressBar.MarqueeAnimationSpeed = 10;
+            this.toolStripProgressBar.Name = "toolStripProgressBar";
+            this.toolStripProgressBar.Size = new System.Drawing.Size(75, 19);
+            this.toolStripProgressBar.Step = 1;
             // 
             // XMinStatusLabel
             // 
@@ -937,13 +935,6 @@
             this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
             this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
             // 
-            // toolStripLongProgressBar
-            // 
-            this.toolStripLongProgressBar.MarqueeAnimationSpeed = 10;
-            this.toolStripLongProgressBar.Name = "toolStripLongProgressBar";
-            this.toolStripLongProgressBar.Size = new System.Drawing.Size(75, 19);
-            this.toolStripLongProgressBar.Step = 1;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1027,7 +1018,7 @@
         private System.Windows.Forms.Button PlusXbutton;
         private System.Windows.Forms.Button MinusXbutton;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripShortProgressBar;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel XMinStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel XMaxStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YMinStatusLabel;
@@ -1097,7 +1088,6 @@
         private System.Windows.Forms.CheckBox showRawCheckbox;
         private System.Windows.Forms.Button abortButton;
         private System.Windows.Forms.Button AsyncStartFindOriginButton;
-        private System.Windows.Forms.ToolStripProgressBar toolStripLongProgressBar;
     }
 }
 
