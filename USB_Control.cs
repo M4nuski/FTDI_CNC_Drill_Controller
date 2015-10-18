@@ -9,7 +9,7 @@ namespace CNC_Drill_Controller1
     {
         private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[64];
-
+        private bool cancelJob;
         public byte[] InputBuffer { get; set; }
 
         public bool IsOpen { get { return USB_Interface.IsOpen; } }
@@ -39,7 +39,7 @@ namespace CNC_Drill_Controller1
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
         
-        public ProgressEvent OnProgress { get; set; }
+        public ProgressDelegate OnProgress { get; set; }
             
         private void UpdateProgress(int Progress, bool Done)
         {
@@ -290,8 +290,22 @@ namespace CNC_Drill_Controller1
         }
 
         #region Internal USB control methods
-        public void MoveBy(int byX, int byY)
+
+        public void CancelMove()
         {
+            cancelJob = true;
+        }
+
+        private bool jobCancelled()
+        {
+            return cancelJob;
+        }
+
+        public bool MoveBy(int byX, int byY)
+        {
+            cancelJob = false;
+            var success = true;
+
             var abyX = Math.Abs(byX);
             var abyY = Math.Abs(byY);
 
@@ -362,28 +376,39 @@ namespace CNC_Drill_Controller1
 
                 Transfer();
                 UpdateProgress(100 * i / numMoves, false);
-                if (MaxXswitch || MinXswitch || MaxYswitch ||
-                    MinYswitch)
+
+                if (!Check_Limit_Switches())
                 {
                     if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
-                    numMoves = i; //exit loop
+                    i = numMoves; //exit loop
+                    success = false;
+                }
+
+                if (jobCancelled())
+                {
+                    ExtLog.AddLine("Move Cancelled");
+                    i = numMoves; //exit loop
+                    success = false;
                 }
             }
 
             UpdateProgress(100, true);
+            return success;
         }
 
-        public void MoveTo(float X, float Y)
+        public bool MoveTo(float X, float Y)
         {
+            var success = false;
             var current_pos = CurrentLocation();
             if (!MaxXswitch && !MinXswitch &&
                 !MaxYswitch && !MinYswitch)
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
-                MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
+                success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");
+            return success;
         }
         #endregion
 

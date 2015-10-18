@@ -4,14 +4,17 @@ using System.Drawing;
 
 namespace CNC_Drill_Controller1
 {
-    delegate void ProgressEvent(int Progress, bool Done);
-
     interface IUSB_Controller
     {
+        //Useful internals exposure
         byte[] InputBuffer { get; set; }
         bool IsOpen { get; }
         DateTime LastUpdate { get; set; }
 
+        //Callback
+        ProgressDelegate OnProgress { get; set; }
+
+        //Input from CNC
         bool MaxXswitch { get; }
         bool MinXswitch { get; }
         bool MaxYswitch { get; }
@@ -19,14 +22,17 @@ namespace CNC_Drill_Controller1
         bool TopSwitch { get; }
         bool BottomSwitch { get; }
 
+        //Output to CNC
         bool X_Driver { get; set; }
         bool Y_Driver { get; set; }
         bool T_Driver { get; set; }
         bool Cycle_Drill { get; set; }
 
+        //Behaviour Modifier of Controller
         bool Inhibit_Backlash_Compensation { get; set; }
         bool Inhibit_LimitSwitches_Warning { get; set; }
 
+        //Hardware State of CNC
         int X_Abs_Location { get; set; }
         int Y_Abs_Location { get; set; }
         int X_Delta { get; set; }
@@ -36,18 +42,18 @@ namespace CNC_Drill_Controller1
         int X_Rel_Location { get; }
         int Y_Rel_Location { get; }
 
-        ProgressEvent OnProgress { get; set; }
-
+        //Setup
         List<string> GetDevicesList();
         bool OpenDeviceByLocation(uint LocationID);
 
-        void Transfer();
-
+        //Helpers
         PointF CurrentLocation();
         bool Check_Limit_Switches();
 
-        void MoveBy(int byX, int byY);
-        void MoveTo(float X, float Y);
-
+        //Movements and Updates
+        void CancelMove();
+        void Transfer();
+        bool MoveBy(int byX, int byY);
+        bool MoveTo(float X, float Y);
     }
 }

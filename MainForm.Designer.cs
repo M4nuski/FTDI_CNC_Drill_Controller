@@ -84,10 +84,7 @@
             this.ViewZoomLabel = new System.Windows.Forms.Label();
             this.ViewXLabel = new System.Windows.Forms.Label();
             this.ViewYLabel = new System.Windows.Forms.Label();
-            this.RunButton = new System.Windows.Forms.Button();
-            this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
-            this.DrillButton = new System.Windows.Forms.Button();
             this.OffsetOriginBtton = new System.Windows.Forms.Button();
             this.YOriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
@@ -106,9 +103,10 @@
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
-            this.abortButton = new System.Windows.Forms.Button();
             this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
             this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
+            this.DrillAllNodebutton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -689,30 +687,6 @@
             this.ViewYLabel.TabIndex = 45;
             this.ViewYLabel.Text = "Y: ";
             // 
-            // RunButton
-            // 
-            this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(159, 111);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(2);
-            this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(156, 21);
-            this.RunButton.TabIndex = 46;
-            this.RunButton.Text = "[Drill All Nodes]";
-            this.RunButton.UseVisualStyleBackColor = true;
-            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
-            // 
-            // SeekZeroButton
-            // 
-            this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(159, 59);
-            this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
-            this.SeekZeroButton.Name = "SeekZeroButton";
-            this.SeekZeroButton.Size = new System.Drawing.Size(156, 21);
-            this.SeekZeroButton.TabIndex = 47;
-            this.SeekZeroButton.Text = "[Find Axis Origins]";
-            this.SeekZeroButton.UseVisualStyleBackColor = true;
-
-            // 
             // ReloadUSBbutton
             // 
             this.ReloadUSBbutton.Location = new System.Drawing.Point(76, 32);
@@ -723,17 +697,6 @@
             this.ReloadUSBbutton.Text = "Reload USB";
             this.ReloadUSBbutton.UseVisualStyleBackColor = true;
             this.ReloadUSBbutton.Click += new System.EventHandler(this.ReloadUSBbutton_Click);
-            // 
-            // DrillButton
-            // 
-            this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillButton.Location = new System.Drawing.Point(159, 85);
-            this.DrillButton.Name = "DrillButton";
-            this.DrillButton.Size = new System.Drawing.Size(156, 21);
-            this.DrillButton.TabIndex = 49;
-            this.DrillButton.Text = "[Drill Selected Node]";
-            this.DrillButton.UseVisualStyleBackColor = true;
-
             // 
             // OffsetOriginBtton
             // 
@@ -912,49 +875,58 @@
             this.showRawCheckbox.UseVisualStyleBackColor = true;
             this.showRawCheckbox.CheckedChanged += new System.EventHandler(this.showRawCheckbox_CheckedChanged);
             // 
-            // abortButton
-            // 
-            this.abortButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.abortButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.abortButton.Location = new System.Drawing.Point(159, 240);
-            this.abortButton.Margin = new System.Windows.Forms.Padding(2);
-            this.abortButton.Name = "abortButton";
-            this.abortButton.Size = new System.Drawing.Size(156, 21);
-            this.abortButton.TabIndex = 65;
-            this.abortButton.Text = "[Abort Task]";
-            this.abortButton.UseVisualStyleBackColor = true;
-            this.abortButton.Click += new System.EventHandler(this.abortButton_Click);
-            // 
             // AsyncStartFindOriginButton
             // 
             this.AsyncStartFindOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(159, 207);
+            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(151, 30);
             this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
-            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(156, 23);
+            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(172, 23);
             this.AsyncStartFindOriginButton.TabIndex = 66;
-            this.AsyncStartFindOriginButton.Text = "Async Find Axis Origin";
+            this.AsyncStartFindOriginButton.Text = "[Find Axis Origin]";
             this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
             this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
             // 
             // AsyncDrillSelectedButton
             // 
             this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(159, 180);
+            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 59);
             this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
-            this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(156, 21);
+            this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(172, 21);
             this.AsyncDrillSelectedButton.TabIndex = 67;
-            this.AsyncDrillSelectedButton.Text = "Async Drill Selected Node";
+            this.AsyncDrillSelectedButton.Text = "[Drill Selected Node]";
             this.AsyncDrillSelectedButton.UseVisualStyleBackColor = true;
             this.AsyncDrillSelectedButton.Click += new System.EventHandler(this.AsyncDrillSelectedButton_Click);
+            // 
+            // DrillAllNodebutton
+            // 
+            this.DrillAllNodebutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 86);
+            this.DrillAllNodebutton.Name = "DrillAllNodebutton";
+            this.DrillAllNodebutton.Size = new System.Drawing.Size(172, 21);
+            this.DrillAllNodebutton.TabIndex = 68;
+            this.DrillAllNodebutton.Text = "[Drill All Nodes]";
+            this.DrillAllNodebutton.UseVisualStyleBackColor = true;
+            this.DrillAllNodebutton.Click += new System.EventHandler(this.DrillAllNodebutton_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(172, 141);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 69;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.DrillAllNodebutton);
             this.Controls.Add(this.AsyncDrillSelectedButton);
             this.Controls.Add(this.AsyncStartFindOriginButton);
-            this.Controls.Add(this.abortButton);
             this.Controls.Add(this.showRawCheckbox);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.IgnoreBacklashBox);
@@ -969,10 +941,7 @@
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YOriginTextbox);
             this.Controls.Add(this.XoriginTextbox);
-            this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
-            this.Controls.Add(this.SeekZeroButton);
-            this.Controls.Add(this.RunButton);
             this.Controls.Add(this.ViewYLabel);
             this.Controls.Add(this.ViewXLabel);
             this.Controls.Add(this.ViewZoomLabel);
@@ -1070,10 +1039,7 @@
         private System.Windows.Forms.Label ViewZoomLabel;
         private System.Windows.Forms.Label ViewXLabel;
         private System.Windows.Forms.Label ViewYLabel;
-        private System.Windows.Forms.Button RunButton;
-        private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
-        private System.Windows.Forms.Button DrillButton;
         private System.Windows.Forms.ContextMenuStrip NodesContextMenu;
         private System.Windows.Forms.ToolStripMenuItem NodeContextSETXY;
         private System.Windows.Forms.ToolStripMenuItem NodeContextMOVETO;
@@ -1099,9 +1065,10 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
-        private System.Windows.Forms.Button abortButton;
         private System.Windows.Forms.Button AsyncStartFindOriginButton;
         private System.Windows.Forms.Button AsyncDrillSelectedButton;
+        private System.Windows.Forms.Button DrillAllNodebutton;
+        private System.Windows.Forms.Button button1;
     }
 }
 

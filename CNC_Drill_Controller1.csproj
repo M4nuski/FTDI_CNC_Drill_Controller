@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Delegates.cs" />
     <Compile Include="DrawingTypeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
