@@ -44,6 +44,7 @@ namespace CNC_Drill_Controller1
         void Transfer();
 
         PointF CurrentLocation();
+        bool Check_Limit_Switches();
 
         void MoveBy(int byX, int byY);
         void MoveTo(float X, float Y);

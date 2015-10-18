@@ -284,6 +284,10 @@ namespace CNC_Drill_Controller1
             return new PointF(current_X, current_Y);
         }
 
+        public bool Check_Limit_Switches()
+        {
+            return !MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch;
+        }
 
         #region Internal USB control methods
         public void MoveBy(int byX, int byY)

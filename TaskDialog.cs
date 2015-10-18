@@ -29,6 +29,7 @@ namespace CNC_Drill_Controller1
 
         private void undone()
         {
+            progressBar1.Value = 0;
             button1.Enabled = true;
             button2.Enabled = false;
             label1.Text = "Running Task:";            
@@ -36,6 +37,7 @@ namespace CNC_Drill_Controller1
 
         public void done()
         {
+            progressBar1.Value = 100;
             button2.Enabled = true;
             button1.Enabled = false;
             label1.Text = "Task Completed.";

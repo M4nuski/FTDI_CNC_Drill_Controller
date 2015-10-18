@@ -21,9 +21,7 @@ namespace CNC_Drill_Controller1
         private const int Label_Refresh_Period = 100;
         private DateTime lastUIupdate;
         private int AxisOffsetCount;
-
-        private ProgressEvent ProgressCallback;
-
+        
         #endregion
 
         #region UI properties
@@ -50,11 +48,16 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
+        #region Event Callback and Thread Sync Properties
+
+        private ProgressEvent ProgressCallback;
         private BackgroundWorker asyncWorker = new BackgroundWorker();
         private DoWorkEventHandler lastTask;
 
         private delegate void CleanupEvent(bool failed);
         private CleanupEvent TaskCleanup;
+
+        #endregion
 
         #region Form Initialization
 
@@ -177,7 +180,7 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
-
+        #region Event Callback and Thread Sync Methods
 
         private void OnProgress(int progress, bool done)
         {
@@ -189,6 +192,7 @@ namespace CNC_Drill_Controller1
             UIupdateTimer_Tick(this, null);
         }
 
+        #endregion
 
         #region Direct USB UI control methods
 
@@ -648,7 +652,7 @@ namespace CNC_Drill_Controller1
         }
         #endregion
 
-        #region Scripted Methods
+        #region Path and Control helpers
 
         private void OptimizeButton_Click(object sender, EventArgs e)
         {
@@ -679,171 +683,11 @@ namespace CNC_Drill_Controller1
             RebuildListBoxAndViewerFromNodes();
         }
 
-        private void DrillButton_Click(object sender, EventArgs e)
-        {
-            //script :
-            //check state of all switch for startup conditions.
-            //disable controls/UI
-            //set node as target/next
-            //start time-out timer
-            //init drill from top
-            //wait for top switch off
-            //wait for top switch on
-            //set node as drilled
-            //if timer expires before end of drill cycle set node as idle and log error
-
-            logger1.AddLine("Starting Scripted Run [Drill Selected Node]...");
-            var failed = !USB.IsOpen;
-
-            if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
-            {
-                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
-                UpdateNodeColors();
-                logger1.AddLine("Moving to: " + Nodes[listBox1.SelectedIndex].Location);
-                UIupdateTimer_Tick(sender, e);
-
-                Enabled = false;
-                USB.MoveTo(Nodes[listBox1.SelectedIndex].location.X, Nodes[listBox1.SelectedIndex].location.Y);
-
-                logger1.AddLine("Drilling...");
-                checkBoxD.Checked = true;
-                UIupdateTimer_Tick(sender, e);
-
-                var maxTries = 20;
-                while (USB.TopSwitch && !failed)
-                {
-                    USB.Transfer();
-                    failed = !USB.IsOpen || (maxTries < 0);
-                    UIupdateTimer_Tick(sender, e);
-                    maxTries--;
-                    Thread.Sleep(50);
-                }
-
-                checkBoxD.Checked = false;
-                Refresh();
-
-                maxTries = 20;
-                while (!USB.TopSwitch && !failed)
-                {
-                    USB.Transfer();
-                    failed = !USB.IsOpen || (maxTries < 0);
-                    UIupdateTimer_Tick(sender, e);
-                    maxTries--;
-                    Thread.Sleep(50);
-                }
-                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
-                UpdateNodeColors();
-                logger1.AddLine("Scripted Run Completed.");
-            }
-            else logger1.AddLine("Can't init drill cycle, limit switches are not properly set.");
-            Enabled = true;
-        }
-
-        private bool Check_Limit_Switches()
-        {
-            return !USB.MaxXswitch && !USB.MinXswitch && !USB.MaxYswitch && !USB.MinYswitch;
-        }
-
-        private void RunButton_Click(object sender, EventArgs e)
-        {
-            logger1.AddLine("Starting Scripted Run [Drill all Nodes]...");
-            var failed = !USB.IsOpen;
-
-            if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
-            {
-                for (var i = 0; i < listBox1.Items.Count; i++)
-                {
-                    if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
-                    {
-                        if (Nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
-                        {
-                            Nodes[i].status = DrillNode.DrillNodeStatus.Next;
-                            UpdateNodeColors();
-                            logger1.AddLine("Moving to [" + (i+1) + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
-                            UIupdateTimer_Tick(sender, e);
-
-                            Enabled = false;
-                            USB.MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
-
-                            logger1.AddLine("Drilling...");
-                            checkBoxD.Checked = true;
-                            UIupdateTimer_Tick(sender, e);
-
-
-                            var maxTries = 20;
-                            while (USB.TopSwitch && !failed)
-                            {
-                                USB.Transfer();
-                                failed = !USB.IsOpen || (maxTries < 0);
-                                UIupdateTimer_Tick(sender, e);
-                                maxTries--;
-                                Thread.Sleep(50);
-                            }
-
-                            checkBoxD.Checked = false;
-                            Refresh();
-
-                            maxTries = 20;
-                            while (!USB.TopSwitch && !failed)
-                            {
-                                USB.Transfer();
-                                failed = !USB.IsOpen || (maxTries < 0);
-                                UIupdateTimer_Tick(sender, e);
-                                maxTries--;
-                                Thread.Sleep(50);
-                            }
-                            Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
-                            UpdateNodeColors();
-                            UIupdateTimer_Tick(sender, e);
-                        }
-                        else
-                        {
-                            logger1.AddLine("Node [" + (i+1) + "/" + listBox1.Items.Count + "] already drilled.");
-                        }
-                    }
-                }
-
-                logger1.AddLine("Scripted Run Completed.");
-            }
-            else logger1.AddLine("Can't init drill cycle, limit switches are not properly set or USB interface is Closed.");
-            Enabled = true;
-        }
-
-        private void SeekZeroButton_Click(object sender, EventArgs e)
-        {
-            logger1.AddLine("Seeking Axis Origins...");
-            if (Check_Limit_Switches() && USB.IsOpen)
-            {
-                USB.Inhibit_LimitSwitches_Warning = true;
-                Enabled = false;
-                
-                GetCloserToOrigin();
-
-                var failed = !SeekXSwitch(false, -30, 0);
-                if (!failed) failed = !SeekXSwitch(true, 1, 0);
-                if (!failed) failed = !SeekYSwitch(false, 0, -30);
-                if (!failed) failed = !SeekYSwitch(true, 0, 1);
-                Refresh();
-
-                if (!failed)
-                {
-                    var loc = USB.CurrentLocation();
-                    logger1.AddLine("Location Set to Zero, Origin was found at X=" + loc.X.ToString("F3") + " Y="+loc.Y.ToString("F3"));
-                    zeroAllbutton_Click(sender, e);
-                    logger1.AddLine("Scripted Run Completed.");
-                }
-                else logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
-
-                }
-            else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed.");
-
-            Enabled = true;
-            USB.Inhibit_LimitSwitches_Warning = false;
-        }
-        
         #endregion
-        
-        #region Async Tasks and Handlers
+
+        #region Scripted Methods
+
+        #region Async Tasks Handlers
 
         private void abortButton_Click(object sender, EventArgs e)
         {
@@ -854,11 +698,11 @@ namespace CNC_Drill_Controller1
             }
         }
         
-        private void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, CleanupEvent asyncCleanup)
+        private void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, CleanupEvent asyncCleanup, object argument)
         {
             if (!asyncWorker.IsBusy)
             {
-                if (Check_Limit_Switches() && USB.IsOpen)
+                if (USB.Check_Limit_Switches() && USB.IsOpen)
                 {
                     logger1.AddLine("Starting Async Task");
 
@@ -872,7 +716,7 @@ namespace CNC_Drill_Controller1
                         lastTask = asyncWork;
                         TaskCleanup = asyncCleanup;
 
-                        asyncWorker.RunWorkerAsync();
+                        asyncWorker.RunWorkerAsync(argument);
                     }
                     catch (Exception ex)
                     {
@@ -905,22 +749,102 @@ namespace CNC_Drill_Controller1
             }
             else
             {
-                logger1.AddLine("Task Completed.");
                 var failed = e.UserState as bool? ?? false;
                 TaskCleanup(failed);
             }
 
             OnProgress(100, true);
-            //Enabled = true;
             USB.Inhibit_LimitSwitches_Warning = false;
         }
 
-        #region Async Find Axis Origin
+
+        #endregion
+
+        #region Async Task: Drill Selected Node
+
+        private void AsyncDrillSelectedButton_Click(object sender, EventArgs e)
+        {
+            if ((listBox1.SelectedIndex > 0) && (listBox1.SelectedIndex <= Nodes.Count))
+            {
+                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
+                var toDrill = Nodes[listBox1.SelectedIndex].location;
+
+                UpdateNodeColors();
+                startAsyncWorkerWithTask("Drill Selected Node (Async)...",
+                    asyncWorkerDoWork_DrillSelected, asyncWorkerDoWork_DrillSelected_Cleanup, toDrill);
+
+                if (taskDialog.ShowDialog(this) == DialogResult.Abort)
+                {
+                    abortButton_Click(sender, e);
+                }
+                Enabled = true;
+            } else logger1.AddLine("Invalid Selection");
+        }
+        private void asyncWorkerDoWork_DrillSelected(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            var failed = !USB.IsOpen;
+            var loc = doWorkEventArgs.Argument as PointF? ?? PointF.Empty;
+
+            USB.MoveTo(loc.X, loc.Y);
+            asyncWorker.ReportProgress(50, failed);
+
+            if (!asyncWorker.CancellationPending)
+            {
+                if (!failed && USB.IsOpen && USB.Check_Limit_Switches())
+                {
+                    USB.Cycle_Drill = true;
+                    var maxTries = 20;
+                    while (USB.TopSwitch && !failed)
+                    {
+                        USB.Transfer();
+                        failed = !USB.IsOpen || (maxTries < 0);
+                        maxTries--;
+                        Thread.Sleep(50);
+                    }
+                }
+                asyncWorker.ReportProgress(75, failed);
+            } else doWorkEventArgs.Cancel = true;
+
+            if (!asyncWorker.CancellationPending)
+            {
+                if (!failed && USB.IsOpen && USB.Check_Limit_Switches())
+                {
+                    USB.Cycle_Drill = false;
+                    var maxTries = 20;
+                    while (USB.TopSwitch && !failed)
+                    {
+                        USB.Transfer();
+                        failed = !USB.IsOpen || (maxTries < 0);
+                        maxTries--;
+                        Thread.Sleep(50);
+                    }
+                }
+                asyncWorker.ReportProgress(100, failed || !USB.IsOpen || !USB.Check_Limit_Switches());
+            } else doWorkEventArgs.Cancel = true;
+        }
+        private void asyncWorkerDoWork_DrillSelected_Cleanup(bool failed)
+        {
+            if (failed)
+            {
+                logger1.AddLine("Drill Sequence Failed");
+            }
+            else
+            {
+                logger1.AddLine("Task Completed.");
+                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
+                UpdateNodeColors();
+            }
+        }
+
+        #endregion
+
+        #region Async Task: Find Axis Origin
+
         private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
         {
             startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
                 asyncWorkerDoWork_FindAxisOrigin,
-                asyncWorkerDoWork_FindAxisOrigin_Cleanup);
+                asyncWorkerDoWork_FindAxisOrigin_Cleanup, null);
 
             if (taskDialog.ShowDialog(this) == DialogResult.Abort)
             {
@@ -928,14 +852,12 @@ namespace CNC_Drill_Controller1
             }
             Enabled = true;
         }
-
         private void GetCloserToOrigin()
         {
             var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
             var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
             USB.MoveBy(-delta_X, -delta_Y);
         }
-
         private bool SeekXSwitch(bool AxisDirection, int byX, int byY)
         {
             var success = true;
@@ -964,8 +886,6 @@ namespace CNC_Drill_Controller1
             }
             return success;
         }
-
-
         private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
         {
             var failed = false;
@@ -1008,6 +928,7 @@ namespace CNC_Drill_Controller1
         }
         private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool failed)
         {
+            logger1.AddLine("Task Completed.");
             if (failed)
             {
                 logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
@@ -1021,8 +942,71 @@ namespace CNC_Drill_Controller1
         }
         #endregion
 
+        private void RunButton_Click(object sender, EventArgs e)
+        {
+            logger1.AddLine("Starting Scripted Run [Drill all Nodes]...");
+            var failed = !USB.IsOpen;
+
+            if (USB.Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
+            {
+                for (var i = 0; i < listBox1.Items.Count; i++)
+                {
+                    if (USB.Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
+                    {
+                        if (Nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
+                        {
+                            Nodes[i].status = DrillNode.DrillNodeStatus.Next;
+                            UpdateNodeColors();
+                            logger1.AddLine("Moving to [" + (i+1) + "/" + listBox1.Items.Count + "]: " + Nodes[i].Location);
+                            UIupdateTimer_Tick(sender, e);
+
+                            Enabled = false;
+                            USB.MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
+
+                            logger1.AddLine("Drilling...");
+                            checkBoxD.Checked = true;
+                            UIupdateTimer_Tick(sender, e);
+
+                            var maxTries = 20;
+                            while (USB.TopSwitch && !failed)
+                            {
+                                USB.Transfer();
+                                failed = !USB.IsOpen || (maxTries < 0);
+                                UIupdateTimer_Tick(sender, e);
+                                maxTries--;
+                                Thread.Sleep(50);
+                            }
+
+                            checkBoxD.Checked = false;
+                            Refresh();
+
+                            maxTries = 20;
+                            while (!USB.TopSwitch && !failed)
+                            {
+                                USB.Transfer();
+                                failed = !USB.IsOpen || (maxTries < 0);
+                                UIupdateTimer_Tick(sender, e);
+                                maxTries--;
+                                Thread.Sleep(50);
+                            }
+                            Nodes[i].status = DrillNode.DrillNodeStatus.Drilled;
+                            UpdateNodeColors();
+                            UIupdateTimer_Tick(sender, e);
+                        }
+                        else
+                        {
+                            logger1.AddLine("Node [" + (i+1) + "/" + listBox1.Items.Count + "] already drilled.");
+                        }
+                    }
+                }
+
+                logger1.AddLine("Scripted Run Completed.");
+            }
+            else logger1.AddLine("Can't init drill cycle, limit switches are not properly set or USB interface is Closed.");
+            Enabled = true;
+        }
+
         #endregion
 
-        //todo offset nodes closer to margins / 6x6 table on load
     }
 }

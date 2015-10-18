@@ -108,6 +108,7 @@
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
             this.abortButton = new System.Windows.Forms.Button();
             this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
+            this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -710,7 +711,7 @@
             this.SeekZeroButton.TabIndex = 47;
             this.SeekZeroButton.Text = "[Find Axis Origins]";
             this.SeekZeroButton.UseVisualStyleBackColor = true;
-            this.SeekZeroButton.Click += new System.EventHandler(this.SeekZeroButton_Click);
+
             // 
             // ReloadUSBbutton
             // 
@@ -732,7 +733,7 @@
             this.DrillButton.TabIndex = 49;
             this.DrillButton.Text = "[Drill Selected Node]";
             this.DrillButton.UseVisualStyleBackColor = true;
-            this.DrillButton.Click += new System.EventHandler(this.DrillButton_Click);
+
             // 
             // OffsetOriginBtton
             // 
@@ -935,11 +936,23 @@
             this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
             this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
             // 
+            // AsyncDrillSelectedButton
+            // 
+            this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(159, 180);
+            this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
+            this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(156, 21);
+            this.AsyncDrillSelectedButton.TabIndex = 67;
+            this.AsyncDrillSelectedButton.Text = "Async Drill Selected Node";
+            this.AsyncDrillSelectedButton.UseVisualStyleBackColor = true;
+            this.AsyncDrillSelectedButton.Click += new System.EventHandler(this.AsyncDrillSelectedButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.AsyncDrillSelectedButton);
             this.Controls.Add(this.AsyncStartFindOriginButton);
             this.Controls.Add(this.abortButton);
             this.Controls.Add(this.showRawCheckbox);
@@ -1088,6 +1101,7 @@
         private System.Windows.Forms.CheckBox showRawCheckbox;
         private System.Windows.Forms.Button abortButton;
         private System.Windows.Forms.Button AsyncStartFindOriginButton;
+        private System.Windows.Forms.Button AsyncDrillSelectedButton;
     }
 }
 
