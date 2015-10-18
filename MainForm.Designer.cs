@@ -106,7 +106,7 @@
             this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
             this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
             this.DrillAllNodebutton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.AbortMoveButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -436,7 +436,7 @@
             // XScaleTextBox
             // 
             this.XScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XScaleTextBox.Location = new System.Drawing.Point(73, 523);
+            this.XScaleTextBox.Location = new System.Drawing.Point(73, 522);
             this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -446,7 +446,7 @@
             // YScaleTextBox
             // 
             this.YScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YScaleTextBox.Location = new System.Drawing.Point(73, 546);
+            this.YScaleTextBox.Location = new System.Drawing.Point(73, 545);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -458,7 +458,7 @@
             this.XCurrentPosTextBox.Location = new System.Drawing.Point(78, 435);
             this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
-            this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
+            this.XCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.XCurrentPosTextBox.TabIndex = 18;
             this.XCurrentPosTextBox.Text = "0.000";
             // 
@@ -467,7 +467,7 @@
             this.YCurrentPosTextBox.Location = new System.Drawing.Point(78, 458);
             this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
-            this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
+            this.YCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.YCurrentPosTextBox.TabIndex = 19;
             this.YCurrentPosTextBox.Text = "0.000";
             // 
@@ -495,7 +495,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(18, 392);
+            this.zeroXbutton.Location = new System.Drawing.Point(18, 390);
             this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
@@ -506,7 +506,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(78, 392);
+            this.zeroYbutton.Location = new System.Drawing.Point(78, 390);
             this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
@@ -520,7 +520,7 @@
             this.zeroAllbutton.Location = new System.Drawing.Point(18, 412);
             this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
-            this.zeroAllbutton.Size = new System.Drawing.Size(117, 19);
+            this.zeroAllbutton.Size = new System.Drawing.Size(116, 19);
             this.zeroAllbutton.TabIndex = 26;
             this.zeroAllbutton.Text = "Zero All";
             this.zeroAllbutton.UseVisualStyleBackColor = true;
@@ -791,7 +791,7 @@
             // 
             // SetAllButton
             // 
-            this.SetAllButton.Location = new System.Drawing.Point(17, 482);
+            this.SetAllButton.Location = new System.Drawing.Point(18, 482);
             this.SetAllButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetAllButton.Name = "SetAllButton";
             this.SetAllButton.Size = new System.Drawing.Size(116, 19);
@@ -878,9 +878,9 @@
             // AsyncStartFindOriginButton
             // 
             this.AsyncStartFindOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(151, 30);
+            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(151, 31);
             this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
-            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(172, 23);
+            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(172, 21);
             this.AsyncStartFindOriginButton.TabIndex = 66;
             this.AsyncStartFindOriginButton.Text = "[Find Axis Origin]";
             this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
@@ -908,22 +908,25 @@
             this.DrillAllNodebutton.UseVisualStyleBackColor = true;
             this.DrillAllNodebutton.Click += new System.EventHandler(this.DrillAllNodebutton_Click);
             // 
-            // button1
+            // AbortMoveButton
             // 
-            this.button1.Location = new System.Drawing.Point(172, 141);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 69;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.AbortMoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
+            this.AbortMoveButton.Location = new System.Drawing.Point(196, 543);
+            this.AbortMoveButton.Name = "AbortMoveButton";
+            this.AbortMoveButton.Size = new System.Drawing.Size(127, 23);
+            this.AbortMoveButton.TabIndex = 69;
+            this.AbortMoveButton.Text = "Abort Move";
+            this.AbortMoveButton.UseVisualStyleBackColor = true;
+            this.AbortMoveButton.Click += new System.EventHandler(this.AbortMoveButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.AbortMoveButton);
             this.Controls.Add(this.DrillAllNodebutton);
             this.Controls.Add(this.AsyncDrillSelectedButton);
             this.Controls.Add(this.AsyncStartFindOriginButton);
@@ -1068,7 +1071,7 @@
         private System.Windows.Forms.Button AsyncStartFindOriginButton;
         private System.Windows.Forms.Button AsyncDrillSelectedButton;
         private System.Windows.Forms.Button DrillAllNodebutton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button AbortMoveButton;
     }
 }
 

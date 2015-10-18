@@ -969,6 +969,7 @@ namespace CNC_Drill_Controller1
             {
                 asyncWorker.ReportProgress(100, success);
             }
+            doWorkEventArgs.Result = success;
         }
         private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool success)
         {
@@ -1047,6 +1048,7 @@ namespace CNC_Drill_Controller1
                     else e.Cancel = true;
                 }
             asyncWorker.ReportProgress(100, success);
+            e.Result = success;
         }
 
         private void asyncWorkerDoWork_DrillAll_Cleanup(bool success)
@@ -1056,7 +1058,7 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
-        private void button1_Click(object sender, EventArgs e)
+        private void AbortMoveButton_Click(object sender, EventArgs e)
         {
             USB.CancelMove();
         }
