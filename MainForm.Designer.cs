@@ -45,8 +45,6 @@
             this.YMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TopStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.BottomStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.XSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.YSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -217,8 +215,6 @@
             this.YMaxStatusLabel,
             this.TopStatusLabel,
             this.BottomStatusLabel,
-            this.XSyncStatusLabel,
-            this.YSyncStatusLabel,
             this.XStatusLabel,
             this.YStatusLabel,
             this.toolStripDropDownButton1});
@@ -289,22 +285,6 @@
             this.BottomStatusLabel.Name = "BottomStatusLabel";
             this.BottomStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.BottomStatusLabel.Text = "Bottom";
-            // 
-            // XSyncStatusLabel
-            // 
-            this.XSyncStatusLabel.AutoSize = false;
-            this.XSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.XSyncStatusLabel.Name = "XSyncStatusLabel";
-            this.XSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.XSyncStatusLabel.Text = "X - Sync";
-            // 
-            // YSyncStatusLabel
-            // 
-            this.YSyncStatusLabel.AutoSize = false;
-            this.YSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.YSyncStatusLabel.Name = "YSyncStatusLabel";
-            this.YSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.YSyncStatusLabel.Text = "Y - Sync";
             // 
             // XStatusLabel
             // 
@@ -946,6 +926,7 @@
             // 
             // AsyncStartFindOriginButton
             // 
+            this.AsyncStartFindOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(159, 207);
             this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
             this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(156, 23);
@@ -1103,8 +1084,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
-        private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
         private System.Windows.Forms.Button abortButton;

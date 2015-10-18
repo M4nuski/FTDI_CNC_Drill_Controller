@@ -27,7 +27,7 @@
     <PublisherName>Emmanuel Charette</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>16</ApplicationRevision>
+    <ApplicationRevision>18</ApplicationRevision>
     <ApplicationVersion>1.5.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -99,6 +99,7 @@
     <Compile Include="DrillNode.cs" />
     <Compile Include="ExtLog.cs" />
     <Compile Include="FTD2XX_NET.cs" />
+    <Compile Include="IUSB_Controller.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,6 +116,7 @@
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
     <Compile Include="USB_Control.cs" />
+    <Compile Include="USB_Control_Emulator.cs" />
     <Compile Include="VDXLoader.cs" />
     <Compile Include="Viewer.cs" />
     <EmbeddedResource Include="DrawingTypeDialog.resx">

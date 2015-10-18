@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -16,10 +15,14 @@ namespace CNC_Drill_Controller1
         public CancellationTokenSource cts = new CancellationTokenSource();
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
-        private USB_Control USB = new USB_Control();
+        private IUSB_Controller USB = new USB_Control();
         private const int USB_Refresh_Period = 250;
         private const int GlobalProperties_Refresh_Period = 10000;
+        private const int Label_Refresh_Period = 100;
+        private DateTime lastUIupdate;
         private int AxisOffsetCount;
+
+        private ProgressEvent ProgressCallback;
 
         #endregion
 
@@ -58,7 +61,8 @@ namespace CNC_Drill_Controller1
         {
             InitializeComponent();
             FormClosing += OnFormClosing;
-            USB.OnProgress += OnProgress;
+
+            ProgressCallback = progressCallback;
 
             asyncWorker.RunWorkerCompleted += asyncWorkerComplete;
             asyncWorker.ProgressChanged += asyncWorkerProgressChange;
@@ -118,7 +122,13 @@ namespace CNC_Drill_Controller1
                 }
                 USBdevicesComboBox.SelectedIndex = 0;
             }
-            else USBdevicesComboBox.Items.Add("[None]");
+            else
+            {
+                USBdevicesComboBox.Items.Add("[None]");
+                USB = new USB_Control_Emulator();
+            }
+
+            USB.OnProgress += OnProgress;
 
             USB.X_Abs_Location = GlobalProperties.X_Pos;
             USB.Y_Abs_Location = GlobalProperties.Y_Pos;
@@ -127,16 +137,14 @@ namespace CNC_Drill_Controller1
             USB.X_Last_Direction = GlobalProperties.X_Dir;
             USB.Y_Last_Direction = GlobalProperties.Y_Dir;
 
-            USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
-            USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
-            USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
-            USB.SwitchesOutput.T_Driver = checkBoxT.Checked;
+            USB.X_Driver = checkBoxX.Checked;
+            USB.Y_Driver = checkBoxY.Checked;
+            USB.T_Driver = checkBoxT.Checked;
+            USB.Cycle_Drill = checkBoxD.Checked;
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
             #endregion
-
-            
             
         }
 
@@ -165,15 +173,22 @@ namespace CNC_Drill_Controller1
 
             GlobalProperties.SaveProperties();
         }
-        
+
         #endregion
 
+
+
         private void OnProgress(int progress, bool done)
+        {
+            Invoke(ProgressCallback, new object[] {progress, done});
+        }
+        private void progressCallback(int progress, bool done)
         {
             Cursor = (done) ? Cursors.Default : Cursors.WaitCursor;
             toolStripProgressBar1.Value = progress;
             UIupdateTimer_Tick(this, null);
-        }     
+        }
+
 
         #region Direct USB UI control methods
 
@@ -195,10 +210,10 @@ namespace CNC_Drill_Controller1
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
-            USB.SwitchesOutput.X_Driver = checkBoxX.Checked;
-            USB.SwitchesOutput.Y_Driver = checkBoxY.Checked;
-            USB.SwitchesOutput.Cycle_Drill = checkBoxD.Checked;
-            USB.SwitchesOutput.T_Driver = checkBoxT.Checked;
+            USB.X_Driver = checkBoxX.Checked;
+            USB.Y_Driver = checkBoxY.Checked;
+            USB.T_Driver = checkBoxT.Checked;
+            USB.Cycle_Drill = checkBoxD.Checked;
 
             if (!CheckBoxInhibit) USB.Transfer();
         }
@@ -353,33 +368,33 @@ namespace CNC_Drill_Controller1
 
                 if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
 
-                if (USB.SwitchesInput.MinXswitch && USB.SwitchesInput.MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
+                if (USB.MinXswitch && USB.MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
                 {
                     XMinStatusLabel.BackColor = Color.DodgerBlue;
                     XMaxStatusLabel.BackColor = Color.DodgerBlue;
                 }
                 else
                 {
-                    XMinStatusLabel.BackColor = !USB.SwitchesInput.MinXswitch ? Color.Lime : Color.Red;
-                    XMaxStatusLabel.BackColor = !USB.SwitchesInput.MaxXswitch ? Color.Lime : Color.Red;
+                    XMinStatusLabel.BackColor = !USB.MinXswitch ? Color.Lime : Color.Red;
+                    XMaxStatusLabel.BackColor = !USB.MaxXswitch ? Color.Lime : Color.Red;
                 }
 
-                if (USB.SwitchesInput.MinYswitch && USB.SwitchesInput.MaxYswitch)
+                if (USB.MinYswitch && USB.MaxYswitch)
                 {
                     YMinStatusLabel.BackColor = Color.DodgerBlue;
                     YMaxStatusLabel.BackColor = Color.DodgerBlue;
                 }
                 else
                 {
-                    YMinStatusLabel.BackColor = !USB.SwitchesInput.MinYswitch ? Color.Lime : Color.Red;
-                    YMaxStatusLabel.BackColor = !USB.SwitchesInput.MaxYswitch ? Color.Lime : Color.Red;
+                    YMinStatusLabel.BackColor = !USB.MinYswitch ? Color.Lime : Color.Red;
+                    YMaxStatusLabel.BackColor = !USB.MaxYswitch ? Color.Lime : Color.Red;
                 }
 
-                TopStatusLabel.BackColor = USB.SwitchesInput.TopSwitch ? Color.Lime : SystemColors.Control;
-                BottomStatusLabel.BackColor = USB.SwitchesInput.BottomSwitch ? Color.Lime : SystemColors.Control;
+                TopStatusLabel.BackColor = USB.TopSwitch ? Color.Lime : SystemColors.Control;
+                BottomStatusLabel.BackColor = USB.BottomSwitch ? Color.Lime : SystemColors.Control;
 
                 //reset drill cycle
-                if (checkBoxD.Checked && !USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch)
+                if (checkBoxD.Checked && !USB.TopSwitch && !USB.BottomSwitch)
                 {
                         checkBoxD.Checked = false;
                 }
@@ -409,11 +424,17 @@ namespace CNC_Drill_Controller1
 
             #region Refresh required elements
 
-            OutputLabel.Refresh();
-            Xlabel.Refresh();
-            Ylabel.Refresh();
-            statusStrip1.Refresh();
-            logger1.Refresh();
+            if ((DateTime.Now.Subtract(lastUIupdate)).Milliseconds > Label_Refresh_Period)
+            {
+
+                OutputLabel.Refresh();
+                Xlabel.Refresh();
+                Ylabel.Refresh();
+                statusStrip1.Refresh();
+                logger1.Refresh();
+
+                lastUIupdate = DateTime.Now;
+            }
 
             #endregion
 
@@ -674,7 +695,7 @@ namespace CNC_Drill_Controller1
             logger1.AddLine("Starting Scripted Run [Drill Selected Node]...");
             var failed = !USB.IsOpen;
 
-            if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+            if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
             {
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
                 UpdateNodeColors();
@@ -689,7 +710,7 @@ namespace CNC_Drill_Controller1
                 UIupdateTimer_Tick(sender, e);
 
                 var maxTries = 20;
-                while (USB.SwitchesInput.TopSwitch && !failed)
+                while (USB.TopSwitch && !failed)
                 {
                     USB.Transfer();
                     failed = !USB.IsOpen || (maxTries < 0);
@@ -702,7 +723,7 @@ namespace CNC_Drill_Controller1
                 Refresh();
 
                 maxTries = 20;
-                while (!USB.SwitchesInput.TopSwitch && !failed)
+                while (!USB.TopSwitch && !failed)
                 {
                     USB.Transfer();
                     failed = !USB.IsOpen || (maxTries < 0);
@@ -720,7 +741,7 @@ namespace CNC_Drill_Controller1
 
         private bool Check_Limit_Switches()
         {
-            return !USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch && !USB.SwitchesInput.MaxYswitch && !USB.SwitchesInput.MinYswitch;
+            return !USB.MaxXswitch && !USB.MinXswitch && !USB.MaxYswitch && !USB.MinYswitch;
         }
 
         private void RunButton_Click(object sender, EventArgs e)
@@ -728,11 +749,11 @@ namespace CNC_Drill_Controller1
             logger1.AddLine("Starting Scripted Run [Drill all Nodes]...");
             var failed = !USB.IsOpen;
 
-            if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+            if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
             {
                 for (var i = 0; i < listBox1.Items.Count; i++)
                 {
-                    if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+                    if (Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch && !failed)
                     {
                         if (Nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
                         {
@@ -750,7 +771,7 @@ namespace CNC_Drill_Controller1
 
 
                             var maxTries = 20;
-                            while (USB.SwitchesInput.TopSwitch && !failed)
+                            while (USB.TopSwitch && !failed)
                             {
                                 USB.Transfer();
                                 failed = !USB.IsOpen || (maxTries < 0);
@@ -763,7 +784,7 @@ namespace CNC_Drill_Controller1
                             Refresh();
 
                             maxTries = 20;
-                            while (!USB.SwitchesInput.TopSwitch && !failed)
+                            while (!USB.TopSwitch && !failed)
                             {
                                 USB.Transfer();
                                 failed = !USB.IsOpen || (maxTries < 0);
@@ -798,10 +819,10 @@ namespace CNC_Drill_Controller1
                 
                 GetCloserToOrigin();
 
-                var failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, false, -30, 0);
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, true, 1, 0);
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, false, 0, -30);
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, true, 0, 1);
+                var failed = !SeekXSwitch(false, -30, 0);
+                if (!failed) failed = !SeekXSwitch(true, 1, 0);
+                if (!failed) failed = !SeekYSwitch(false, 0, -30);
+                if (!failed) failed = !SeekYSwitch(true, 0, 1);
                 Refresh();
 
                 if (!failed)
@@ -873,7 +894,11 @@ namespace CNC_Drill_Controller1
         {
             asyncWorker.DoWork -= lastTask;
 
-            if (e.Cancelled)
+            if (e.Error != null)
+            {
+                logger1.AddLine("Error running Task: "+ e.Error.Message);
+            } 
+            else if (e.Cancelled)
             {
                 logger1.AddLine("Task Cancelled.");
             }
@@ -884,6 +909,7 @@ namespace CNC_Drill_Controller1
                 TaskCleanup(failed);
             }
 
+            OnProgress(100, true);
             Enabled = true;
             USB.Inhibit_LimitSwitches_Warning = false;
         }
@@ -902,11 +928,12 @@ namespace CNC_Drill_Controller1
             var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
             USB.MoveBy(-delta_X, -delta_Y);
         }
-        private bool SeekSwitch(ref bool AxisSwitch, bool AxisDirection, int byX, int byY)
+
+        private bool SeekXSwitch(bool AxisDirection, int byX, int byY)
         {
             var success = true;
             var maxTries = GlobalProperties.numStepsPerTurns;
-            while ((AxisSwitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
+            while ((USB.MinXswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
             {
                 USB.MoveBy(byX, byY);
                 maxTries--;
@@ -916,6 +943,22 @@ namespace CNC_Drill_Controller1
             }
             return success;
         }
+        private bool SeekYSwitch(bool AxisDirection, int byX, int byY)
+        {
+            var success = true;
+            var maxTries = GlobalProperties.numStepsPerTurns;
+            while ((USB.MinYswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
+            {
+                USB.MoveBy(byX, byY);
+                maxTries--;
+                Thread.Sleep(50);
+                USB.Transfer();
+                success = maxTries > 0;
+            }
+            return success;
+        }
+
+
         private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
         {
             var failed = false;
@@ -929,26 +972,25 @@ namespace CNC_Drill_Controller1
             
             if (!asyncWorker.CancellationPending)
             {
-                failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, false, -30, 0); //1.5in
+                failed = !SeekXSwitch(false, -30, 0); //1.5in
                 asyncWorker.ReportProgress(45, failed);
-            }
-            else doWorkEventArgs.Cancel = true;
+            } else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinXswitch, true, 1, 0); //1 turn
+                if (!failed) failed = !SeekXSwitch(true, 1, 0); //1 turn
                 asyncWorker.ReportProgress(60, failed);
             } else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, false, 0, -30);
+                if (!failed) failed = !SeekYSwitch(false, 0, -30);
                 asyncWorker.ReportProgress(75, failed);
             } else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (!failed) failed = !SeekSwitch(ref USB.SwitchesInput.MinYswitch, true, 0, 1);
+                if (!failed) failed = !SeekYSwitch(true, 0, 1);
                 asyncWorker.ReportProgress(90, failed);
             } else doWorkEventArgs.Cancel = true;
 
