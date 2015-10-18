@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace CNC_Drill_Controller1

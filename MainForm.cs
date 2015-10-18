@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1
 {
     public partial class MainForm : Form
     {
-        public CancellationTokenSource cts = new CancellationTokenSource();
+
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private IUSB_Controller USB = new USB_Control();
@@ -33,6 +33,7 @@ namespace CNC_Drill_Controller1
         private int lastSelectedIndex;
         private char[] trimChars = { ' ' };
         private RawUSBForm RawUsbForm = new RawUSBForm();
+        private TaskDialog taskDialog = new TaskDialog();
 
         #endregion
 
@@ -184,7 +185,6 @@ namespace CNC_Drill_Controller1
         }
         private void progressCallback(int progress, bool done)
         {
-            Cursor = (done) ? Cursors.Default : Cursors.WaitCursor;
             toolStripShortProgressBar.Value = progress;
             UIupdateTimer_Tick(this, null);
         }
@@ -889,12 +889,13 @@ namespace CNC_Drill_Controller1
         {
             logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
             toolStripLongProgressBar.Value = e.ProgressPercentage;
+            taskDialog.update(e.ProgressPercentage);
         }
 
         private void asyncWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
         {
             asyncWorker.DoWork -= lastTask;
-
+            taskDialog.done();
             if (e.Error != null)
             {
                 logger1.AddLine("Error running Task: "+ e.Error.Message);
@@ -911,7 +912,7 @@ namespace CNC_Drill_Controller1
             }
 
             OnProgress(100, true);
-            Enabled = true;
+            //Enabled = true;
             USB.Inhibit_LimitSwitches_Warning = false;
         }
 
@@ -921,6 +922,12 @@ namespace CNC_Drill_Controller1
             startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
                 asyncWorkerDoWork_FindAxisOrigin,
                 asyncWorkerDoWork_FindAxisOrigin_Cleanup);
+
+            if (taskDialog.ShowDialog(this) == DialogResult.Abort)
+            {
+                abortButton_Click(sender, e);
+            }
+            Enabled = true;
         }
 
         private void GetCloserToOrigin()

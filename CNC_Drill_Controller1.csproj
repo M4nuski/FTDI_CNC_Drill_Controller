@@ -115,6 +115,12 @@
     <Compile Include="RawUSBForm.Designer.cs">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskDialog.Designer.cs">
+      <DependentUpon>TaskDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="USB_Control.cs" />
     <Compile Include="USB_Control_Emulator.cs" />
     <Compile Include="VDXLoader.cs" />
@@ -137,6 +143,9 @@
     </Compile>
     <EmbeddedResource Include="RawUSBForm.resx">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskDialog.resx">
+      <DependentUpon>TaskDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="CNC_Drill_Controller1_TemporaryKey.pfx" />
