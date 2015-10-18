@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
 using FTD2XX_NET;
 
 namespace CNC_Drill_Controller1
@@ -19,37 +18,37 @@ namespace CNC_Drill_Controller1
         {
             public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
             public bool TopSwitch, BottomSwitch;
-            public bool SyncXswitch, SyncYswitch;
         }
         public InputSwitchStruct SwitchesInput;
 
         public struct OutputSwitchStruct
         {
-            public bool X_Driver, Y_Driver;
+            public bool X_Driver, Y_Driver, T_Driver;
             public bool Cycle_Drill;
         }
 
         public OutputSwitchStruct SwitchesOutput;
 
-        public int X_Abs_Location, Y_Abs_Location;
+        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
 
+        public int X_Abs_Location, Y_Abs_Location;
         public int X_Delta, Y_Delta;
+        public int X_Last_Direction, Y_Last_Direction;
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
 
-        private int X_Last_Direction, Y_Last_Direction;//todo save to application context
-        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning, Inhibit_Sync;
-        public int X_Sync_Modulus, Y_Sync_Modulus;
-        public int Sync_Divisor = 8;
-        private bool X_Sync_Found, Y_Sync_Found;
 
+
+        //todo change to workerthread
         public delegate void ProgressEvent(int Progress, bool Done);
         public ProgressEvent OnProgress;
-
-        private void UpdateProgress(int Progress, bool Done) //todo change to workerthread
+        private void UpdateProgress(int Progress, bool Done)
         {
             if (OnProgress != null) OnProgress(Progress, Done);
         }
+
+
+
 
         public List<string> GetDevicesList()
         {
@@ -98,8 +97,8 @@ namespace CNC_Drill_Controller1
                 return false;
             }
 
-            ExtLog.AddLine("Setting default bauld rate (300)");
-            ftStatus = USB_Interface.SetBaudRate(300);
+            ExtLog.AddLine("Setting default bauld rate (" + GlobalProperties.baudRate + ")");
+            ftStatus = USB_Interface.SetBaudRate(GlobalProperties.baudRate);
             if (ftStatus != FTDI.FT_STATUS.FT_OK)
             {
                 ExtLog.AddLine("Failed to set Baud rate (error " + ftStatus + ")");
@@ -130,120 +129,11 @@ namespace CNC_Drill_Controller1
                 if (SendToUSB())
                 {
                     SwitchesInput = DeSerialize();
-
-
-
-
-                    if (!Inhibit_Sync)
-                        //at every step check if switches matches sync location
-                        //if discrepency wait and repool
-                        //if still off seek correct sync
-                    {
-                        if (X_Sync_Found && Y_Sync_Found)
-                        {
-                            var recheck = false;
-                            if (X_Abs_Location % Sync_Divisor == X_Sync_Modulus)
-                            {
-                                Thread.Sleep(5);
-                                SendToUSB();
-                                recheck = true;
-                                SwitchesInput = DeSerialize();
-                                if (!SwitchesInput.SyncXswitch) ResyncX();
-
-                            }
-                            if (Y_Abs_Location % Sync_Divisor == Y_Sync_Modulus)
-                            {
-                                if (!recheck)
-                                {
-                                    Thread.Sleep(5);
-                                    SendToUSB();
-                                }
-                                SwitchesInput = DeSerialize();
-                                if (!SwitchesInput.SyncYswitch) ResyncY();
-                            }
-                        }
-                        else
-                        {
-                            //re-pool data and set properties if sync  
-                            Thread.Sleep(5);
-                            SendToUSB();
-                            SwitchesInput = DeSerialize();
-                            if (!X_Sync_Found && SwitchesInput.SyncXswitch)
-                            {
-                                X_Sync_Modulus = X_Abs_Location % Sync_Divisor;
-                                X_Sync_Found = true;
-                                ExtLog.AddLine("X_Sync Found");
-                            }
-                            if (!Y_Sync_Found && SwitchesInput.SyncYswitch)
-                            {
-                                Y_Sync_Modulus = Y_Abs_Location % Sync_Divisor;
-                                Y_Sync_Found = true;
-                                ExtLog.AddLine("Y_Sync Found");
-                            }
-                        }
-                    }//end sync
-
-
                     LastUpdate = DateTime.Now;
                 }
             }
             return SwitchesInput;
         }
-
-        private void ResyncX()
-        {
-            X_Sync_Found = false;
-            ExtLog.AddLine("X_Sync Lost");
-
-            var offset = X_Last_Direction * 4;
-
-            X_Abs_Location -= offset;
-            var max_test = Sync_Divisor + 4;
-            while (!SwitchesInput.SyncXswitch && (max_test >= 0))
-            {
-                Serialize(CreateStepByte(), CreateControlByte());
-                SendToUSB();
-                Thread.Sleep(5);
-                SendToUSB();
-                SwitchesInput = DeSerialize();
-                max_test--;
-                if (!SwitchesInput.SyncXswitch) X_Abs_Location += X_Last_Direction;
-            }
-            if (SwitchesInput.SyncXswitch)
-            {
-                X_Sync_Found = true;
-                ExtLog.AddLine("X_Sync found");
-            }
-            else ExtLog.AddLine("Could not recover X_Sync");
-        }
-
-        private void ResyncY()
-        {
-            Y_Sync_Found = false;
-            ExtLog.AddLine("Y_Sync Lost");
-
-            var offset = Y_Last_Direction * 4;
-
-            Y_Abs_Location -= offset;
-            var max_test = Sync_Divisor + 4;
-            while (!SwitchesInput.SyncYswitch && (max_test >= 0))
-            {
-                Serialize(CreateStepByte(), CreateControlByte());
-                SendToUSB();
-                Thread.Sleep(5);
-                SendToUSB();
-                SwitchesInput = DeSerialize();
-                max_test--;
-                if (!SwitchesInput.SyncYswitch) Y_Abs_Location += Y_Last_Direction;
-            }
-            if (SwitchesInput.SyncYswitch)
-            {
-                Y_Sync_Found = true;
-                ExtLog.AddLine("Y_Sync found");
-            }
-            else ExtLog.AddLine("Could not recover Y_Sync");
-        }
-
 
         private bool SendToUSB()
         {
@@ -271,32 +161,44 @@ namespace CNC_Drill_Controller1
 
         private byte CreateStepByte()
         {
-            var x = (byte)(X_Abs_Location & 0x03);
-            var y = (byte)(Y_Abs_Location & 0x03);
+            var x = (byte)(X_Abs_Location & GlobalProperties.numStepMask);
+            var y = (byte)(Y_Abs_Location & GlobalProperties.numStepMask);
             return (byte)((GlobalProperties.stepBytes[x] & 0x0F) | (GlobalProperties.stepBytes[y] & 0xF0));
         }
 
         private byte CreateControlByte()
         {
-            //0 Activate X Axis Step Controller
-            //1 Activate Y Axis Step Controller
+            //0 Activate X Axis Step Controller Driver
+            //1 Activate Y Axis Step Controller Driver
             //2 Activate Drill
+            //3 Activate Torque Assist Driver
+
+            //4 TQA_X_Pos;
+            //5 TQA_X_Neg;
+            //6 TQA_Y_Pos;
+            //7 TQA_Y_Neg;
+
+            var TQA_X_Pos = (X_Last_Direction == 1);
+            var TQA_X_Neg = (X_Last_Direction == -1);
+            var TQA_Y_Pos = (Y_Last_Direction == 1);
+            var TQA_Y_Neg = (Y_Last_Direction == -1);
 
             byte output = 0;
             if (SwitchesOutput.X_Driver) output = (byte)(output | 1);
             if (SwitchesOutput.Y_Driver) output = (byte)(output | 2);
             if (SwitchesOutput.Cycle_Drill) output = (byte)(output | 4);
+            if (SwitchesOutput.T_Driver) output = (byte)(output | 8);
+
+            if (TQA_X_Pos) output = (byte)(output | 16);
+            if (TQA_X_Neg) output = (byte)(output | 32);
+            if (TQA_Y_Pos) output = (byte)(output | 64);
+            if (TQA_Y_Neg) output = (byte)(output | 128);
+
             return output;
         }
 
         private void Serialize(byte Steps, byte Ctrl)
-        {   //bitFrame:
-            //01234567890123456789
-            //b0                b0
-            //50                40
-            //  7766554433221100
-            //  
-
+        {   // Default states:
             //          0 Out Clock					Down 0x01
             //          1 In Inbuffer				N/A  0x02
             //          2 Out StepBuffer			N/A  0x04
@@ -348,10 +250,7 @@ namespace CNC_Drill_Controller1
             for (var i = 0; i < 16; i++)
             {
                 OutputBuffer[46 + i] = (byte)((i % 2) + 0x20);
-            }//46 47 48 49
-            //50 51 52 53
-            //54 55 56 57
-            //58 59 60 61
+            }
 
             //add to clocks to make sure the interface's buffer have been sent 62 - 63
         }
@@ -376,9 +275,6 @@ namespace CNC_Drill_Controller1
 
             SwitchesInput.TopSwitch = !getBit(InputBuffer[53], 1);
             SwitchesInput.BottomSwitch = !getBit(InputBuffer[51], 1);
-
-            SwitchesInput.SyncYswitch = !getBit(InputBuffer[49], 1);
-            SwitchesInput.SyncXswitch = !getBit(InputBuffer[47], 1);
 
             return SwitchesInput;
         }
@@ -463,7 +359,7 @@ namespace CNC_Drill_Controller1
                 }
 
                 Transfer();
-                UpdateProgress(100 * i / numMoves, true);
+                UpdateProgress(100 * i / numMoves, false);
                 if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch ||
                     SwitchesInput.MinYswitch)
                 {
