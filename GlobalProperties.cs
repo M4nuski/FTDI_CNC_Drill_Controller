@@ -11,7 +11,6 @@ namespace CNC_Drill_Controller1
         public static int numStepBytes = 4;
         public static byte numStepMask = 0x03;//b'0000 0011'
         
-
         //Interface config
         public static uint baudRate = 4800;
         public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
@@ -22,6 +21,11 @@ namespace CNC_Drill_Controller1
         public static int Y_Scale = 1;//961;
         public static int X_Backlash = 0;//4;
         public static int Y_Backlash = 0;//4;
+
+        //UI refresh throttler
+        public static int USB_Refresh_Period = 250;
+        public static int GlobalProperties_Refresh_Period = 10000;
+        public static int Label_Refresh_Period = 100;
 
         //USB state
         public static int X_Dir = 0;

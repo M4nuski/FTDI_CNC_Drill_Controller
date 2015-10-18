@@ -27,7 +27,7 @@
     <PublisherName>Emmanuel Charette</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>20</ApplicationRevision>
+    <ApplicationRevision>21</ApplicationRevision>
     <ApplicationVersion>1.5.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -122,6 +122,7 @@
     <Compile Include="TaskDialog.Designer.cs">
       <DependentUpon>TaskDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextConverter.cs" />
     <Compile Include="USB_Control.cs" />
     <Compile Include="USB_Control_Emulator.cs" />
     <Compile Include="VDXLoader.cs" />

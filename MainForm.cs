@@ -16,9 +16,6 @@ namespace CNC_Drill_Controller1
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private IUSB_Controller USB = new USB_Control();
-        private const int USB_Refresh_Period = 250; //todo add to global properties
-        private const int GlobalProperties_Refresh_Period = 10000;
-        private const int Label_Refresh_Period = 100;
         private DateTime lastUIupdate;
         private int AxisOffsetCount;
 
@@ -269,11 +266,11 @@ namespace CNC_Drill_Controller1
             // (loc - delta) / scale = pos
             // loc - delta = (pos * scale)
             // loc - (pos * scale) = delta
-            USB.X_Delta = (int)(USB.X_Abs_Location - (safeTextToFloat(XCurrentPosTextBox.Text) * GlobalProperties.X_Scale));
+            USB.X_Delta = (int)(USB.X_Abs_Location - (TextConverter.SafeTextToFloat(XCurrentPosTextBox.Text) * GlobalProperties.X_Scale));
         }
         private void SetYButton_Click(object sender, EventArgs e)
         {
-            USB.Y_Delta = (int)(USB.Y_Abs_Location - (safeTextToFloat(YCurrentPosTextBox.Text) * GlobalProperties.Y_Scale));
+            USB.Y_Delta = (int)(USB.Y_Abs_Location - (TextConverter.SafeTextToFloat(YCurrentPosTextBox.Text) * GlobalProperties.Y_Scale));
         }
 
         private void SetAllButton_Click(object sender, EventArgs e)
@@ -310,30 +307,11 @@ namespace CNC_Drill_Controller1
                 AxisOffsetCount = 1;
             }
         }
-
-        #endregion
-
-        #region ConversionHelpers
-        private float safeTextToFloat(string text)
+        private void AbortMoveButton_Click(object sender, EventArgs e)
         {
-            float res;
-            if (float.TryParse(text, out res))
-            {
-                return res;
-            }
-            logger1.AddLine("Failed to convert value: " + text);
-            return 0.0f;
+            USB.CancelMove();
         }
-        private int safeTextToInt(string text)
-        {
-            int res;
-            if (int.TryParse(text, out res))
-            {
-                return res;
-            }
-            logger1.AddLine("Failed to convert value: " + text);
-            return 0;
-        }
+
         #endregion
 
         #region Log methods
@@ -361,7 +339,7 @@ namespace CNC_Drill_Controller1
             var snapLocation = nodeViewer.MousePositionF;
             if (SnapViewBox.Checked)
             {
-                var snapSize = safeTextToFloat(SnapSizeTextBox.Text);
+                var snapSize = TextConverter.SafeTextToFloat(SnapSizeTextBox.Text);
                 snapLocation.X = (float)Math.Round(snapLocation.X / snapSize) * snapSize;
                 snapLocation.Y = (float)Math.Round(snapLocation.Y / snapSize) * snapSize;
             }
@@ -371,15 +349,15 @@ namespace CNC_Drill_Controller1
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
         {
-            GlobalProperties.X_Scale = safeTextToInt(XScaleTextBox.Text);
-            GlobalProperties.X_Backlash = safeTextToInt(XBacklastTextbox.Text);
+            GlobalProperties.X_Scale = TextConverter.SafeTextToInt(XScaleTextBox.Text);
+            GlobalProperties.X_Backlash = TextConverter.SafeTextToInt(XBacklastTextbox.Text);
             logger1.AddLine("Set X Axis Scale to: " + GlobalProperties.X_Scale + " steps/inch, Backlash to: " + GlobalProperties.X_Backlash + "steps.");
         }
 
         private void YSetTransformButton_Click(object sender, EventArgs e)
         {
-            GlobalProperties.Y_Scale = safeTextToInt(YScaleTextBox.Text);
-            GlobalProperties.Y_Backlash = safeTextToInt(YBacklastTextbox.Text);
+            GlobalProperties.Y_Scale = TextConverter.SafeTextToInt(YScaleTextBox.Text);
+            GlobalProperties.Y_Backlash = TextConverter.SafeTextToInt(YBacklastTextbox.Text);
             logger1.AddLine("Set Y Axis Scale to: " + GlobalProperties.Y_Scale + " steps/inch, Backlash to: " + GlobalProperties.Y_Backlash + "steps.");
         }
 
@@ -390,7 +368,7 @@ namespace CNC_Drill_Controller1
             {
                 CheckBoxInhibit = true;
                 //fetch data if too old
-                if ((DateTime.Now.Subtract(USB.LastUpdate)).Milliseconds > USB_Refresh_Period)
+                if ((DateTime.Now.Subtract(USB.LastUpdate)).Milliseconds > GlobalProperties.USB_Refresh_Period)
                 {
                     USB.Transfer();
                 }
@@ -453,7 +431,7 @@ namespace CNC_Drill_Controller1
 
             #region Refresh required elements
 
-            if ((DateTime.Now.Subtract(lastUIupdate)).Milliseconds > Label_Refresh_Period)
+            if ((DateTime.Now.Subtract(lastUIupdate)).Milliseconds > GlobalProperties.Label_Refresh_Period)
             {
 
                 OutputLabel.Refresh();
@@ -480,7 +458,7 @@ namespace CNC_Drill_Controller1
             GlobalProperties.X_Delta = USB.X_Delta;
             GlobalProperties.Y_Delta = USB.Y_Delta;
 
-            if ((DateTime.Now.Subtract(GlobalProperties.LastSave)).Milliseconds > GlobalProperties_Refresh_Period)
+            if ((DateTime.Now.Subtract(GlobalProperties.LastSave)).Milliseconds > GlobalProperties.GlobalProperties_Refresh_Period)
             {
                 GlobalProperties.SaveProperties();
             }
@@ -547,8 +525,8 @@ namespace CNC_Drill_Controller1
             var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
             {
-                var mx = safeTextToFloat(axisdata[0].Trim(trimChars));
-                var my = safeTextToFloat(axisdata[1].Trim(trimChars));
+                var mx = TextConverter.SafeTextToFloat(axisdata[0].Trim(trimChars));
+                var my = TextConverter.SafeTextToFloat(axisdata[1].Trim(trimChars));
                 logger1.AddLine("Moving to: " + mx.ToString("F3") + ", " + my.ToString("F3"));
                 USB.MoveTo(mx, my);
             }
@@ -623,7 +601,7 @@ namespace CNC_Drill_Controller1
 
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
-            var origOffset = new SizeF(safeTextToFloat(XoriginTextbox.Text), safeTextToFloat(YOriginTextbox.Text));
+            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YOriginTextbox.Text));
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
             RebuildListBoxAndViewerFromNodes();
@@ -767,7 +745,8 @@ namespace CNC_Drill_Controller1
 
         private void asyncWorkerProgressChange(object sender, ProgressChangedEventArgs e)
         {
-            logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
+            var inhibit = e.UserState as bool? ?? false;
+            if (!inhibit) logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
             taskDialog.update(e.ProgressPercentage);
         }
 
@@ -878,7 +857,7 @@ namespace CNC_Drill_Controller1
             USB.MoveTo(loc.X, loc.Y);
 
             var success = USB.Check_Limit_Switches();
-            asyncWorker.ReportProgress(50, success);
+            asyncWorker.ReportProgress(50);
 
             //start drill from top
             if (!asyncWorker.CancellationPending)
@@ -887,7 +866,7 @@ namespace CNC_Drill_Controller1
                 {
                     success = Initiate_Drill_From_Top(20, 50);
                 }
-                asyncWorker.ReportProgress(75, success);
+                asyncWorker.ReportProgress(75);
             }
             else doWorkEventArgs.Cancel = true;
 
@@ -898,7 +877,7 @@ namespace CNC_Drill_Controller1
                 {
                     success = Wait_For_Drill_To_Top(20, 50);
                 }
-                asyncWorker.ReportProgress(100, success);
+                asyncWorker.ReportProgress(100);
             }
             else doWorkEventArgs.Cancel = true;
 
@@ -937,40 +916,42 @@ namespace CNC_Drill_Controller1
             GetCloserToOrigin();
 
             var success = USB.Check_Limit_Switches();
-            asyncWorker.ReportProgress(30, success);
+            asyncWorker.ReportProgress(30);
 
             if (!asyncWorker.CancellationPending)
             {
                 success = SeekXminSwitch(false, -30, 0, 10); //1.5in
-                asyncWorker.ReportProgress(45, success);
+                asyncWorker.ReportProgress(45);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
                 if (success) success = SeekXminSwitch(true, 1, 0, 50); //1 turn
-                asyncWorker.ReportProgress(60, success);
+                asyncWorker.ReportProgress(60);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
                 if (success) success = SeekYminSwitch(false, 0, -30, 10);
-                asyncWorker.ReportProgress(75, success);
+                asyncWorker.ReportProgress(75);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
                 if (success) success = SeekYminSwitch(true, 0, 1, 50);
-                asyncWorker.ReportProgress(90, success);
+                asyncWorker.ReportProgress(90);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                asyncWorker.ReportProgress(100, success);
+                asyncWorker.ReportProgress(100);
             }
+            else doWorkEventArgs.Cancel = true;
+
             doWorkEventArgs.Result = success;
         }
         private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool success)
@@ -990,7 +971,7 @@ namespace CNC_Drill_Controller1
 
         private void DrillAllNodebutton_Click(object sender, EventArgs e)
         {
-            if (Nodes.Count > 0)
+            if ((Nodes != null) && (Nodes.Count > 0))
             {
                 startAsyncWorkerWithTask("Drill All Nodes (Async)...",
                     asyncWorkerDoWork_DrillAll, asyncWorkerDoWork_DrillAll_Cleanup, Nodes);
@@ -1032,7 +1013,7 @@ namespace CNC_Drill_Controller1
                                 }
 
                                 OnUpdateNode(i, DrillNode.DrillNodeStatus.Drilled);
-
+                                asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, true);
                             }
                             else
                             {
@@ -1042,13 +1023,12 @@ namespace CNC_Drill_Controller1
                         else
                         {
                             success = false;
-                            asyncWorker.ReportProgress(100, false);
                         }
                     }
                     else e.Cancel = true;
                 }
 
-            asyncWorker.ReportProgress(100, success);
+            asyncWorker.ReportProgress(100);
             e.Result = success;
         }
 
@@ -1058,11 +1038,6 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
-
-        private void AbortMoveButton_Click(object sender, EventArgs e)
-        {
-            USB.CancelMove();
-        }
 
         #endregion
     }
