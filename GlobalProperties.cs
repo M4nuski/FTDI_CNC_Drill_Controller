@@ -13,7 +13,7 @@ namespace CNC_Drill_Controller1
         
 
         //Interface config
-        public static uint baudRate = 2400;
+        public static uint baudRate = 4800;
         public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
 
         //UI settings

@@ -785,7 +785,7 @@ namespace CNC_Drill_Controller1
             }
             else
             {
-                var success = e.UserState as bool? ?? false;
+                var success = e.Result as bool? ?? false;
                 if (CleanupCallback != null) CleanupCallback(success);
             }
         }
@@ -901,6 +901,8 @@ namespace CNC_Drill_Controller1
                 asyncWorker.ReportProgress(100, success);
             }
             else doWorkEventArgs.Cancel = true;
+
+            doWorkEventArgs.Result = success;
         }
         private void asyncWorkerDoWork_DrillSelected_Cleanup(bool success)
         {
@@ -939,7 +941,7 @@ namespace CNC_Drill_Controller1
 
             if (!asyncWorker.CancellationPending)
             {
-                success = SeekXminSwitch(false, -30, 0, 20); //1.5in
+                success = SeekXminSwitch(false, -30, 0, 10); //1.5in
                 asyncWorker.ReportProgress(45, success);
             }
             else doWorkEventArgs.Cancel = true;
@@ -953,7 +955,7 @@ namespace CNC_Drill_Controller1
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekYminSwitch(false, 0, -30, 20);
+                if (success) success = SeekYminSwitch(false, 0, -30, 10);
                 asyncWorker.ReportProgress(75, success);
             }
             else doWorkEventArgs.Cancel = true;
@@ -1029,8 +1031,6 @@ namespace CNC_Drill_Controller1
                                     success = Wait_For_Drill_To_Top(20, 50);
                                 }
 
-                                asyncWorker.ReportProgress((100 * (i+1) / nodes.Count), success);
-
                                 OnUpdateNode(i, DrillNode.DrillNodeStatus.Drilled);
 
                             }
@@ -1047,6 +1047,7 @@ namespace CNC_Drill_Controller1
                     }
                     else e.Cancel = true;
                 }
+
             asyncWorker.ReportProgress(100, success);
             e.Result = success;
         }
