@@ -109,7 +109,7 @@
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
             this.abortButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -935,7 +935,7 @@
             // 
             this.abortButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.abortButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.abortButton.Location = new System.Drawing.Point(159, 152);
+            this.abortButton.Location = new System.Drawing.Point(159, 240);
             this.abortButton.Margin = new System.Windows.Forms.Padding(2);
             this.abortButton.Name = "abortButton";
             this.abortButton.Size = new System.Drawing.Size(156, 21);
@@ -944,22 +944,22 @@
             this.abortButton.UseVisualStyleBackColor = true;
             this.abortButton.Click += new System.EventHandler(this.abortButton_Click);
             // 
-            // button1
+            // AsyncStartFindOriginButton
             // 
-            this.button1.Location = new System.Drawing.Point(168, 207);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 66;
-            this.button1.Text = "boboche";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(159, 207);
+            this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
+            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(156, 23);
+            this.AsyncStartFindOriginButton.TabIndex = 66;
+            this.AsyncStartFindOriginButton.Text = "Async Find Axis Origin";
+            this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.AsyncStartFindOriginButton);
             this.Controls.Add(this.abortButton);
             this.Controls.Add(this.showRawCheckbox);
             this.Controls.Add(this.checkBoxT);
@@ -1108,7 +1108,7 @@
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
         private System.Windows.Forms.Button abortButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button AsyncStartFindOriginButton;
     }
 }
 

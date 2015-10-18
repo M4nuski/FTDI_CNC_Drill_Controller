@@ -25,7 +25,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("961")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1922")]
         public int X_Scale {
             get {
                 return ((int)(this["X_Scale"]));
@@ -37,7 +37,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("961")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1922")]
         public int Y_Scale {
             get {
                 return ((int)(this["Y_Scale"]));
@@ -49,7 +49,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
         public int X_Backlash {
             get {
                 return ((int)(this["X_Backlash"]));
@@ -61,7 +61,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
         public int Y_Backlash {
             get {
                 return ((int)(this["Y_Backlash"]));

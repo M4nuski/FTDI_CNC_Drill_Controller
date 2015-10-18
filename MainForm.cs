@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
@@ -12,6 +13,7 @@ namespace CNC_Drill_Controller1
 {
     public partial class MainForm : Form
     {
+        public CancellationTokenSource cts = new CancellationTokenSource();
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private USB_Control USB = new USB_Control();
@@ -44,6 +46,9 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
+        private BackgroundWorker asyncWorker = new BackgroundWorker();
+        private DoWorkEventHandler lastTask;
+
         #region Form Initialization
 
         public MainForm()
@@ -51,30 +56,27 @@ namespace CNC_Drill_Controller1
             InitializeComponent();
             FormClosing += OnFormClosing;
             USB.OnProgress += OnProgress;
+
+            asyncWorker.RunWorkerCompleted += asyncWorkerComplete;
+            asyncWorker.ProgressChanged += asyncWorkerProgressChange;
+            asyncWorker.WorkerReportsProgress = true;
+            asyncWorker.WorkerSupportsCancellation = true;
         }
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
             ExtLog.Logger = logger1;
-            try
-            {
-                if (ApplicationDeployment.IsNetworkDeployed)
-                {
-                    Text += ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
-                }
-                else
-                {
-                    Text += Assembly.GetExecutingAssembly()
-                        .GetName()
-                        .Version
-                        .ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                logger1.AddLine("Error geting version info: " + ex.Message);
-            }
 
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                Text += ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(4);
+            }
+            else
+            {
+                Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
 
             #region View initialization
 
@@ -130,6 +132,9 @@ namespace CNC_Drill_Controller1
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
             #endregion
+
+            
+            
         }
 
         private void USBdevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -853,17 +858,111 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
+        
+        #region Async Tasks and Handlers
 
         private void abortButton_Click(object sender, EventArgs e)
         {
-            //todo w/threadworker
+            if (asyncWorker.IsBusy)
+            {
+                logger1.AddLine("Cancelling Task...");
+                asyncWorker.CancelAsync();
+            }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
         {
-            Thread.Sleep(10000);
+            if (!asyncWorker.IsBusy)
+            {
+                logger1.AddLine("Starting Async Task");
+                try
+                {
+                    asyncWorker.DoWork += asyncWorkerDoWork_FindAxisOrigin;
+                    lastTask = asyncWorkerDoWork_FindAxisOrigin;
+                    asyncWorker.RunWorkerAsync();
+                }
+                catch (Exception ex)
+                {
+                    logger1.AddLine("Async Task failed: " + ex.Message);
+                }
+                logger1.AddLine("Async Started");
+            }
+            else logger1.AddLine("Async Task Already Running");
         }
 
+        private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            if (!asyncWorker.CancellationPending)
+            {
+                Thread.Sleep(500);
+                asyncWorker.ReportProgress(20);
+            }
+            else
+            {
+                doWorkEventArgs.Cancel = true;
+            }
+
+            if (!asyncWorker.CancellationPending)
+            {
+                Thread.Sleep(500);
+                asyncWorker.ReportProgress(40);
+            }
+            else
+            {
+                doWorkEventArgs.Cancel = true;
+            }
+
+            if (!asyncWorker.CancellationPending)
+            {
+                Thread.Sleep(500);
+                asyncWorker.ReportProgress(60);
+            }
+            else
+            {
+                doWorkEventArgs.Cancel = true;
+            }
+
+            if (!asyncWorker.CancellationPending)
+            {
+                Thread.Sleep(500);
+                asyncWorker.ReportProgress(80);
+            }
+            else
+            {
+                doWorkEventArgs.Cancel = true;
+            }
+
+            if (!asyncWorker.CancellationPending)
+            {
+                Thread.Sleep(200);
+                asyncWorker.ReportProgress(100);
+            }
+            else
+            {
+                doWorkEventArgs.Cancel = true;
+            }
+
+        }
+
+        private void asyncWorkerProgressChange(object sender, ProgressChangedEventArgs e)
+        {
+            logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
+        }
+
+        private void asyncWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
+        {
+// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (e.Cancelled)
+            {
+                logger1.AddLine("Task Cancelled.");
+            }
+            else
+            {
+                logger1.AddLine("task done");
+            }
+            asyncWorker.DoWork -= lastTask;
+        }
+        #endregion
 
         //todo offset nodes closer to margins / 6x6 table on load
     }
