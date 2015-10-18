@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -131,13 +132,6 @@ namespace CNC_Drill_Controller1
             #endregion
         }
 
-        private void OnProgress(int progress, bool done)
-        {
-            Cursor = (done) ? Cursors.Default : Cursors.WaitCursor;
-            toolStripProgressBar1.Value = progress;
-            UIupdateTimer_Tick(this, null);
-        }
-
         private void USBdevicesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var locStr = (string)USBdevicesComboBox.SelectedItem;
@@ -165,7 +159,14 @@ namespace CNC_Drill_Controller1
         }
         
         #endregion
-     
+
+        private void OnProgress(int progress, bool done)
+        {
+            Cursor = (done) ? Cursors.Default : Cursors.WaitCursor;
+            toolStripProgressBar1.Value = progress;
+            UIupdateTimer_Tick(this, null);
+        }     
+
         #region Direct USB UI control methods
 
         private void PlusXbutton_Click(object sender, EventArgs e)
@@ -665,7 +666,7 @@ namespace CNC_Drill_Controller1
             logger1.AddLine("Starting Scripted Run [Drill Selected Node]...");
             var failed = !USB.IsOpen;
 
-            if (!USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch && !USB.SwitchesInput.MaxYswitch && !USB.SwitchesInput.MinYswitch && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+            if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
             {
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
                 UpdateNodeColors();
@@ -709,18 +710,21 @@ namespace CNC_Drill_Controller1
             Enabled = true;
         }
 
+        private bool Check_Limit_Switches()
+        {
+            return !USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch && !USB.SwitchesInput.MaxYswitch && !USB.SwitchesInput.MinYswitch;
+        }
+
         private void RunButton_Click(object sender, EventArgs e)
         {
             logger1.AddLine("Starting Scripted Run [Drill all Nodes]...");
             var failed = !USB.IsOpen;
 
-            if (!USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch && !USB.SwitchesInput.MaxYswitch &&
-                !USB.SwitchesInput.MinYswitch && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+            if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
             {
                 for (var i = 0; i < listBox1.Items.Count; i++)
                 {
-                    if (!USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch && !USB.SwitchesInput.MaxYswitch &&
-                        !USB.SwitchesInput.MinYswitch && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
+                    if (Check_Limit_Switches() && USB.SwitchesInput.TopSwitch && !USB.SwitchesInput.BottomSwitch && !failed)
                     {
                         if (Nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
                         {
@@ -780,8 +784,7 @@ namespace CNC_Drill_Controller1
         {
             logger1.AddLine("Seeking Axis Origins...");
 
-            if (!USB.SwitchesInput.MaxXswitch && !USB.SwitchesInput.MinXswitch &&
-                !USB.SwitchesInput.MaxYswitch && !USB.SwitchesInput.MinYswitch && USB.IsOpen)
+            if (Check_Limit_Switches() && USB.IsOpen)
             {
                 USB.Inhibit_LimitSwitches_Warning = true;
                 Enabled = false;
@@ -794,6 +797,7 @@ namespace CNC_Drill_Controller1
                 UIupdateTimer_Tick(sender, e);
 
                 var maxTries = 48;
+
                 while (!USB.SwitchesInput.MinXswitch && USB.IsOpen && (maxTries > 0))
                 {
                     USB.MoveBy(-24, 0);
@@ -849,6 +853,17 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
+
+        private void abortButton_Click(object sender, EventArgs e)
+        {
+            //todo w/threadworker
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Thread.Sleep(10000);
+        }
+
 
         //todo offset nodes closer to margins / 6x6 table on load
     }

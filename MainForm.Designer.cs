@@ -108,6 +108,8 @@
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
+            this.abortButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -709,7 +711,7 @@
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(159, 83);
+            this.RunButton.Location = new System.Drawing.Point(159, 111);
             this.RunButton.Margin = new System.Windows.Forms.Padding(2);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(156, 21);
@@ -721,7 +723,7 @@
             // SeekZeroButton
             // 
             this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(159, 31);
+            this.SeekZeroButton.Location = new System.Drawing.Point(159, 59);
             this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
             this.SeekZeroButton.Name = "SeekZeroButton";
             this.SeekZeroButton.Size = new System.Drawing.Size(156, 21);
@@ -744,7 +746,7 @@
             // DrillButton
             // 
             this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillButton.Location = new System.Drawing.Point(159, 57);
+            this.DrillButton.Location = new System.Drawing.Point(159, 85);
             this.DrillButton.Name = "DrillButton";
             this.DrillButton.Size = new System.Drawing.Size(156, 21);
             this.DrillButton.TabIndex = 49;
@@ -929,11 +931,36 @@
             this.showRawCheckbox.UseVisualStyleBackColor = true;
             this.showRawCheckbox.CheckedChanged += new System.EventHandler(this.showRawCheckbox_CheckedChanged);
             // 
+            // abortButton
+            // 
+            this.abortButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.abortButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.abortButton.Location = new System.Drawing.Point(159, 152);
+            this.abortButton.Margin = new System.Windows.Forms.Padding(2);
+            this.abortButton.Name = "abortButton";
+            this.abortButton.Size = new System.Drawing.Size(156, 21);
+            this.abortButton.TabIndex = 65;
+            this.abortButton.Text = "[Abort Task]";
+            this.abortButton.UseVisualStyleBackColor = true;
+            this.abortButton.Click += new System.EventHandler(this.abortButton_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(168, 207);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 66;
+            this.button1.Text = "boboche";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.abortButton);
             this.Controls.Add(this.showRawCheckbox);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.IgnoreBacklashBox);
@@ -1080,6 +1107,8 @@
         private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
+        private System.Windows.Forms.Button abortButton;
+        private System.Windows.Forms.Button button1;
     }
 }
 
