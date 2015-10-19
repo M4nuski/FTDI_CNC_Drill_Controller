@@ -19,3 +19,5 @@ Videos:
 * http://youtu.be/9ViaTz70iDg
 * http://youtu.be/PQLuftB3uqs
 
+Latest : Test run with new torque assist and multi-threading
+* http://youtu.be/hOwpW07IG70
