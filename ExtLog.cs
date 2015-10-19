@@ -8,7 +8,17 @@ namespace CNC_Drill_Controller1
 
         static public void AddLine(string Text)
         {
-            if (Logger != null) Logger.AddLine(Text);
+            if (Logger != null)
+            {
+                if (Logger.InvokeRequired)
+                {
+                    Logger.Invoke((AddLineDelegate) AddLine, new object[] {Text});
+                }
+                else
+                {
+                    Logger.AddLine(Text);
+                }
+            }
         }
     }
 }

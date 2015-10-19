@@ -27,8 +27,8 @@
     <PublisherName>Emmanuel Charette</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>16</ApplicationRevision>
-    <ApplicationVersion>1.5.0.%2a</ApplicationVersion>
+    <ApplicationRevision>21</ApplicationRevision>
+    <ApplicationVersion>1.5.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Delegates.cs" />
     <Compile Include="DrawingTypeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +100,7 @@
     <Compile Include="DrillNode.cs" />
     <Compile Include="ExtLog.cs" />
     <Compile Include="FTD2XX_NET.cs" />
+    <Compile Include="IUSB_Controller.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,7 +116,15 @@
     <Compile Include="RawUSBForm.Designer.cs">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskDialog.Designer.cs">
+      <DependentUpon>TaskDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextConverter.cs" />
     <Compile Include="USB_Control.cs" />
+    <Compile Include="USB_Control_Emulator.cs" />
     <Compile Include="VDXLoader.cs" />
     <Compile Include="Viewer.cs" />
     <EmbeddedResource Include="DrawingTypeDialog.resx">
@@ -135,6 +145,9 @@
     </Compile>
     <EmbeddedResource Include="RawUSBForm.resx">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskDialog.resx">
+      <DependentUpon>TaskDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="CNC_Drill_Controller1_TemporaryKey.pfx" />

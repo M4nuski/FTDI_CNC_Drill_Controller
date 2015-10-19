@@ -5,50 +5,58 @@ using FTD2XX_NET;
 
 namespace CNC_Drill_Controller1
 {
-    class USB_Control
+    class USB_Control : IUSB_Controller
     {
         private FTDI USB_Interface = new FTDI();
         private byte[] OutputBuffer = new byte[64];
-        public byte[] InputBuffer = new byte[64];
+        private bool cancelJob;
+        public byte[] InputBuffer { get; set; }
 
         public bool IsOpen { get { return USB_Interface.IsOpen; } }
-        public DateTime LastUpdate = DateTime.Now;
+        public DateTime LastUpdate { get; set; }
 
-        public struct InputSwitchStruct
-        {
-            public bool MaxXswitch, MinXswitch, MaxYswitch, MinYswitch;
-            public bool TopSwitch, BottomSwitch;
-        }
-        public InputSwitchStruct SwitchesInput;
+        public bool Inhibit_Backlash_Compensation{ get; set; }
+        public bool Inhibit_LimitSwitches_Warning{ get; set; }
 
-        public struct OutputSwitchStruct
-        {
-            public bool X_Driver, Y_Driver, T_Driver;
-            public bool Cycle_Drill;
-        }
+        public bool MaxXswitch { get; set; }
+        public bool MinXswitch { get; set; }
+        public bool MaxYswitch { get; set; }
+        public bool MinYswitch { get; set; }
+        public bool TopSwitch { get; set; }
+        public bool BottomSwitch { get; set; }
 
-        public OutputSwitchStruct SwitchesOutput;
+        public bool X_Driver { get; set; }
+        public bool Y_Driver { get; set; }
+        public bool T_Driver { get; set; }
+        public bool Cycle_Drill { get; set; }
 
-        public bool Inhibit_Backlash_Compensation, Inhibit_LimitSwitches_Warning;
-
-        public int X_Abs_Location, Y_Abs_Location;
-        public int X_Delta, Y_Delta;
-        public int X_Last_Direction, Y_Last_Direction;
+        public int X_Abs_Location{ get; set; }
+        public int Y_Abs_Location { get; set; }
+        public int X_Delta{ get; set; }
+        public int Y_Delta{ get; set; }
+        public int X_Last_Direction { get; set; }
+        public int Y_Last_Direction{ get; set; }
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
-
-
-
-        //todo change to workerthread
-        public delegate void ProgressEvent(int Progress, bool Done);
-        public ProgressEvent OnProgress;
+        
+        public ProgressDelegate OnProgress { get; set; }
+            
         private void UpdateProgress(int Progress, bool Done)
         {
             if (OnProgress != null) OnProgress(Progress, Done);
         }
 
+        public USB_Control() 
+        {
+            InputBuffer  = new byte[64];
 
-
+            X_Abs_Location = GlobalProperties.X_Pos;
+            Y_Abs_Location = GlobalProperties.Y_Pos;
+            X_Delta = GlobalProperties.X_Delta;
+            Y_Delta = GlobalProperties.Y_Delta;
+            X_Last_Direction = GlobalProperties.X_Dir;
+            Y_Last_Direction = GlobalProperties.Y_Dir;
+        }
 
         public List<string> GetDevicesList()
         {
@@ -117,7 +125,7 @@ namespace CNC_Drill_Controller1
             return true;
         }
 
-        public InputSwitchStruct Transfer()
+        public void Transfer()
         {
             if (USB_Interface.IsOpen)
             {
@@ -128,11 +136,10 @@ namespace CNC_Drill_Controller1
 
                 if (SendToUSB())
                 {
-                    SwitchesInput = DeSerialize();
+                    DeSerialize();
                     LastUpdate = DateTime.Now;
                 }
             }
-            return SwitchesInput;
         }
 
         private bool SendToUSB()
@@ -184,10 +191,10 @@ namespace CNC_Drill_Controller1
             var TQA_Y_Neg = (Y_Last_Direction == -1);
 
             byte output = 0;
-            if (SwitchesOutput.X_Driver) output = (byte)(output | 1);
-            if (SwitchesOutput.Y_Driver) output = (byte)(output | 2);
-            if (SwitchesOutput.Cycle_Drill) output = (byte)(output | 4);
-            if (SwitchesOutput.T_Driver) output = (byte)(output | 8);
+            if (X_Driver) output = (byte)(output | 1);
+            if (Y_Driver) output = (byte)(output | 2);
+            if (Cycle_Drill) output = (byte)(output | 4);
+            if (T_Driver) output = (byte)(output | 8);
 
             if (TQA_X_Pos) output = (byte)(output | 16);
             if (TQA_X_Neg) output = (byte)(output | 32);
@@ -265,18 +272,16 @@ namespace CNC_Drill_Controller1
             return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
         }
 
-        private InputSwitchStruct DeSerialize()
+        private void DeSerialize()
         {
-            SwitchesInput.MaxXswitch = !getBit(InputBuffer[61], 1);
-            SwitchesInput.MinXswitch = !getBit(InputBuffer[59], 1);
+            MaxXswitch = !getBit(InputBuffer[61], 1);
+            MinXswitch = !getBit(InputBuffer[59], 1);
 
-            SwitchesInput.MinYswitch = !getBit(InputBuffer[57], 1);
-            SwitchesInput.MaxYswitch = !getBit(InputBuffer[55], 1);
+            MinYswitch = !getBit(InputBuffer[57], 1);
+            MaxYswitch = !getBit(InputBuffer[55], 1);
 
-            SwitchesInput.TopSwitch = !getBit(InputBuffer[53], 1);
-            SwitchesInput.BottomSwitch = !getBit(InputBuffer[51], 1);
-
-            return SwitchesInput;
+            TopSwitch = !getBit(InputBuffer[53], 1);
+            BottomSwitch = !getBit(InputBuffer[51], 1);
         }
 
         public PointF CurrentLocation()
@@ -286,10 +291,28 @@ namespace CNC_Drill_Controller1
             return new PointF(current_X, current_Y);
         }
 
+        public bool Check_Limit_Switches()
+        {
+            return !MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch;
+        }
 
         #region Internal USB control methods
-        public void MoveBy(int byX, int byY)
+
+        public void CancelMove()
         {
+            cancelJob = true;
+        }
+
+        private bool jobCancelled()
+        {
+            return cancelJob;
+        }
+
+        public bool MoveBy(int byX, int byY)
+        {
+            cancelJob = false;
+            var success = true;
+
             var abyX = Math.Abs(byX);
             var abyY = Math.Abs(byY);
 
@@ -360,28 +383,39 @@ namespace CNC_Drill_Controller1
 
                 Transfer();
                 UpdateProgress(100 * i / numMoves, false);
-                if (SwitchesInput.MaxXswitch || SwitchesInput.MinXswitch || SwitchesInput.MaxYswitch ||
-                    SwitchesInput.MinYswitch)
+
+                if (!Check_Limit_Switches())
                 {
                     if (!Inhibit_LimitSwitches_Warning) ExtLog.AddLine("Limit switch triggered before end of move");
-                    numMoves = i; //exit loop
+                    i = numMoves; //exit loop
+                    success = false;
+                }
+
+                if (jobCancelled())
+                {
+                    ExtLog.AddLine("Move Cancelled");
+                    i = numMoves; //exit loop
+                    success = false;
                 }
             }
 
             UpdateProgress(100, true);
+            return success;
         }
 
-        public void MoveTo(float X, float Y)
+        public bool MoveTo(float X, float Y)
         {
+            var success = false;
             var current_pos = CurrentLocation();
-            if (!SwitchesInput.MaxXswitch && !SwitchesInput.MinXswitch &&
-                !SwitchesInput.MaxYswitch && !SwitchesInput.MinYswitch)
+            if (!MaxXswitch && !MinXswitch &&
+                !MaxYswitch && !MinYswitch)
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
-                MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
+                success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");
+            return success;
         }
         #endregion
 

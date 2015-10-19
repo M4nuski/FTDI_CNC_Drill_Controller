@@ -6,14 +6,13 @@ namespace CNC_Drill_Controller1
     static class GlobalProperties
     {
         //Hardware config 
-        public static int numStepsPerTurns = 96;//quad phase //48 steps per turn, double phase
-        public static byte[] stepBytes = {0x11, 0x33, 0x22, 0x66, 0x44, 0xCC, 0x88, 0x99};//{ 0x33, 0x66, 0xCC, 0x99 };
-        public static int numStepBytes = 8;//4;
-        public static byte numStepMask = 0x07;//0x03;//b'0000 0011'
+        public static int numStepsPerTurns = 48;//48 steps per turn, double phase
+        public static byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
+        public static int numStepBytes = 4;
+        public static byte numStepMask = 0x03;//b'0000 0011'
         
-
         //Interface config
-        public static uint baudRate = 2400;
+        public static uint baudRate = 4800;
         public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
 
         //UI settings
@@ -22,6 +21,11 @@ namespace CNC_Drill_Controller1
         public static int Y_Scale = 1;//961;
         public static int X_Backlash = 0;//4;
         public static int Y_Backlash = 0;//4;
+
+        //UI refresh throttler
+        public static int USB_Refresh_Period = 250;
+        public static int GlobalProperties_Refresh_Period = 10000;
+        public static int Label_Refresh_Period = 100;
 
         //USB state
         public static int X_Dir = 0;

@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="X_Scale" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1922</Value>
+      <Value Profile="(Default)">961</Value>
     </Setting>
     <Setting Name="Y_Scale" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1922</Value>
+      <Value Profile="(Default)">961</Value>
     </Setting>
     <Setting Name="X_Backlash" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="Y_Backlash" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="Logfile_Filename" Type="System.String" Scope="User">
       <Value Profile="(Default)">CNC_Drill_CTRL.log</Value>

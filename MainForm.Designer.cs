@@ -38,15 +38,13 @@
             this.PlusXbutton = new System.Windows.Forms.Button();
             this.MinusXbutton = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.XMinStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.XMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YMinStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YMaxStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TopStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.BottomStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.XSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.YSyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.XStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.YStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -86,10 +84,7 @@
             this.ViewZoomLabel = new System.Windows.Forms.Label();
             this.ViewXLabel = new System.Windows.Forms.Label();
             this.ViewYLabel = new System.Windows.Forms.Label();
-            this.RunButton = new System.Windows.Forms.Button();
-            this.SeekZeroButton = new System.Windows.Forms.Button();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
-            this.DrillButton = new System.Windows.Forms.Button();
             this.OffsetOriginBtton = new System.Windows.Forms.Button();
             this.YOriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
@@ -108,8 +103,10 @@
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
-            this.abortButton = new System.Windows.Forms.Button();
             this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
+            this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
+            this.DrillAllNodebutton = new System.Windows.Forms.Button();
+            this.AbortMoveButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -210,15 +207,13 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripProgressBar1,
+            this.toolStripProgressBar,
             this.XMinStatusLabel,
             this.XMaxStatusLabel,
             this.YMinStatusLabel,
             this.YMaxStatusLabel,
             this.TopStatusLabel,
             this.BottomStatusLabel,
-            this.XSyncStatusLabel,
-            this.YSyncStatusLabel,
             this.XStatusLabel,
             this.YStatusLabel,
             this.toolStripDropDownButton1});
@@ -229,12 +224,12 @@
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripProgressBar1
+            // toolStripProgressBar
             // 
-            this.toolStripProgressBar1.MarqueeAnimationSpeed = 10;
-            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
-            this.toolStripProgressBar1.Size = new System.Drawing.Size(75, 19);
-            this.toolStripProgressBar1.Step = 1;
+            this.toolStripProgressBar.MarqueeAnimationSpeed = 10;
+            this.toolStripProgressBar.Name = "toolStripProgressBar";
+            this.toolStripProgressBar.Size = new System.Drawing.Size(75, 19);
+            this.toolStripProgressBar.Step = 1;
             // 
             // XMinStatusLabel
             // 
@@ -289,22 +284,6 @@
             this.BottomStatusLabel.Name = "BottomStatusLabel";
             this.BottomStatusLabel.Size = new System.Drawing.Size(80, 20);
             this.BottomStatusLabel.Text = "Bottom";
-            // 
-            // XSyncStatusLabel
-            // 
-            this.XSyncStatusLabel.AutoSize = false;
-            this.XSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.XSyncStatusLabel.Name = "XSyncStatusLabel";
-            this.XSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.XSyncStatusLabel.Text = "X - Sync";
-            // 
-            // YSyncStatusLabel
-            // 
-            this.YSyncStatusLabel.AutoSize = false;
-            this.YSyncStatusLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.YSyncStatusLabel.Name = "YSyncStatusLabel";
-            this.YSyncStatusLabel.Size = new System.Drawing.Size(80, 20);
-            this.YSyncStatusLabel.Text = "Y - Sync";
             // 
             // XStatusLabel
             // 
@@ -457,7 +436,7 @@
             // XScaleTextBox
             // 
             this.XScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XScaleTextBox.Location = new System.Drawing.Point(73, 523);
+            this.XScaleTextBox.Location = new System.Drawing.Point(73, 522);
             this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -467,7 +446,7 @@
             // YScaleTextBox
             // 
             this.YScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YScaleTextBox.Location = new System.Drawing.Point(73, 546);
+            this.YScaleTextBox.Location = new System.Drawing.Point(73, 545);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
@@ -479,7 +458,7 @@
             this.XCurrentPosTextBox.Location = new System.Drawing.Point(78, 435);
             this.XCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XCurrentPosTextBox.Name = "XCurrentPosTextBox";
-            this.XCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
+            this.XCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.XCurrentPosTextBox.TabIndex = 18;
             this.XCurrentPosTextBox.Text = "0.000";
             // 
@@ -488,7 +467,7 @@
             this.YCurrentPosTextBox.Location = new System.Drawing.Point(78, 458);
             this.YCurrentPosTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YCurrentPosTextBox.Name = "YCurrentPosTextBox";
-            this.YCurrentPosTextBox.Size = new System.Drawing.Size(57, 20);
+            this.YCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.YCurrentPosTextBox.TabIndex = 19;
             this.YCurrentPosTextBox.Text = "0.000";
             // 
@@ -516,7 +495,7 @@
             // 
             // zeroXbutton
             // 
-            this.zeroXbutton.Location = new System.Drawing.Point(18, 392);
+            this.zeroXbutton.Location = new System.Drawing.Point(18, 390);
             this.zeroXbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroXbutton.Name = "zeroXbutton";
             this.zeroXbutton.Size = new System.Drawing.Size(56, 19);
@@ -527,7 +506,7 @@
             // 
             // zeroYbutton
             // 
-            this.zeroYbutton.Location = new System.Drawing.Point(78, 392);
+            this.zeroYbutton.Location = new System.Drawing.Point(78, 390);
             this.zeroYbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroYbutton.Name = "zeroYbutton";
             this.zeroYbutton.Size = new System.Drawing.Size(56, 19);
@@ -541,7 +520,7 @@
             this.zeroAllbutton.Location = new System.Drawing.Point(18, 412);
             this.zeroAllbutton.Margin = new System.Windows.Forms.Padding(2);
             this.zeroAllbutton.Name = "zeroAllbutton";
-            this.zeroAllbutton.Size = new System.Drawing.Size(117, 19);
+            this.zeroAllbutton.Size = new System.Drawing.Size(116, 19);
             this.zeroAllbutton.TabIndex = 26;
             this.zeroAllbutton.Text = "Zero All";
             this.zeroAllbutton.UseVisualStyleBackColor = true;
@@ -708,30 +687,6 @@
             this.ViewYLabel.TabIndex = 45;
             this.ViewYLabel.Text = "Y: ";
             // 
-            // RunButton
-            // 
-            this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(159, 111);
-            this.RunButton.Margin = new System.Windows.Forms.Padding(2);
-            this.RunButton.Name = "RunButton";
-            this.RunButton.Size = new System.Drawing.Size(156, 21);
-            this.RunButton.TabIndex = 46;
-            this.RunButton.Text = "[Drill All Nodes]";
-            this.RunButton.UseVisualStyleBackColor = true;
-            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
-            // 
-            // SeekZeroButton
-            // 
-            this.SeekZeroButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SeekZeroButton.Location = new System.Drawing.Point(159, 59);
-            this.SeekZeroButton.Margin = new System.Windows.Forms.Padding(2);
-            this.SeekZeroButton.Name = "SeekZeroButton";
-            this.SeekZeroButton.Size = new System.Drawing.Size(156, 21);
-            this.SeekZeroButton.TabIndex = 47;
-            this.SeekZeroButton.Text = "[Find Axis Origins]";
-            this.SeekZeroButton.UseVisualStyleBackColor = true;
-            this.SeekZeroButton.Click += new System.EventHandler(this.SeekZeroButton_Click);
-            // 
             // ReloadUSBbutton
             // 
             this.ReloadUSBbutton.Location = new System.Drawing.Point(76, 32);
@@ -742,17 +697,6 @@
             this.ReloadUSBbutton.Text = "Reload USB";
             this.ReloadUSBbutton.UseVisualStyleBackColor = true;
             this.ReloadUSBbutton.Click += new System.EventHandler(this.ReloadUSBbutton_Click);
-            // 
-            // DrillButton
-            // 
-            this.DrillButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillButton.Location = new System.Drawing.Point(159, 85);
-            this.DrillButton.Name = "DrillButton";
-            this.DrillButton.Size = new System.Drawing.Size(156, 21);
-            this.DrillButton.TabIndex = 49;
-            this.DrillButton.Text = "[Drill Selected Node]";
-            this.DrillButton.UseVisualStyleBackColor = true;
-            this.DrillButton.Click += new System.EventHandler(this.DrillButton_Click);
             // 
             // OffsetOriginBtton
             // 
@@ -847,7 +791,7 @@
             // 
             // SetAllButton
             // 
-            this.SetAllButton.Location = new System.Drawing.Point(17, 482);
+            this.SetAllButton.Location = new System.Drawing.Point(18, 482);
             this.SetAllButton.Margin = new System.Windows.Forms.Padding(2);
             this.SetAllButton.Name = "SetAllButton";
             this.SetAllButton.Size = new System.Drawing.Size(116, 19);
@@ -931,36 +875,61 @@
             this.showRawCheckbox.UseVisualStyleBackColor = true;
             this.showRawCheckbox.CheckedChanged += new System.EventHandler(this.showRawCheckbox_CheckedChanged);
             // 
-            // abortButton
-            // 
-            this.abortButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.abortButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.abortButton.Location = new System.Drawing.Point(159, 240);
-            this.abortButton.Margin = new System.Windows.Forms.Padding(2);
-            this.abortButton.Name = "abortButton";
-            this.abortButton.Size = new System.Drawing.Size(156, 21);
-            this.abortButton.TabIndex = 65;
-            this.abortButton.Text = "[Abort Task]";
-            this.abortButton.UseVisualStyleBackColor = true;
-            this.abortButton.Click += new System.EventHandler(this.abortButton_Click);
-            // 
             // AsyncStartFindOriginButton
             // 
-            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(159, 207);
+            this.AsyncStartFindOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(151, 31);
             this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
-            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(156, 23);
+            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(172, 21);
             this.AsyncStartFindOriginButton.TabIndex = 66;
-            this.AsyncStartFindOriginButton.Text = "Async Find Axis Origin";
+            this.AsyncStartFindOriginButton.Text = "[Find Axis Origin]";
             this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
             this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
+            // 
+            // AsyncDrillSelectedButton
+            // 
+            this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 59);
+            this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
+            this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(172, 21);
+            this.AsyncDrillSelectedButton.TabIndex = 67;
+            this.AsyncDrillSelectedButton.Text = "[Drill Selected Node]";
+            this.AsyncDrillSelectedButton.UseVisualStyleBackColor = true;
+            this.AsyncDrillSelectedButton.Click += new System.EventHandler(this.AsyncDrillSelectedButton_Click);
+            // 
+            // DrillAllNodebutton
+            // 
+            this.DrillAllNodebutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 86);
+            this.DrillAllNodebutton.Name = "DrillAllNodebutton";
+            this.DrillAllNodebutton.Size = new System.Drawing.Size(172, 21);
+            this.DrillAllNodebutton.TabIndex = 68;
+            this.DrillAllNodebutton.Text = "[Drill All Nodes]";
+            this.DrillAllNodebutton.UseVisualStyleBackColor = true;
+            this.DrillAllNodebutton.Click += new System.EventHandler(this.DrillAllNodebutton_Click);
+            // 
+            // AbortMoveButton
+            // 
+            this.AbortMoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
+            this.AbortMoveButton.Location = new System.Drawing.Point(196, 543);
+            this.AbortMoveButton.Name = "AbortMoveButton";
+            this.AbortMoveButton.Size = new System.Drawing.Size(127, 23);
+            this.AbortMoveButton.TabIndex = 69;
+            this.AbortMoveButton.Text = "Abort Move";
+            this.AbortMoveButton.UseVisualStyleBackColor = true;
+            this.AbortMoveButton.Click += new System.EventHandler(this.AbortMoveButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.AbortMoveButton);
+            this.Controls.Add(this.DrillAllNodebutton);
+            this.Controls.Add(this.AsyncDrillSelectedButton);
             this.Controls.Add(this.AsyncStartFindOriginButton);
-            this.Controls.Add(this.abortButton);
             this.Controls.Add(this.showRawCheckbox);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.IgnoreBacklashBox);
@@ -975,10 +944,7 @@
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YOriginTextbox);
             this.Controls.Add(this.XoriginTextbox);
-            this.Controls.Add(this.DrillButton);
             this.Controls.Add(this.ReloadUSBbutton);
-            this.Controls.Add(this.SeekZeroButton);
-            this.Controls.Add(this.RunButton);
             this.Controls.Add(this.ViewYLabel);
             this.Controls.Add(this.ViewXLabel);
             this.Controls.Add(this.ViewZoomLabel);
@@ -1037,7 +1003,7 @@
         private System.Windows.Forms.Button PlusXbutton;
         private System.Windows.Forms.Button MinusXbutton;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel XMinStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel XMaxStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YMinStatusLabel;
@@ -1076,10 +1042,7 @@
         private System.Windows.Forms.Label ViewZoomLabel;
         private System.Windows.Forms.Label ViewXLabel;
         private System.Windows.Forms.Label ViewYLabel;
-        private System.Windows.Forms.Button RunButton;
-        private System.Windows.Forms.Button SeekZeroButton;
         private System.Windows.Forms.Button ReloadUSBbutton;
-        private System.Windows.Forms.Button DrillButton;
         private System.Windows.Forms.ContextMenuStrip NodesContextMenu;
         private System.Windows.Forms.ToolStripMenuItem NodeContextSETXY;
         private System.Windows.Forms.ToolStripMenuItem NodeContextMOVETO;
@@ -1103,12 +1066,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
-        private System.Windows.Forms.ToolStripStatusLabel XSyncStatusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel YSyncStatusLabel;
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
-        private System.Windows.Forms.Button abortButton;
         private System.Windows.Forms.Button AsyncStartFindOriginButton;
+        private System.Windows.Forms.Button AsyncDrillSelectedButton;
+        private System.Windows.Forms.Button DrillAllNodebutton;
+        private System.Windows.Forms.Button AbortMoveButton;
     }
 }
 
