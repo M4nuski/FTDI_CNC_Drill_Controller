@@ -75,6 +75,9 @@ namespace CNC_Drill_Controller1
         {
             if (File.Exists(FileName))
             {
+                ExtLog.AddLine("Opening File: " + FileName);
+                ExtLog.AddLine("Inverted: " + flipX);
+                
                 //load and parse data;
                 Shapes = new List<rawShapeData>();
                 PageWidth = 11.0f;

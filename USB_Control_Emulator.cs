@@ -41,6 +41,19 @@ namespace CNC_Drill_Controller1
         private int drilldelay;
 
         public ProgressDelegate OnProgress { get; set; }
+
+        public USB_Control_Emulator() 
+        {
+            InputBuffer  = new byte[64];
+
+            X_Abs_Location = GlobalProperties.X_Pos;
+            Y_Abs_Location = GlobalProperties.Y_Pos;
+            X_Delta = GlobalProperties.X_Delta;
+            Y_Delta = GlobalProperties.Y_Delta;
+            X_Last_Direction = GlobalProperties.X_Dir;
+            Y_Last_Direction = GlobalProperties.Y_Dir;
+        }
+
         private void UpdateProgress(int Progress, bool Done)
         {
             if (OnProgress != null) OnProgress(Progress, Done);

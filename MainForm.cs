@@ -12,7 +12,6 @@ namespace CNC_Drill_Controller1
 {
     public partial class MainForm : Form
     {
-
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private IUSB_Controller USB = new USB_Control();
@@ -135,13 +134,6 @@ namespace CNC_Drill_Controller1
 
             USB.OnProgress = OnProgress;
 
-            USB.X_Abs_Location = GlobalProperties.X_Pos;
-            USB.Y_Abs_Location = GlobalProperties.Y_Pos;
-            USB.X_Delta = GlobalProperties.X_Delta;
-            USB.Y_Delta = GlobalProperties.Y_Delta;
-            USB.X_Last_Direction = GlobalProperties.X_Dir;
-            USB.Y_Last_Direction = GlobalProperties.Y_Dir;
-
             USB.X_Driver = checkBoxX.Checked;
             USB.Y_Driver = checkBoxY.Checked;
             USB.T_Driver = checkBoxT.Checked;
@@ -211,9 +203,7 @@ namespace CNC_Drill_Controller1
         {
             logger1.AddLine(text);
         }
-
-
-
+        
         #endregion
 
         #region Direct USB UI control methods
@@ -375,27 +365,11 @@ namespace CNC_Drill_Controller1
 
                 if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
 
-                if (USB.MinXswitch && USB.MaxXswitch) //check for impossible combinaison (step controller or power not plugged-in)
-                {
-                    XMinStatusLabel.BackColor = Color.DodgerBlue;
-                    XMaxStatusLabel.BackColor = Color.DodgerBlue;
-                }
-                else
-                {
-                    XMinStatusLabel.BackColor = !USB.MinXswitch ? Color.Lime : Color.Red;
-                    XMaxStatusLabel.BackColor = !USB.MaxXswitch ? Color.Lime : Color.Red;
-                }
+                XMinStatusLabel.BackColor = !USB.MinXswitch ? Color.Lime : Color.Red;
+                XMaxStatusLabel.BackColor = !USB.MaxXswitch ? Color.Lime : Color.Red;
 
-                if (USB.MinYswitch && USB.MaxYswitch)
-                {
-                    YMinStatusLabel.BackColor = Color.DodgerBlue;
-                    YMaxStatusLabel.BackColor = Color.DodgerBlue;
-                }
-                else
-                {
-                    YMinStatusLabel.BackColor = !USB.MinYswitch ? Color.Lime : Color.Red;
-                    YMaxStatusLabel.BackColor = !USB.MaxYswitch ? Color.Lime : Color.Red;
-                }
+                YMinStatusLabel.BackColor = !USB.MinYswitch ? Color.Lime : Color.Red;
+                YMaxStatusLabel.BackColor = !USB.MaxYswitch ? Color.Lime : Color.Red;
 
                 TopStatusLabel.BackColor = USB.TopSwitch ? Color.Lime : SystemColors.Control;
                 BottomStatusLabel.BackColor = USB.BottomSwitch ? Color.Lime : SystemColors.Control;
@@ -502,10 +476,6 @@ namespace CNC_Drill_Controller1
 
                 if (dtypeDialog.ShowDialog() == DialogResult.OK)
                 {
-                    logger1.AddLine("Opening File: " + openFileDialog1.FileName);
-                    logger1.AddLine("Inverted: " + dtypeDialog.DrawingConfig.Inverted);
-                    logger1.AddLine("Type: " + dtypeDialog.DrawingConfig.Type);
-
                     var loader = new VDXLoader(openFileDialog1.FileName, dtypeDialog.DrawingConfig.Inverted);
                     Nodes = loader.DrillNodes;
                     logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
