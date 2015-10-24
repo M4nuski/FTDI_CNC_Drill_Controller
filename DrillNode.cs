@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CNC_Drill_Controller1
 {
-    class DrillNode
+    public class DrillNode
     {
         public Color Color { get { return nodeStatusColors[status]; } }
 

@@ -46,16 +46,11 @@ namespace CNC_Drill_Controller1
 
         #region Async Worker, Callback and Thread Sync Properties
 
-        private BackgroundWorker asyncWorker = new BackgroundWorker();
-
-        //for BackgroundWorker
-        private DoWorkEventHandler lastTask;
-        private CleanupDelegate CleanupCallback;
+        private TaskContainer TaskRunner;
 
         //for UI
         private ProgressDelegate ProgressCallback;
         private UpdateNodeDelegate UpdateNodeCallback;
-        private AddLineDelegate AddLineCallback;
 
         #endregion
 
@@ -68,12 +63,6 @@ namespace CNC_Drill_Controller1
 
             ProgressCallback = progressCallback;
             UpdateNodeCallback = updateNodeCallback;
-            AddLineCallback = addLineCallback;
-
-            asyncWorker.RunWorkerCompleted += asyncWorkerComplete;
-            asyncWorker.ProgressChanged += asyncWorkerProgressChange;
-            asyncWorker.WorkerReportsProgress = true;
-            asyncWorker.WorkerSupportsCancellation = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -141,6 +130,9 @@ namespace CNC_Drill_Controller1
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
+            TaskRunner = new TaskContainer(this, USB, taskDialog);
+            TaskRunner.UpdateNodes = OnUpdateNode;
+
             #endregion
 
         }
@@ -185,7 +177,7 @@ namespace CNC_Drill_Controller1
             UIupdateTimer_Tick(this, null);
         }
 
-        private void OnUpdateNode(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
+        public void OnUpdateNode(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
         {
             Invoke(UpdateNodeCallback, new object[] { nodeIndex, newStatus });
         }
@@ -193,15 +185,6 @@ namespace CNC_Drill_Controller1
         {
             Nodes[nodeIndex].status = newStatus;
             UpdateNodeColors();
-        }
-
-        private void OnAddLine(string text)
-        {
-            Invoke(AddLineCallback, new object[] { text });
-        }
-        private void addLineCallback(string text)
-        {
-            logger1.AddLine(text);
         }
         
         #endregion
@@ -664,146 +647,6 @@ namespace CNC_Drill_Controller1
 
         #region Async Tasks Handlers
 
-        private void abortAsyncWorker()
-        {
-            if (asyncWorker.IsBusy)
-            {
-                logger1.AddLine("Cancelling Task...");
-                asyncWorker.CancelAsync();
-            }
-        }
-
-        private void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, CleanupDelegate asyncCleanup, object argument)
-        {
-            if (!asyncWorker.IsBusy)
-            {
-                if (USB.Check_Limit_Switches() && USB.IsOpen)
-                {
-                    logger1.AddLine("Starting Async Task");
-
-                    USB.Inhibit_LimitSwitches_Warning = true;
-                    Enabled = false;
-
-                    try
-                    {
-                        logger1.AddLine(desc);
-                        asyncWorker.DoWork += asyncWork;
-                        lastTask = asyncWork;
-                        CleanupCallback = asyncCleanup;
-
-                        asyncWorker.RunWorkerAsync(argument);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger1.AddLine("Async Task failed: " + ex.Message);
-                    }
-
-                    logger1.AddLine("Async Started");
-
-                    if (taskDialog.ShowDialog(this) == DialogResult.Abort)
-                    {
-                        abortAsyncWorker();
-                        USB.CancelMove();
-                    }
-                    Enabled = true;
-                    USB.Inhibit_LimitSwitches_Warning = false;
-                }
-                else logger1.AddLine("Can't init scripted sequence, limit switches are not properly set or USB interface is Closed");
-            }
-            else logger1.AddLine("Async Task Already Running");
-        }
-
-        private void asyncWorkerProgressChange(object sender, ProgressChangedEventArgs e)
-        {
-            var inhibit = e.UserState as bool? ?? false;
-            if (!inhibit) logger1.AddLine("Progress: " + e.ProgressPercentage.ToString("D") + "%");
-            taskDialog.update(e.ProgressPercentage);
-        }
-
-        private void asyncWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
-        {
-            asyncWorker.DoWork -= lastTask;
-            taskDialog.done();
-            if (e.Error != null)
-            {
-                logger1.AddLine("Error running Task: " + e.Error.Message);
-            }
-            else if (e.Cancelled)
-            {
-                logger1.AddLine("Task Cancelled");
-            }
-            else
-            {
-                var success = e.Result as bool? ?? false;
-                if (CleanupCallback != null) CleanupCallback(success);
-            }
-        }
-
-        #endregion
-
-        #region Async Task Helpers
-
-        private bool Initiate_Drill_From_Top(int numTries, int TriesPeriod)
-        {
-            var success = true;
-            USB.Cycle_Drill = true;
-
-            while (USB.TopSwitch && success)
-            {
-                USB.Transfer();
-                success = USB.IsOpen && (numTries >= 0);
-                numTries--;
-                Thread.Sleep(TriesPeriod);
-            }
-            return success;
-        }
-        private bool Wait_For_Drill_To_Top(int numTries, int TriesPeriod)
-        {
-            var success = true;
-            USB.Cycle_Drill = false;
-
-            while (!USB.TopSwitch && success)
-            {
-                USB.Transfer();
-                success = !USB.IsOpen || (numTries >= 0);
-                numTries--;
-                Thread.Sleep(TriesPeriod);
-            }
-            return success;
-        }
-
-        private bool SeekXminSwitch(bool AxisDirection, int byX, int byY, int TriesPeriod)
-        {
-            var success = true;
-            var maxTries = GlobalProperties.numStepsPerTurns;
-            while ((USB.MinXswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
-            {
-                USB.MoveBy(byX, byY);
-                maxTries--;
-                Thread.Sleep(TriesPeriod);
-                USB.Transfer();
-                success = maxTries >= 0;
-            }
-            return success;
-        }
-        private bool SeekYminSwitch(bool AxisDirection, int byX, int byY, int TriesPeriod)
-        {
-            var success = true;
-            var maxTries = GlobalProperties.numStepsPerTurns;
-            while ((USB.MinYswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
-            {
-                USB.MoveBy(byX, byY);
-                maxTries--;
-                Thread.Sleep(TriesPeriod);
-                USB.Transfer();
-                success = maxTries >= 0;
-            }
-            return success;
-        }
-
-        #endregion
-
-        #region Async Task: Drill Selected Node
 
         private void AsyncDrillSelectedButton_Click(object sender, EventArgs e)
         {
@@ -814,198 +657,61 @@ namespace CNC_Drill_Controller1
 
                 var toDrill = Nodes[listBox1.SelectedIndex].location;
 
-                startAsyncWorkerWithTask("Drill Selected Node (Async)...",
-                    asyncWorkerDoWork_DrillSelected, asyncWorkerDoWork_DrillSelected_Cleanup, toDrill);
+                TaskRunner.startAsyncWorkerWithTask("Drill Selected Node (Async)...",
+                    TaskRunner.asyncWorkerDoWork_DrillSelected, asyncWorkerDoWork_DrillSelected_Cleanup, toDrill);
 
             }
-            else logger1.AddLine("Invalid Selection");
-        }
-        private void asyncWorkerDoWork_DrillSelected(object sender, DoWorkEventArgs doWorkEventArgs)
-        {
-            var loc = doWorkEventArgs.Argument as PointF? ?? PointF.Empty;
-
-            USB.MoveTo(loc.X, loc.Y);
-
-            var success = USB.Check_Limit_Switches();
-            asyncWorker.ReportProgress(50);
-
-            //start drill from top
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success && USB.IsOpen && USB.Check_Limit_Switches())
-                {
-                    success = Initiate_Drill_From_Top(20, 50);
-                }
-                asyncWorker.ReportProgress(75);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            //wait for drill to reach back top
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success && USB.IsOpen && USB.Check_Limit_Switches())
-                {
-                    success = Wait_For_Drill_To_Top(20, 50);
-                }
-                asyncWorker.ReportProgress(100);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            doWorkEventArgs.Result = success;
+            else ExtLog.AddLine("Invalid Selection");
         }
         private void asyncWorkerDoWork_DrillSelected_Cleanup(bool success)
         {
             if (success)
             {
-                logger1.AddLine("Task Completed");
+                ExtLog.AddLine("Task Completed");
                 Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
                 UpdateNodeColors();
             }
-            else logger1.AddLine("Drill Sequence Failed");
+            else ExtLog.AddLine("Drill Sequence Failed");
         }
 
-        #endregion
 
-        #region Async Task: Find Axis Origin
 
         private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
         {
-            startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
-                asyncWorkerDoWork_FindAxisOrigin,
+            TaskRunner.startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisOrigin,
                 asyncWorkerDoWork_FindAxisOrigin_Cleanup, null);
-        }
-        private void GetCloserToOrigin()
-        {
-            var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
-            var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
-            USB.MoveBy(-delta_X, -delta_Y);
-        }
-
-        private void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
-        {
-            GetCloserToOrigin();
-
-            var success = USB.Check_Limit_Switches();
-            asyncWorker.ReportProgress(30);
-
-            if (!asyncWorker.CancellationPending)
-            {
-                success = SeekXminSwitch(false, -30, 0, 10); //1.5in
-                asyncWorker.ReportProgress(45);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success) success = SeekXminSwitch(true, 1, 0, 50); //1 turn
-                asyncWorker.ReportProgress(60);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success) success = SeekYminSwitch(false, 0, -30, 10);
-                asyncWorker.ReportProgress(75);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success) success = SeekYminSwitch(true, 0, 1, 50);
-                asyncWorker.ReportProgress(90);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            if (!asyncWorker.CancellationPending)
-            {
-                asyncWorker.ReportProgress(100);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            doWorkEventArgs.Result = success;
         }
         private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool success)
         {
-            logger1.AddLine("Task Completed");
+            ExtLog.AddLine("Task Completed");
             if (success)
             {
                 var loc = USB.CurrentLocation();
-                logger1.AddLine("Location Set to Zero, Origin was found at X=" + loc.X.ToString("F3") + " Y=" + loc.Y.ToString("F3"));
+                ExtLog.AddLine("Location Set to Zero, Origin was found at X=" + loc.X.ToString("F3") + " Y=" + loc.Y.ToString("F3"));
                 zeroAllbutton_Click(this, null);
             }
-            else logger1.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
+            else ExtLog.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
         }
-        #endregion
 
-        #region Async Task: Drill All Nodes
+
+
 
         private void DrillAllNodebutton_Click(object sender, EventArgs e)
         {
             if ((Nodes != null) && (Nodes.Count > 0))
             {
-                startAsyncWorkerWithTask("Drill All Nodes (Async)...",
-                    asyncWorkerDoWork_DrillAll, asyncWorkerDoWork_DrillAll_Cleanup, Nodes);
+                TaskRunner.startAsyncWorkerWithTask("Drill All Nodes (Async)...",
+                    TaskRunner.asyncWorkerDoWork_DrillAll, asyncWorkerDoWork_DrillAll_Cleanup, Nodes);
             }
-            else logger1.AddLine("No Nodes to Drill");
+            else ExtLog.AddLine("No Nodes to Drill");
         }
-
-        private void asyncWorkerDoWork_DrillAll(object sender, DoWorkEventArgs e)
-        {
-            var nodes = e.Argument as List<DrillNode> ?? new List<DrillNode>();
-            var success = nodes.Count > 0;
-
-            if (success) for (var i = 0; i < nodes.Count; i++)
-                {
-                    if (!asyncWorker.CancellationPending)
-                    {
-                        if (success && USB.Check_Limit_Switches() && USB.TopSwitch && !USB.BottomSwitch)
-                        {
-                            if (nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
-                            {
-
-                                OnUpdateNode(i, DrillNode.DrillNodeStatus.Next);
-
-                                OnAddLine("Moving to [" + (i + 1) + "/" + nodes.Count + "]: " + nodes[i].Location);
-                                USB.MoveTo(Nodes[i].location.X, Nodes[i].location.Y);
-
-                                OnAddLine("Drilling...");
-
-                                //start drill from top
-                                if (USB.IsOpen && USB.Check_Limit_Switches())
-                                {
-                                    success = Initiate_Drill_From_Top(20, 50);
-                                }
-
-                                //wait for drill to reach back top
-                                if (success && USB.IsOpen && USB.Check_Limit_Switches())
-                                {
-                                    success = Wait_For_Drill_To_Top(20, 50);
-                                }
-
-                                OnUpdateNode(i, DrillNode.DrillNodeStatus.Drilled);
-                                asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, true);
-                            }
-                            else
-                            {
-                                OnAddLine("Node [" + (i + 1) + "/" + nodes.Count + "] already drilled");
-                            }
-                        }
-                        else
-                        {
-                            success = false;
-                        }
-                    }
-                    else e.Cancel = true;
-                }
-
-            asyncWorker.ReportProgress(100);
-            e.Result = success;
-        }
-
         private void asyncWorkerDoWork_DrillAll_Cleanup(bool success)
         {
-            logger1.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
+            ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
         }
+
+
 
         #endregion
 

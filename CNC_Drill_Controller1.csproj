@@ -12,10 +12,10 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>D:\Prog\Web\Homepage\publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>D:\Downloads\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
+    <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -23,10 +23,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://192.168.2.13/publish/</InstallUrl>
     <PublisherName>Emmanuel Charette</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>21</ApplicationRevision>
     <ApplicationVersion>1.5.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
@@ -116,6 +116,7 @@
     <Compile Include="RawUSBForm.Designer.cs">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskContainer.cs" />
     <Compile Include="TaskDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,8 +193,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"D:\Prog\Visual Studio 2012\Solutions\AWSTests\S3_Packager\bin\Debug\S3_Packager.exe" "$(ProjectName)" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
