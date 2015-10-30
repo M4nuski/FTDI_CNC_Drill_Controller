@@ -459,6 +459,63 @@ namespace CNC_Drill_Controller1
         }
     }
 
+    internal class Cross : IViewerElements
+    {
+        public int ID { get; set; }
+
+        public Color color
+        {
+            get { return _color.Color; }
+            set { _color = new Pen(value); }
+        }
+
+        private Pen _color;
+        private float _x, _y, _s;
+
+        public Cross(float X, float Y, Color color)
+        {
+            _color = new Pen(color);
+            _x = X;
+            _y = Y;
+            _s = 0.1f;
+
+            ID = -1;
+        }
+
+        public Cross(float X, float Y, float Size, Color color, int ID)
+        {
+            _color = new Pen(color);
+            _x = X;
+            _y = Y;
+            _s = Size/2.0f;
+            this.ID = ID;
+        }
+
+        public void Draw(Viewer.viewData data)
+        {
+            var out_rectangle = ViewerHelper.ScaleRectangle(_x, _y, _s, _s, data);
+            data.OutputGraphic.DrawLine(_color, out_rectangle.X - out_rectangle.Width, out_rectangle.Y, out_rectangle.Right, out_rectangle.Y);
+            data.OutputGraphic.DrawLine(_color, out_rectangle.X, out_rectangle.Y-out_rectangle.Height, out_rectangle.X, out_rectangle.Bottom);
+        }
+
+        public void UpdatePosition(PointF newPosition)
+        {
+            _x = newPosition.X;
+            _y = newPosition.Y;
+        }
+
+        public void UpdatePosition(float X, float Y)
+        {
+            _x = X;
+            _y = Y;
+        }
+
+        public bool Selected(PointF SelectionLocation)
+        {
+            return false;
+        }
+    }
+
     static class ViewerHelper
     {
         public static Rectangle ScaleRectangle(float X, float Y, float W, float H, Viewer.viewData data)

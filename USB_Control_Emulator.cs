@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Drawing;
 using System.Threading;
 
@@ -42,6 +43,7 @@ namespace CNC_Drill_Controller1
         private int drilldelay;
 
         public ProgressDelegate OnProgress { get; set; }
+        public MoveDelegate OnMove { get; set; }
 
         public USB_Control_Emulator() 
         {
@@ -236,6 +238,7 @@ namespace CNC_Drill_Controller1
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
+                if (OnMove != null) OnMove(X, Y);
                 success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");

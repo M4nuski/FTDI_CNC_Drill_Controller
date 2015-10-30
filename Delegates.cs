@@ -11,5 +11,6 @@
     delegate void CleanupDelegate(bool Success);
     delegate void UpdateNodeDelegate(int nodeIndex, DrillNode.DrillNodeStatus newStatus);
     delegate void AddLineDelegate(string text);
+    delegate void MoveDelegate(float X, float Y);
 
 }

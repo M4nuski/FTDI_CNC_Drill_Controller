@@ -41,6 +41,7 @@ namespace CNC_Drill_Controller1
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
         
         public ProgressDelegate OnProgress { get; set; }
+        public MoveDelegate OnMove { get; set; }
             
         private void UpdateProgress(int Progress, bool Done)
         {
@@ -347,6 +348,7 @@ namespace CNC_Drill_Controller1
             {
                 var deltaX = X - current_pos.X;
                 var deltaY = Y - current_pos.Y;
+                if (OnMove != null) OnMove(X, Y);
                 success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");

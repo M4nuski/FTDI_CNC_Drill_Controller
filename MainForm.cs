@@ -40,6 +40,7 @@ namespace CNC_Drill_Controller1
         private CrossHair drillCrossHair;
         private Box CNCTableBox;
         private Box drawingPageBox;
+        private Cross moveTarget;
 
         #endregion
 
@@ -83,6 +84,7 @@ namespace CNC_Drill_Controller1
             drillCrossHair = new CrossHair(0, 0, Color.Red);
             CNCTableBox = new Box(0, 0, 6, 6, Color.LightGray);
             drawingPageBox = new Box(0, 0, 8.5f, 11, Color.GhostWhite);
+            moveTarget = new Cross(0, 0, Color.Yellow);
             nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
             nodeViewer.OnSelect += OnSelect;
             lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
@@ -105,6 +107,7 @@ namespace CNC_Drill_Controller1
             #region USB interface initialization
 
             USBdevicesComboBox.Items.Clear();
+
             var USBDevices = USB.GetDevicesList();
             if (USBDevices.Count > 0)
             {
@@ -121,6 +124,7 @@ namespace CNC_Drill_Controller1
             }
 
             USB.OnProgress = OnProgress;
+            USB.OnMove = onMove;
 
             USB.X_Driver = checkBoxX.Checked;
             USB.Y_Driver = checkBoxY.Checked;
@@ -129,8 +133,7 @@ namespace CNC_Drill_Controller1
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
-            TaskRunner = new TaskContainer(this, USB, taskDialog);
-            TaskRunner.UpdateNodes = OnUpdateNode;
+            TaskRunner = new TaskContainer(this, USB, taskDialog) {UpdateNodes = OnUpdateNode};
 
             #endregion
 
@@ -317,6 +320,11 @@ namespace CNC_Drill_Controller1
             }
 
             return snapLocation;
+        }
+
+        private void onMove(float X, float Y)
+        {
+            moveTarget.UpdatePosition(X, Y);
         }
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
@@ -536,6 +544,7 @@ namespace CNC_Drill_Controller1
             {
                 drawingPageBox,
                 CNCTableBox,
+                moveTarget,
                 drillCrossHair,
                 cursorCrossHair
             };
