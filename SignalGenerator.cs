@@ -10,7 +10,6 @@ namespace CNC_Drill_Controller1
 
         //Control signals (v0.0 - v1.0)
         private const byte clock = 0x01;
-
         private const byte usb_to_outputs = 0x10;
         private const bool usb_to_outputs_default = false;
         private const byte inputs_to_usb = 0x20;
@@ -23,17 +22,19 @@ namespace CNC_Drill_Controller1
 
         private static int _buffer_index;
 
+        private static byte[] Powers = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
+
         //unused private static byte buffer = 0x40; //reserved for v2.0
         //unused private static byte buffer = 0x80; //reserved for v2.0
 
         public static bool GetBit(byte data, int bit)
         {
-            return ((data & (byte)Math.Pow(2, bit)) > 0);
+            return ((data & Powers[bit]) > 0);
         }
 
         public static byte SetBit(byte input, byte bitToSet, bool set)
         {
-            return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
+            return (byte)(input | (set ? Powers[bitToSet] : 0));
         }
 
         public static int Serialize(ref byte[] buffer)
