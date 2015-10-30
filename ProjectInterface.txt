@@ -115,6 +115,18 @@ Default State :
 6 N/C
 7 N/C
 
+Default State :
+0 Out Clock					Down
+1 Out Buffer 0				N/A		XpA XpB XpC XpD		YpA YpB YpC YpD
+2 Out Buffer 1				N/A		ZpA ZpB ZpC ZpD		TX+ TX- TY+ TY-
+3 Out Buffer 0				N/A		EnX EnY EnZ EnT		TZ+ TZ- N/R N/R
+
+4 In  Buffer 0				N/A		Xmi XMA Ymi YMA		Zmi ZMA N/R N/R
+5 In  Buffer 1				N/A		N/R N/R N/R N/R		N/R N/R N/R N/R
+6 Out Latch USB to Outputs	Down
+7 Out Latch Input to USB	Up
+
+
 all down except b5, set byte to 0 at the end of transfert
 
 Transfert Sequence:

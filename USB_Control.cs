@@ -11,6 +11,7 @@ namespace CNC_Drill_Controller1
         private byte[] OutputBuffer = new byte[64];
         private bool cancelJob;
         public byte[] InputBuffer { get; set; }
+        private int dataSize;
 
         public bool IsOpen { get { return USB_Interface.IsOpen; } }
         public DateTime LastUpdate { get; set; }
@@ -129,10 +130,9 @@ namespace CNC_Drill_Controller1
         {
             if (USB_Interface.IsOpen)
             {
-                var stepData = CreateStepByte();
-                var ctrlData = CreateControlByte();
-
-                Serialize(stepData, ctrlData);
+                SignalGenerator.OutputByte0 = CreateStepByte();
+                SignalGenerator.OutputByte1 = CreateControlByte();
+                dataSize = SignalGenerator.Serialize(ref OutputBuffer);
 
                 if (SendToUSB())
                 {
@@ -146,20 +146,20 @@ namespace CNC_Drill_Controller1
         {
             var result = true;
             uint res = 0;
-            var ftStatus = USB_Interface.Write(OutputBuffer, 64, ref res);
-            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 64))
+            var ftStatus = USB_Interface.Write(OutputBuffer, dataSize, ref res);
+            if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != dataSize))
             {
                 USB_Interface.Close();
-                ExtLog.AddLine("Failed to write data (error " + ftStatus + ") (" + res + "/64)");
+                ExtLog.AddLine(string.Format("Failed to write data (error {0}) ({1}/{2})", ftStatus, res, dataSize));
                 result = false;
             }
             else
             {
-                ftStatus = USB_Interface.Read(InputBuffer, 64, ref res);
-                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != 64))
+                ftStatus = USB_Interface.Read(InputBuffer, (uint)dataSize, ref res);
+                if ((ftStatus != FTDI.FT_STATUS.FT_OK) && (res != dataSize))
                 {
                     USB_Interface.Close();
-                    ExtLog.AddLine("Failed to read data (error " + ftStatus + ") (" + res + "/64)");
+                    ExtLog.AddLine(string.Format("Failed to write data (error {0}) ({1}/{2})", ftStatus, res, dataSize));
                     result = false;
                 }
             }
@@ -204,84 +204,19 @@ namespace CNC_Drill_Controller1
             return output;
         }
 
-        private void Serialize(byte Steps, byte Ctrl)
-        {   // Default states:
-            //          0 Out Clock					Down 0x01
-            //          1 In Inbuffer				N/A  0x02
-            //          2 Out StepBuffer			N/A  0x04
-            //          3 Out CtrlBuffer			N/A  0x08
-
-            //          4 Out Latch USB to Outputs	Down 0x10
-            //          5 Out Latch Input to USB	Up   0x20
-
-            //clear buffer
-            for (var i = 0; i < 64; i++)
-            {
-                OutputBuffer[i] = 0x20; //b5 up by default
-            }
-
-            //create clock to write 8 bits 0-15
-            for (var i = 0; i < 16; i++)
-            {
-                OutputBuffer[i] = (byte)((i % 2) + 0x20);
-            }
-
-            //write data
-            //msb first
-            //bit2 steps
-            //bit3 ctrl
-            for (var i = 7; i >= 0; i--)
-            {
-                var offset = ((7 - i) * 2);
-
-                OutputBuffer[offset] = setBit(OutputBuffer[offset], 2, getBit(Steps, i));
-                OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 2, getBit(Steps, i));
-
-                OutputBuffer[offset] = setBit(OutputBuffer[offset], 3, getBit(Ctrl, i));
-                OutputBuffer[offset + 1] = setBit(OutputBuffer[offset + 1], 3, getBit(Ctrl, i));
-            }
-
-
-            //strobe b4 up 16-17
-            OutputBuffer[16] = 0x10 + 0x20;
-            OutputBuffer[17] = 0x00 + 0x20;
-
-            //delay of at least 18 for move and switches feedback 18-42
-
-            //strobe b5 down with a clock cycle to load data 43-45
-            OutputBuffer[43] = 0x00;
-            OutputBuffer[44] = 0x01;
-            OutputBuffer[45] = 0x00;
-
-            //create clock to read 8 bits 46-61
-            for (var i = 0; i < 16; i++)
-            {
-                OutputBuffer[46 + i] = (byte)((i % 2) + 0x20);
-            }
-
-            //add to clocks to make sure the interface's buffer have been sent 62 - 63
-        }
-
-        private static bool getBit(byte data, int bit)
-        {
-            return ((data & (byte)Math.Pow(2, bit)) > 0);
-        }
-
-        private static byte setBit(byte input, byte bitToSet, bool set)
-        {
-            return (byte)(input | ((set) ? (byte)(Math.Pow(2, bitToSet)) : 0));
-        }
+       // private void Serialize(byte Steps, byte Ctrl)
+       
 
         private void DeSerialize()
         {
-            MaxXswitch = !getBit(InputBuffer[61], 1);
-            MinXswitch = !getBit(InputBuffer[59], 1);
+            MaxXswitch = !SignalGenerator.GetBit(InputBuffer[61], 1);
+            MinXswitch = !SignalGenerator.GetBit(InputBuffer[59], 1);
 
-            MinYswitch = !getBit(InputBuffer[57], 1);
-            MaxYswitch = !getBit(InputBuffer[55], 1);
+            MinYswitch = !SignalGenerator.GetBit(InputBuffer[57], 1);
+            MaxYswitch = !SignalGenerator.GetBit(InputBuffer[55], 1);
 
-            TopSwitch = !getBit(InputBuffer[53], 1);
-            BottomSwitch = !getBit(InputBuffer[51], 1);
+            TopSwitch = !SignalGenerator.GetBit(InputBuffer[53], 1);
+            BottomSwitch = !SignalGenerator.GetBit(InputBuffer[51], 1);
         }
 
         public PointF CurrentLocation()

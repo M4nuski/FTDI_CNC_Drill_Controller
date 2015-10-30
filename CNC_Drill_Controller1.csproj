@@ -116,6 +116,7 @@
     <Compile Include="RawUSBForm.Designer.cs">
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SignalGenerator.cs" />
     <Compile Include="TaskContainer.cs" />
     <Compile Include="TaskDialog.cs">
       <SubType>Form</SubType>

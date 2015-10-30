@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -22,11 +20,6 @@ namespace CNC_Drill_Controller1
         private TaskDialog taskDialog;
 
         public UpdateNodeDelegate UpdateNodes;
-
-        //gather info needed for form callback and classes
-        //1 task content class for each task ?
-        //top class with all information needed for sub classes
-        //list of subclasses with control/button that generetate list automatically on load?
 
         public TaskContainer(Control MainControl, IUSB_Controller usb, TaskDialog RunningTaskDialog)
         {

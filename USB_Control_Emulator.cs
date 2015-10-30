@@ -8,6 +8,7 @@ namespace CNC_Drill_Controller1
     class USB_Control_Emulator : IUSB_Controller
     {
         public byte[] InputBuffer { get; set; }
+        private  byte[] obuf = new byte[64];
         public bool IsOpen {
             get { return true; }
         }
@@ -71,6 +72,10 @@ namespace CNC_Drill_Controller1
 
         public void Transfer()
         {
+            SignalGenerator.OutputByte0 = CreateStepByte();
+            SignalGenerator.OutputByte1 = CreateControlByte();
+            SignalGenerator.Serialize(ref obuf);
+            InputBuffer = obuf;
             Thread.Sleep(1);
             LastUpdate = DateTime.Now;
 
@@ -94,6 +99,34 @@ namespace CNC_Drill_Controller1
             MinYswitch = (pos.Y < 0.0f);
             MaxYswitch = (pos.Y > 6.0f);
 
+        }
+
+        private byte CreateStepByte()
+        {
+            var x = (byte)(X_Abs_Location & GlobalProperties.numStepMask);
+            var y = (byte)(Y_Abs_Location & GlobalProperties.numStepMask);
+            return (byte)((GlobalProperties.stepBytes[x] & 0x0F) | (GlobalProperties.stepBytes[y] & 0xF0));
+        }
+
+        private byte CreateControlByte()
+        {
+            var TQA_X_Pos = (X_Last_Direction == 1);
+            var TQA_X_Neg = (X_Last_Direction == -1);
+            var TQA_Y_Pos = (Y_Last_Direction == 1);
+            var TQA_Y_Neg = (Y_Last_Direction == -1);
+
+            byte output = 0;
+            if (X_Driver) output = (byte)(output | 1);
+            if (Y_Driver) output = (byte)(output | 2);
+            if (Cycle_Drill) output = (byte)(output | 4);
+            if (T_Driver) output = (byte)(output | 8);
+
+            if (TQA_X_Pos) output = (byte)(output | 16);
+            if (TQA_X_Neg) output = (byte)(output | 32);
+            if (TQA_Y_Pos) output = (byte)(output | 64);
+            if (TQA_Y_Neg) output = (byte)(output | 128);
+
+            return output;
         }
 
         public PointF CurrentLocation()
