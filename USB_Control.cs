@@ -127,6 +127,11 @@ namespace CNC_Drill_Controller1
             return true;
         }
 
+        public void CloseDevice()
+        {
+            if (USB_Interface.IsOpen) USB_Interface.Close();
+        }
+
         public void Transfer()
         {
             if (USB_Interface.IsOpen)

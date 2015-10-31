@@ -46,6 +46,7 @@ namespace CNC_Drill_Controller1
         //Setup
         List<string> GetDevicesList();
         bool OpenDeviceByLocation(uint LocationID);
+        void CloseDevice();
 
         //Helpers
         PointF CurrentLocation();

@@ -152,6 +152,7 @@ namespace CNC_Drill_Controller1
 
         private void OnFormClosing(object sender, FormClosingEventArgs formClosingEventArgs)
         {
+            USB.CloseDevice();
             try
             {
                 saveLogToolStripMenuItem_Click(sender, null);
@@ -465,7 +466,8 @@ namespace CNC_Drill_Controller1
 
                 if (dtypeDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var loader = new VDXLoader(openFileDialog1.FileName, dtypeDialog.DrawingConfig.Inverted);
+                    var dresult = dtypeDialog.DrawingConfig;
+                    var loader = new VDXLoader(openFileDialog1.FileName, dresult.Inverted);
                     Nodes = loader.DrillNodes;
                     logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
 

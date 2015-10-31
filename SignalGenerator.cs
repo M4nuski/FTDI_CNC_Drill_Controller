@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CNC_Drill_Controller1
+﻿namespace CNC_Drill_Controller1
 {
     static class SignalGenerator
     {

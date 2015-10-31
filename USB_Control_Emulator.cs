@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Drawing;
 using System.Threading;
 
@@ -70,6 +69,11 @@ namespace CNC_Drill_Controller1
         public bool OpenDeviceByLocation(uint LocationID)
         {
             return true;
+        }
+
+        public void CloseDevice()
+        {
+            
         }
 
         public void Transfer()
