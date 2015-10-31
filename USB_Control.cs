@@ -137,6 +137,7 @@ namespace CNC_Drill_Controller1
 
                 if (SendToUSB())
                 {
+                    SignalGenerator.Deserialize(InputBuffer);
                     ReadSwitches();
                     LastUpdate = DateTime.Now;
                 }

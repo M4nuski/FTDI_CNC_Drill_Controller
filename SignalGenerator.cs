@@ -18,7 +18,7 @@ namespace CNC_Drill_Controller1
         private const bool inputs_to_usb_default = true;
 
         //Data signals (v0.0 - v1.0)
-        private static int in_buffer0_bit = 1;
+        private const int in_buffer0_bit = 1;
         private const int out_buffer0_bit = 2;
         private const int out_buffer1_bit = 3;
 
@@ -50,7 +50,7 @@ namespace CNC_Drill_Controller1
 
             for (var i = 0; i < 16; i++)
             {
-                buffer[_buffer_index] = genByte(false, GetBit(OutputByte0, i/2), GetBit(OutputByte1, i/2), usb_to_outputs_default, inputs_to_usb_default);
+                buffer[_buffer_index] = genByte(false, GetBit(OutputByte0, 7 - (i/2)), GetBit(OutputByte1, 7 - (i/2)), usb_to_outputs_default, inputs_to_usb_default);
             }
 
             //strobe usb_to_outputs
@@ -60,12 +60,12 @@ namespace CNC_Drill_Controller1
             return _buffer_index;
         }
 
-        public static void Deserialize(ref byte[] buffer)
+        public static void Deserialize(byte[] buffer)
         {
             byte result = 0;
             for (byte i = 0; i < 8; i++)
             {
-                result = SetBit(result, i, (buffer[3 + (i * 2)] & in_buffer0_bit) > 0);
+                result = SetBit(result, i, GetBit(buffer[17 - (i * 2)], in_buffer0_bit));
             }
             InputByte0 = result;
         }

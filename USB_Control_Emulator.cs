@@ -112,21 +112,19 @@ namespace CNC_Drill_Controller1
 
         private byte CreateControlByte()
         {
-            var TQA_X_Pos = (X_Last_Direction == 1);
-            var TQA_X_Neg = (X_Last_Direction == -1);
-            var TQA_Y_Pos = (Y_Last_Direction == 1);
-            var TQA_Y_Neg = (Y_Last_Direction == -1);
-
             byte output = 0;
-            if (X_Driver) output = (byte)(output | 1);
-            if (Y_Driver) output = (byte)(output | 2);
-            if (Cycle_Drill) output = (byte)(output | 4);
-            if (TQA_Driver) output = (byte)(output | 8);
 
-            if (TQA_X_Pos) output = (byte)(output | 16);
-            if (TQA_X_Neg) output = (byte)(output | 32);
-            if (TQA_Y_Pos) output = (byte)(output | 64);
-            if (TQA_Y_Neg) output = (byte)(output | 128);
+            output = SignalGenerator.SetBit(output, GlobalProperties.X_Driver_Bit, X_Driver);
+            output = SignalGenerator.SetBit(output, GlobalProperties.Y_Driver_Bit, Y_Driver);
+
+            output = SignalGenerator.SetBit(output, GlobalProperties.D_Driver_Bit, Cycle_Drill);
+
+            output = SignalGenerator.SetBit(output, GlobalProperties.T_Driver_Bit, TQA_Driver);
+
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Pos_Bit, (X_Last_Direction == 1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Neg_Bit, (X_Last_Direction == -1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Pos_Bit, (Y_Last_Direction == 1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Neg_Bit, (Y_Last_Direction == -1));
 
             return output;
         }
