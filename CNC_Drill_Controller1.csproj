@@ -193,7 +193,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"D:\Prog\Visual Studio 2012\Solutions\AWSTests\S3_Packager\bin\Debug\S3_Packager.exe" "$(ProjectName)" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>"D:\Prog\Visual Studio 2012\Solutions\AWSTests\S3_Packager\bin\Release\S3_Packager.exe" "$(ProjectName)" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

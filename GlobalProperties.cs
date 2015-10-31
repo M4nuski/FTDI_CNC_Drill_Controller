@@ -18,8 +18,9 @@ namespace CNC_Drill_Controller1
         //Switches bits of InputByte0
         public static int X_MaxSwitch_Bit = 0;
         public static int X_MinSwitch_Bit = 1;
-        public static int Y_MaxSwitch_Bit = 2;
-        public static int Y_MinSwitch_Bit = 3;
+
+        public static int Y_MinSwitch_Bit = 2;
+        public static int Y_MaxSwitch_Bit = 3;
 
         public static int TopSwitch_Bit = 4;
         public static int BottomSwitch_Bit = 5;

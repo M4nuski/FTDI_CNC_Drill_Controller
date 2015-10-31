@@ -151,7 +151,7 @@ namespace CNC_Drill_Controller1
                 USB.Transfer();
                 success = maxTries >= 0;
             }
-            return success;
+            return success && (USB.MinXswitch != AxisDirection);
         }
         private bool SeekYminSwitch(bool AxisDirection, int byX, int byY, int TriesPeriod)
         {
@@ -165,7 +165,7 @@ namespace CNC_Drill_Controller1
                 USB.Transfer();
                 success = maxTries >= 0;
             }
-            return success;
+            return success && (USB.MinYswitch != AxisDirection);
         }
 
         public void asyncWorkerDoWork_DrillSelected(object sender, DoWorkEventArgs doWorkEventArgs)
