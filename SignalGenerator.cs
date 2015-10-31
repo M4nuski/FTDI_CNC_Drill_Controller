@@ -9,16 +9,18 @@ namespace CNC_Drill_Controller1
         public static byte InputByte0;//, InputByte1;
 
         //Control signals (v0.0 - v1.0)
-        private const byte clock = 0x01;
-        private const byte usb_to_outputs = 0x10;
+        private const int clock_bit = 0;
+
+        private const int usb_to_outputs_bit = 4;
         private const bool usb_to_outputs_default = false;
-        private const byte inputs_to_usb = 0x20;
+
+        private const int inputs_to_usb_bit = 5;
         private const bool inputs_to_usb_default = true;
 
         //Data signals (v0.0 - v1.0)
-        private static byte in_buffer0 = 0x02;
-        private const byte out_buffer0 = 0x04;
-        private const byte out_buffer1 = 0x08;
+        private static int in_buffer0_bit = 1;
+        private const int out_buffer0_bit = 2;
+        private const int out_buffer1_bit = 3;
 
         private static int _buffer_index;
 
@@ -32,7 +34,7 @@ namespace CNC_Drill_Controller1
             return ((data & Powers[bit]) > 0);
         }
 
-        public static byte SetBit(byte input, byte bitToSet, bool set)
+        public static byte SetBit(byte input, int bitToSet, bool set)
         {
             return (byte)(input | (set ? Powers[bitToSet] : 0));
         }
@@ -63,24 +65,25 @@ namespace CNC_Drill_Controller1
             byte result = 0;
             for (byte i = 0; i < 8; i++)
             {
-                result = SetBit(result, i, (buffer[3 + (i * 2)] & in_buffer0) > 0);
+                result = SetBit(result, i, (buffer[3 + (i * 2)] & in_buffer0_bit) > 0);
             }
-            in_buffer0 = result;
+            InputByte0 = result;
         }
 
         private static byte genByte(bool clk_inhibit, bool out0, bool out1, bool out_en, bool in_en)
         {
             byte result = 0;
 
-            result = (byte)(result | ((clk_inhibit | !getClock()) ? 0 : clock));
+            result = SetBit(result, clock_bit, (!clk_inhibit & getClock()));
 
-            result = (byte)(result | ((out0) ? out_buffer0 : 0));
-            result = (byte)(result | ((out1) ? out_buffer1 : 0));
+            result = SetBit(result, out_buffer0_bit, out0);
+            result = SetBit(result, out_buffer1_bit, out1);
 
-            result = (byte)(result | ((in_en) ? inputs_to_usb : 0));
-            result = (byte)(result | ((out_en) ? usb_to_outputs : 0));
+            result = SetBit(result, inputs_to_usb_bit, in_en);
+            result = SetBit(result, usb_to_outputs_bit, out_en);
 
             _buffer_index++;
+
             return result;
         }
 

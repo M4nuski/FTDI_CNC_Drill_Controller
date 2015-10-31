@@ -26,7 +26,7 @@ namespace CNC_Drill_Controller1
         //Output to CNC
         bool X_Driver { get; set; }
         bool Y_Driver { get; set; }
-        bool T_Driver { get; set; }
+        bool TQA_Driver { get; set; }
         bool Cycle_Drill { get; set; }
 
         //Behaviour Modifier of Controller

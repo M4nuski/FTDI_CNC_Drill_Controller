@@ -28,7 +28,7 @@ namespace CNC_Drill_Controller1
 
         public bool X_Driver { get; set; }
         public bool Y_Driver { get; set; }
-        public bool T_Driver { get; set; }
+        public bool TQA_Driver { get; set; }
         public bool Cycle_Drill { get; set; }
 
         public int X_Abs_Location{ get; set; }
@@ -137,7 +137,7 @@ namespace CNC_Drill_Controller1
 
                 if (SendToUSB())
                 {
-                    DeSerialize();
+                    ReadSwitches();
                     LastUpdate = DateTime.Now;
                 }
             }
@@ -176,48 +176,33 @@ namespace CNC_Drill_Controller1
 
         private byte CreateControlByte()
         {
-            //0 Activate X Axis Step Controller Driver
-            //1 Activate Y Axis Step Controller Driver
-            //2 Activate Drill
-            //3 Activate Torque Assist Driver
-
-            //4 TQA_X_Pos;
-            //5 TQA_X_Neg;
-            //6 TQA_Y_Pos;
-            //7 TQA_Y_Neg;
-
-            var TQA_X_Pos = (X_Last_Direction == 1);
-            var TQA_X_Neg = (X_Last_Direction == -1);
-            var TQA_Y_Pos = (Y_Last_Direction == 1);
-            var TQA_Y_Neg = (Y_Last_Direction == -1);
-
             byte output = 0;
-            if (X_Driver) output = (byte)(output | 1);
-            if (Y_Driver) output = (byte)(output | 2);
-            if (Cycle_Drill) output = (byte)(output | 4);
-            if (T_Driver) output = (byte)(output | 8);
 
-            if (TQA_X_Pos) output = (byte)(output | 16);
-            if (TQA_X_Neg) output = (byte)(output | 32);
-            if (TQA_Y_Pos) output = (byte)(output | 64);
-            if (TQA_Y_Neg) output = (byte)(output | 128);
+            output = SignalGenerator.SetBit(output, GlobalProperties.X_Driver_Bit, X_Driver);
+            output = SignalGenerator.SetBit(output, GlobalProperties.Y_Driver_Bit, Y_Driver);
 
+            output = SignalGenerator.SetBit(output, GlobalProperties.D_Driver_Bit, Cycle_Drill);
+
+            output = SignalGenerator.SetBit(output, GlobalProperties.T_Driver_Bit, TQA_Driver);
+
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Pos_Bit, (X_Last_Direction == 1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Neg_Bit, (X_Last_Direction == -1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Pos_Bit, (Y_Last_Direction == 1));
+            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Neg_Bit, (Y_Last_Direction == -1));
+            
             return output;
         }
 
-       // private void Serialize(byte Steps, byte Ctrl)
-       
-
-        private void DeSerialize()
+        private void ReadSwitches()
         {
-            MaxXswitch = !SignalGenerator.GetBit(InputBuffer[61], 1);
-            MinXswitch = !SignalGenerator.GetBit(InputBuffer[59], 1);
+            MaxXswitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.X_MaxSwitch_Bit);
+            MinXswitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.X_MinSwitch_Bit);
 
-            MinYswitch = !SignalGenerator.GetBit(InputBuffer[57], 1);
-            MaxYswitch = !SignalGenerator.GetBit(InputBuffer[55], 1);
+            MaxYswitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.Y_MaxSwitch_Bit);
+            MinYswitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.Y_MinSwitch_Bit);
 
-            TopSwitch = !SignalGenerator.GetBit(InputBuffer[53], 1);
-            BottomSwitch = !SignalGenerator.GetBit(InputBuffer[51], 1);
+            TopSwitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.TopSwitch_Bit);
+            BottomSwitch = !SignalGenerator.GetBit(SignalGenerator.InputByte0, GlobalProperties.BottomSwitch_Bit);
         }
 
         public PointF CurrentLocation()

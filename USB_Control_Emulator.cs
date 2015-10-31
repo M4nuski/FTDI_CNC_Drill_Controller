@@ -25,7 +25,7 @@ namespace CNC_Drill_Controller1
 
         public bool X_Driver { get; set; }
         public bool Y_Driver { get; set; }
-        public bool T_Driver { get; set; }
+        public bool TQA_Driver { get; set; }
         public bool Cycle_Drill { get; set; }
 
         public bool Inhibit_Backlash_Compensation { get; set; }
@@ -121,7 +121,7 @@ namespace CNC_Drill_Controller1
             if (X_Driver) output = (byte)(output | 1);
             if (Y_Driver) output = (byte)(output | 2);
             if (Cycle_Drill) output = (byte)(output | 4);
-            if (T_Driver) output = (byte)(output | 8);
+            if (TQA_Driver) output = (byte)(output | 8);
 
             if (TQA_X_Pos) output = (byte)(output | 16);
             if (TQA_X_Neg) output = (byte)(output | 32);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -128,12 +127,12 @@ namespace CNC_Drill_Controller1
 
             USB.X_Driver = checkBoxX.Checked;
             USB.Y_Driver = checkBoxY.Checked;
-            USB.T_Driver = checkBoxT.Checked;
+            USB.TQA_Driver = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
-            TaskRunner = new TaskContainer(this, USB, taskDialog) {UpdateNodes = OnUpdateNode};
+            TaskRunner = new TaskContainer(this, USB, taskDialog) { UpdateNodes = OnUpdateNode };
 
             #endregion
 
@@ -188,7 +187,7 @@ namespace CNC_Drill_Controller1
             Nodes[nodeIndex].status = newStatus;
             UpdateNodeColors();
         }
-        
+
         #endregion
 
         #region Direct USB UI control methods
@@ -213,7 +212,7 @@ namespace CNC_Drill_Controller1
         {
             USB.X_Driver = checkBoxX.Checked;
             USB.Y_Driver = checkBoxY.Checked;
-            USB.T_Driver = checkBoxT.Checked;
+            USB.TQA_Driver = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             if (!CheckBoxInhibit) USB.Transfer();
@@ -651,10 +650,7 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
-        #region Scripted Methods
-
         #region Async Tasks Handlers
-
 
         private void AsyncDrillSelectedButton_Click(object sender, EventArgs e)
         {
@@ -704,7 +700,6 @@ namespace CNC_Drill_Controller1
 
 
 
-
         private void DrillAllNodebutton_Click(object sender, EventArgs e)
         {
             if ((Nodes != null) && (Nodes.Count > 0))
@@ -718,10 +713,6 @@ namespace CNC_Drill_Controller1
         {
             ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
         }
-
-
-
-        #endregion
 
         #endregion
     }
