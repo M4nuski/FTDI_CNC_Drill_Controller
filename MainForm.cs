@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
+using Svg;
 
 namespace CNC_Drill_Controller1
 {
@@ -717,5 +720,23 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
+
+        private void LoadSVGbutton_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                var loader = SvgDocument.Open(openFileDialog1.FileName);
+
+                var circles = loader.Children.FindSvgElementsOf<SvgCircle>();
+
+                ExtLog.AddLine(circles.Count().ToString("D"));
+                foreach (var svgCircle in circles)
+                {
+                    ExtLog.AddLine(svgCircle.CenterX.Value.ToString("F4") + " " + svgCircle.CenterY.Value.ToString("F4"));
+                }
+            }
+
+        }
     }
 }
