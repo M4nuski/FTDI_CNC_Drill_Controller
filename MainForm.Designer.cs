@@ -86,7 +86,7 @@
             this.ViewYLabel = new System.Windows.Forms.Label();
             this.ReloadUSBbutton = new System.Windows.Forms.Button();
             this.OffsetOriginBtton = new System.Windows.Forms.Button();
-            this.YOriginTextbox = new System.Windows.Forms.TextBox();
+            this.YoriginTextbox = new System.Windows.Forms.TextBox();
             this.XoriginTextbox = new System.Windows.Forms.TextBox();
             this.OptimizeButton = new System.Windows.Forms.Button();
             this.ViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -710,14 +710,14 @@
             this.OffsetOriginBtton.UseVisualStyleBackColor = true;
             this.OffsetOriginBtton.Click += new System.EventHandler(this.OffsetOriginBtton_Click);
             // 
-            // YOriginTextbox
+            // YoriginTextbox
             // 
-            this.YOriginTextbox.Location = new System.Drawing.Point(907, 31);
-            this.YOriginTextbox.Margin = new System.Windows.Forms.Padding(2);
-            this.YOriginTextbox.Name = "YOriginTextbox";
-            this.YOriginTextbox.Size = new System.Drawing.Size(40, 20);
-            this.YOriginTextbox.TabIndex = 51;
-            this.YOriginTextbox.Text = "0.000";
+            this.YoriginTextbox.Location = new System.Drawing.Point(907, 31);
+            this.YoriginTextbox.Margin = new System.Windows.Forms.Padding(2);
+            this.YoriginTextbox.Name = "YoriginTextbox";
+            this.YoriginTextbox.Size = new System.Drawing.Size(40, 20);
+            this.YoriginTextbox.TabIndex = 51;
+            this.YoriginTextbox.Text = "0.000";
             // 
             // XoriginTextbox
             // 
@@ -943,7 +943,7 @@
             this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.OptimizeButton);
             this.Controls.Add(this.OffsetOriginBtton);
-            this.Controls.Add(this.YOriginTextbox);
+            this.Controls.Add(this.YoriginTextbox);
             this.Controls.Add(this.XoriginTextbox);
             this.Controls.Add(this.ReloadUSBbutton);
             this.Controls.Add(this.ViewYLabel);
@@ -1053,7 +1053,7 @@
         private System.Windows.Forms.ToolStripMenuItem NodeContextDRILED;
         private System.Windows.Forms.ToolStripMenuItem NodeContextTARGET;
         private System.Windows.Forms.Button OffsetOriginBtton;
-        private System.Windows.Forms.TextBox YOriginTextbox;
+        private System.Windows.Forms.TextBox YoriginTextbox;
         private System.Windows.Forms.TextBox XoriginTextbox;
         private System.Windows.Forms.Button OptimizeButton;
         private System.Windows.Forms.ContextMenuStrip ViewContextMenu;

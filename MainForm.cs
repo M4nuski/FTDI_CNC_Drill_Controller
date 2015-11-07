@@ -487,6 +487,22 @@ namespace CNC_Drill_Controller1
 
                             Nodes = loader.DrillNodes;
 
+                            if (dresult.reset_origin)
+                            {
+                                var leftmost = loader.PageWidth;
+                                var topmost = loader.PageHeight;
+
+                                for (var i = 0; i < Nodes.Count; i++)
+                                {
+                                    if (Nodes[i].location.X < leftmost) leftmost = Nodes[i].location.X;
+                                    if (Nodes[i].location.Y < topmost) topmost = Nodes[i].location.Y;
+                                }
+
+                                XoriginTextbox.Text = (leftmost - dresult.origin_x).ToString("F4");
+                                YoriginTextbox.Text = (topmost - dresult.origin_y).ToString("F4");
+                                OffsetOriginBtton_Click(sender, e);
+                            }
+
                             ExtLog.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
                             ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1"));
                             ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1"));
@@ -585,12 +601,12 @@ namespace CNC_Drill_Controller1
 
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
-            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YOriginTextbox.Text));
+            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YoriginTextbox.Text));
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
-            YOriginTextbox.Text = "0.000";
+            YoriginTextbox.Text = "0.000";
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -623,7 +639,7 @@ namespace CNC_Drill_Controller1
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.X, Nodes[i].location.Y - origOffset.Y);
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
-            YOriginTextbox.Text = "0.000";
+            YoriginTextbox.Text = "0.000";
         }
         private void ViewSetXYContext_Click(object sender, EventArgs e)
         {
