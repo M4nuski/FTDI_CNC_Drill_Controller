@@ -107,7 +107,6 @@
             this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
             this.DrillAllNodebutton = new System.Windows.Forms.Button();
             this.AbortMoveButton = new System.Windows.Forms.Button();
-            this.LoadSVGButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -426,13 +425,14 @@
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(156, 21);
             this.loadFileButton.TabIndex = 15;
-            this.loadFileButton.Text = "Load .VDX File";
+            this.loadFileButton.Text = "Load VDX/SVG File";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.LoadFileButton_Click);
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "*.vdx";
+            this.openFileDialog1.Filter = "All Supported Types|*.vdx;*.svg|MS Visio Files|*.vdx|Scalable Vertor Graphic|*.sv" +
+    "g";
             // 
             // XScaleTextBox
             // 
@@ -922,23 +922,11 @@
             this.AbortMoveButton.UseVisualStyleBackColor = true;
             this.AbortMoveButton.Click += new System.EventHandler(this.AbortMoveButton_Click);
             // 
-            // LoadSVGButton
-            // 
-            this.LoadSVGButton.Location = new System.Drawing.Point(167, 232);
-            this.LoadSVGButton.Margin = new System.Windows.Forms.Padding(2);
-            this.LoadSVGButton.Name = "LoadSVGButton";
-            this.LoadSVGButton.Size = new System.Drawing.Size(156, 21);
-            this.LoadSVGButton.TabIndex = 70;
-            this.LoadSVGButton.Text = "Load .SVG File";
-            this.LoadSVGButton.UseVisualStyleBackColor = true;
-            this.LoadSVGButton.Click += new System.EventHandler(this.LoadSVGbutton_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
-            this.Controls.Add(this.LoadSVGButton);
             this.Controls.Add(this.AbortMoveButton);
             this.Controls.Add(this.DrillAllNodebutton);
             this.Controls.Add(this.AsyncDrillSelectedButton);
@@ -1086,7 +1074,6 @@
         private System.Windows.Forms.Button AsyncDrillSelectedButton;
         private System.Windows.Forms.Button DrillAllNodebutton;
         private System.Windows.Forms.Button AbortMoveButton;
-        private System.Windows.Forms.Button LoadSVGButton;
     }
 }
 

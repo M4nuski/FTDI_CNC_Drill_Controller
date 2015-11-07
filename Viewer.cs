@@ -21,7 +21,7 @@ namespace CNC_Drill_Controller1
 
         private Control _outputControl;
 
-        public float LineSelectionWidth = 0.010f;
+
         private int maxPanX, maxPanY;
         private int minPanX, minPanY;
         private bool panning;
@@ -395,7 +395,21 @@ namespace CNC_Drill_Controller1
 
         public bool Selected(PointF SelectionLocation)
         {
-            return false; //todo
+            if (Math.Abs(_fx - _tx) < float.Epsilon) return (Math.Abs(SelectionLocation.X - _fx) < 0.010f);
+            if (Math.Abs(_fy - _ty) < float.Epsilon) return (Math.Abs(SelectionLocation.Y - _fy) < 0.010f);
+
+            //on X
+            var slope = (_ty - _fy) / (_tx - _fx);
+            var datum = _ty - (slope*_tx);
+
+            var SelectedOnX = (Math.Abs(((slope * SelectionLocation.X) + datum) - SelectionLocation.Y) < 0.010f);
+
+            //on Y
+            slope = (_tx - _fx) / (_ty - _fy);
+            datum = _tx - (slope * _ty);
+            var SelectedOnY = (Math.Abs(((slope * SelectionLocation.Y) + datum) - SelectionLocation.X) < 0.010f);
+
+            return SelectedOnX || SelectedOnY; 
         }
     }
 

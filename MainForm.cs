@@ -463,21 +463,40 @@ namespace CNC_Drill_Controller1
 
         private void LoadFileButton_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "*.vdx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-
                 if (dtypeDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var dresult = dtypeDialog.DrawingConfig;
-                    var loader = new VDXLoader(openFileDialog1.FileName, dresult.Inverted);
-                    Nodes = loader.DrillNodes;
-                    logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+                    if (File.Exists(openFileDialog1.FileName))
+                    {
+                        ExtLog.AddLine("Opening File: " + openFileDialog1.FileName);
 
-                    drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
-                    lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
-                    RebuildListBoxAndViewerFromNodes();
-                    lastSelectedIndex = -1;
+                        var loader = (INodeLoader) null;
+                        if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".VDX")) loader = new VDXLoader();
+                        else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".SVG")) loader = new SVGLoader();
+                        else ExtLog.AddLine("File Type not supported.");
+
+                        if (loader != null)
+                        {
+                            loader.PageWidth = 11.0f;
+                            loader.PageHeight = 11.0f;
+                            loader.DrillNodes = new List<DrillNode>();
+
+                            var dresult = dtypeDialog.DrawingConfig;
+                            loader.Load(openFileDialog1.FileName, dresult);
+
+                            Nodes = loader.DrillNodes;
+
+                            ExtLog.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+                            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1"));
+                            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1"));
+
+                            drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
+                            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
+                            RebuildListBoxAndViewerFromNodes();
+                            lastSelectedIndex = -1;
+                        }
+                    }
                 }
             }
         }
@@ -721,22 +740,5 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
-        private void LoadSVGbutton_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-
-                var loader = SvgDocument.Open(openFileDialog1.FileName);
-
-                var circles = loader.Children.FindSvgElementsOf<SvgCircle>();
-
-                ExtLog.AddLine(circles.Count().ToString("D"));
-                foreach (var svgCircle in circles)
-                {
-                    ExtLog.AddLine(svgCircle.CenterX.Value.ToString("F4") + " " + svgCircle.CenterY.Value.ToString("F4"));
-                }
-            }
-
-        }
     }
 }
