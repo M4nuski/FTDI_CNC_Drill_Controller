@@ -219,28 +219,28 @@ namespace CNC_Drill_Controller1
 
             if (!asyncWorker.CancellationPending)
             {
-                success = SeekXminSwitch(false, -30, 0, 10); //1.5in
+                success = SeekXminSwitch(false, -30, 0, 20); //1.5in
                 asyncWorker.ReportProgress(45);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekXminSwitch(true, 1, 0, 50); //1 turn
+                if (success) success = SeekXminSwitch(true, 1, 0, 100); //1 turn
                 asyncWorker.ReportProgress(60);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekYminSwitch(false, 0, -30, 10);
+                if (success) success = SeekYminSwitch(false, 0, -30, 20);
                 asyncWorker.ReportProgress(75);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekYminSwitch(true, 0, 1, 50);
+                if (success) success = SeekYminSwitch(true, 0, 1, 100);
                 asyncWorker.ReportProgress(90);
             }
             else doWorkEventArgs.Cancel = true;

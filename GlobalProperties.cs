@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1
         public static byte numStepMask = 0x03;//b'0000 0011'
         
         //Interface config
-        public static uint baudRate = 4800;
+        public static uint baudRate = 1200;
         public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
 
         //Switches bits of InputByte0
@@ -49,8 +49,8 @@ namespace CNC_Drill_Controller1
 
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";
-        public static int X_Scale = 1;//961;
-        public static int Y_Scale = 1;//961;
+        public static int X_Scale = 960;//961;
+        public static int Y_Scale = 960;//961;
         public static int X_Backlash = 0;//4;
         public static int Y_Backlash = 0;//4;
 
