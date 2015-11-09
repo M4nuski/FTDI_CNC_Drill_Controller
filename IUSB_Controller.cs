@@ -14,6 +14,7 @@ namespace CNC_Drill_Controller1
         //Callback
         ProgressDelegate OnProgress { get; set; }
         MoveDelegate OnMove { get; set; }
+        Action OnMoveCompleted { get; set; }
 
         //Input from CNC
         bool MaxXswitch { get; }

@@ -127,6 +127,7 @@ namespace CNC_Drill_Controller1
 
             USB.OnProgress = OnProgress;
             USB.OnMove = onMove;
+            USB.OnMoveCompleted = OnMoveCompleted;
 
             USB.X_Driver = checkBoxX.Checked;
             USB.Y_Driver = checkBoxY.Checked;
@@ -328,6 +329,12 @@ namespace CNC_Drill_Controller1
         private void onMove(float X, float Y)
         {
             moveTarget.UpdatePosition(X, Y);
+            listBox1.Hide();
+        }
+
+        private void OnMoveCompleted()
+        {
+            listBox1.Show();
         }
 
         private void XSetTransformButton_Click(object sender, EventArgs e)

@@ -43,6 +43,7 @@ namespace CNC_Drill_Controller1
 
         public ProgressDelegate OnProgress { get; set; }
         public MoveDelegate OnMove { get; set; }
+        public Action OnMoveCompleted { get; set; }
 
         public USB_Control_Emulator() 
         {
@@ -242,6 +243,7 @@ namespace CNC_Drill_Controller1
                 var deltaY = Y - current_pos.Y;
                 if (OnMove != null) OnMove(X, Y);
                 success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
+                if (OnMoveCompleted != null) OnMoveCompleted();
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");
             return success;
