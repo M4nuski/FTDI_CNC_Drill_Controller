@@ -28,8 +28,8 @@
         private const bool inputs_to_usb_default = true;
 
         //Data signals (v2.0 - v2.2)
-        private const int in_buffer0_data_bit = 2;
-        private const int in_buffer1_data_bit = 0;
+        private const int in_buffer0_data_bit = 0;
+        private const int in_buffer1_data_bit = 2;
 
         private const int out_buffer0_data_bit = 6;
         private const int out_buffer1_data_bit = 1;

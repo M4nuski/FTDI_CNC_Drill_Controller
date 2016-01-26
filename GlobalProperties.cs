@@ -13,7 +13,7 @@ namespace CNC_Drill_Controller1
         
         //Interface config
         public static uint baudRate = 1200;
-        public static byte portDirectionMask = 61;//61 = 0x3D = b'00111101' = in in out out  out out in out
+        public static byte portDirectionMask = 250;//250 = 0xFA = b'11111010' = out out out out  out in out in
 
         //Switches bits of InputByte0
         public static int X_MaxSwitch_Bit = 0;
