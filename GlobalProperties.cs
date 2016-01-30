@@ -7,17 +7,17 @@ namespace CNC_Drill_Controller1
     {
         //Hardware config 
         public static int numStepsPerTurns = 48;//48 steps per turn, double phase
-        public static byte[] stepBytes = { 0x33, 0x66, 0xCC, 0x99 };
+        public static byte[] stepBytes = { 0x03, 0x06, 0x0C, 0x09 };
         public static int numStepBytes = 4;
-        public static byte numStepMask = 0x03;//b'0000 0011'
+        public static byte numStepMask = 0x03;//b'0000 0011' //(stepByte.length-1)
         
         //Interface config
         public static uint baudRate = 1200;
         public static byte portDirectionMask = 250;//250 = 0xFA = b'11111010' = out out out out  out in out in
 
         //Switches bits of InputByte0
-        public static int X_MaxSwitch_Bit = 0;
-        public static int X_MinSwitch_Bit = 1;
+        public static int X_MinSwitch_Bit = 0;
+        public static int X_MaxSwitch_Bit = 1;
 
         public static int Y_MinSwitch_Bit = 2;
         public static int Y_MaxSwitch_Bit = 3;
@@ -25,27 +25,15 @@ namespace CNC_Drill_Controller1
         public static int TopSwitch_Bit = 4;
         public static int BottomSwitch_Bit = 5;
 
-        //Outputs bits of OutputByte0
-        public static int X_PhaseA_Bit = 0;
-        public static int X_PhaseB_Bit = 1;
-        public static int X_PhaseC_Bit = 2;
-        public static int X_PhaseD_Bit = 3;
+        //Outputs control bits of OutputByte0 and OutputByte1
+        public static int StepMotor_Enable_Bit = 4;
+        public static int Torque_Pos_Bit = 5;
+        public static int Torque_Neg_Bit = 6;
+        public static int Torque_Enable_Bit = 7;
 
-        public static int Y_PhaseA_Bit = 4;
-        public static int Y_PhaseB_Bit = 5;
-        public static int Y_PhaseC_Bit = 6;
-        public static int Y_PhaseD_Bit = 7;
-
-        //Outputs bits of OutputByte1
-        public static int X_Driver_Bit = 0;
-        public static int Y_Driver_Bit = 1;
-        public static int D_Driver_Bit = 2;
-        public static int T_Driver_Bit = 3;
-
-        public static int TQA_Driver_X_Pos_Bit = 4;//todo move to Z_axis
-        public static int TQA_Driver_X_Neg_Bit = 5;
-        public static int TQA_Driver_Y_Pos_Bit = 6;
-        public static int TQA_Driver_Y_Neg_Bit = 7;
+        //Outputs control bits of OutputByte2
+        public static int Drill_Cycle_Enable_Bit = 0;
+        public static int StepMotor_Throttle_Bit = 4;
 
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";
