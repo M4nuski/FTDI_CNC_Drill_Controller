@@ -173,6 +173,9 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ProjectInterface2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectInterface.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
