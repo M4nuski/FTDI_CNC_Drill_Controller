@@ -6,18 +6,6 @@
         public static byte OutputByte0, OutputByte1, OutputByte2;
         public static byte InputByte0, InputByte1;
 
-        //Control signals (v0.0 - v1.0)
-        //private const int clock_bit = 0;
-        //private const int usb_to_outputs_bit = 4;
-        //private const bool usb_to_outputs_default = false;
-        //private const int inputs_to_usb_bit = 5;
-        //private const bool inputs_to_usb_default = true;
-
-        ////Data signals (v0.0 - v1.0)
-        //private const int in_buffer0_bit = 1;
-        //private const int out_buffer0_bit = 2;
-        //private const int out_buffer1_bit = 3;
-
         //Control signals (v2.0 - v2v2)
         private const int clock_bit = 7;
 
@@ -32,15 +20,12 @@
         private const int in_buffer1_data_bit = 2;
 
         private const int out_buffer0_data_bit = 6;
-        private const int out_buffer1_data_bit = 1;
-        private const int out_buffer2_data_bit = 5;
+        private const int out_buffer1_data_bit = 5;
+        private const int out_buffer2_data_bit = 1;
 
         private static int _buffer_index;
 
         private static byte[] Powers = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
-
-        //unused private static byte buffer = 0x40; //reserved for v2.0
-        //unused private static byte buffer = 0x80; //reserved for v2.0
 
         public static bool GetBit(byte data, int bit)
         {
@@ -63,7 +48,7 @@
 
             for (var i = 0; i < 16; i++)
             {
-                buffer[_buffer_index] = genByte(false, GetBit(OutputByte0, 7 - (i / 2)), GetBit(OutputByte1, 7 - (i / 2)), GetBit(OutputByte2, 7 - (i / 2)), usb_to_outputs_default, inputs_to_usb_default);
+                buffer[_buffer_index] = genByte(false, GetBit(OutputByte0, (i / 2)), GetBit(OutputByte1, (i / 2)), GetBit(OutputByte2, (i / 2)), usb_to_outputs_default, inputs_to_usb_default);
             }
 
             //strobe usb_to_outputs
