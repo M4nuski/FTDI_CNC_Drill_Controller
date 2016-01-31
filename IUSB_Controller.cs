@@ -25,9 +25,9 @@ namespace CNC_Drill_Controller1
         bool BottomSwitch { get; }
 
         //Output to CNC
-        bool X_Driver { get; set; }
-        bool Y_Driver { get; set; }
-        bool TQA_Driver { get; set; }
+        bool X_StepMotor_Driver_Enable { get; set; }
+        bool Y_StepMotor_Driver_Enable { get; set; }
+        bool TQA_Driver_Enable { get; set; }
         bool Cycle_Drill { get; set; }
 
         //Behaviour Modifier of Controller

@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1
         public static byte numStepMask = 0x03;//b'0000 0011' //(stepByte.length-1)
         
         //Interface config
-        public static uint baudRate = 1200;
+        public static uint baudRate = 3000000;
         public static byte portDirectionMask = 250;//250 = 0xFA = b'11111010' = out out out out  out in out in
 
         //Switches bits of InputByte0
