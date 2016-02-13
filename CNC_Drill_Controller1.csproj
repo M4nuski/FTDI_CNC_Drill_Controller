@@ -79,8 +79,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FTD2XX_NET.dll</HintPath>
     </Reference>
+    <Reference Include="Svg, Version=2.1.0.28187, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.2.1.0\lib\Svg.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -99,6 +104,7 @@
     </Compile>
     <Compile Include="DrillNode.cs" />
     <Compile Include="ExtLog.cs" />
+    <Compile Include="INodeLoader.cs" />
     <Compile Include="IUSB_Controller.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -116,6 +122,7 @@
       <DependentUpon>RawUSBForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SignalGenerator.cs" />
+    <Compile Include="SVGLoader.cs" />
     <Compile Include="TaskContainer.cs" />
     <Compile Include="TaskDialog.cs">
       <SubType>Form</SubType>
@@ -152,6 +159,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="CNC_Drill_Controller1_TemporaryKey.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -165,6 +173,9 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ProjectInterface2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ProjectInterface.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

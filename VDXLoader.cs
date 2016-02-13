@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace CNC_Drill_Controller1
 {
-    class VDXLoader
+    class VDXLoader : INodeLoader
     {
         private class rawShapeData
         {
@@ -17,101 +18,103 @@ namespace CNC_Drill_Controller1
         }
         private List<rawShapeData> Shapes;
 
-        public float PageWidth, PageHeight;
-        public List<DrillNode> DrillNodes; 
-        public float NodeEpsilon = 0.010f;
+        public float PageWidth { get; set; }
+        public float PageHeight { get; set; }
+        public List<DrillNode> DrillNodes { get; set; }
+        public float NodeEpsilon { get; set; }
 
-        private List<rawShapeData> RemoveNonEllipses(List<rawShapeData> inData)
+        private void RemoveNonEllipses()
         {
-            var nonelli = inData.RemoveAll(d => !d.isEllipse);
-            ExtLog.AddLine(nonelli + " NonEllipses");
-            return inData;
+            Shapes.RemoveAll(d => !d.isEllipse);
+            ExtLog.AddLine(Shapes.Count + " Ellipses");
         }
 
-        private List<rawShapeData> RemoveZero(List<rawShapeData> inData)
+        private void RemoveZero()
         {
-            for (var i = 0; i < inData.Count; i++)
+            for (var i = 0; i < Shapes.Count; i++)
             {
-                inData[i].isZero = (Math.Abs(inData[i].x) < float.Epsilon) && (Math.Abs(inData[i].y) < float.Epsilon);
+                Shapes[i].isZero = (Math.Abs(Shapes[i].x) < float.Epsilon) && (Math.Abs(Shapes[i].y) < float.Epsilon);
             }
-            var zero = inData.RemoveAll(d => d.isZero);
-            ExtLog.AddLine(zero + " Zeros");
-            return inData;
+            Shapes.RemoveAll(d => d.isZero);
+            ExtLog.AddLine(Shapes.Count + " Non-zeros");
         }
 
-        private List<rawShapeData> RemoveDuplicates(List<rawShapeData> inData)
+        private void RemoveDuplicates()
         {
-            var dup = new bool[inData.Count];
-            for (var i = 0; i < inData.Count; i++)
+            var dup = new bool[Shapes.Count];
+            for (var i = 0; i < Shapes.Count; i++)
             {
-                if (!dup[i]) for (var j = 0; j < inData.Count; j++)
+                if (!dup[i]) for (var j = 0; j < Shapes.Count; j++)
                     {
                         if ((i != j) && (!dup[j]))
                         {
                             var dist =
-                                Math.Sqrt(Math.Pow(inData[i].x - inData[j].x, 2) + Math.Pow(inData[i].y - inData[j].y, 2));
+                                Math.Sqrt(Math.Pow(Shapes[i].x - Shapes[j].x, 2) + Math.Pow(Shapes[i].y - Shapes[j].y, 2));
                             dup[j] = (dist < NodeEpsilon);
                         }
                     }
             }
-            for (var i = 0; i < inData.Count; i++)
+            for (var i = 0; i < Shapes.Count; i++)
             {
-                inData[i].isDuplicate = dup[i];
+                Shapes[i].isDuplicate = dup[i];
             }
 
-            var nDup = inData.RemoveAll(d => d.isDuplicate);
-            ExtLog.AddLine(nDup + " Duplicates");
-            return inData;
+            Shapes.RemoveAll(d => d.isDuplicate);
+            ExtLog.AddLine(Shapes.Count + " Uniques");
         }
 
-        private void cleanList()
+        private void FlipXShapes()
         {
-            Shapes = RemoveZero(Shapes);
-            Shapes = RemoveNonEllipses(Shapes);
-            Shapes = RemoveDuplicates(Shapes);
-        }
-
-        public VDXLoader(string FileName, bool flipX)
-        {
-            if (File.Exists(FileName))
+            foreach (var rawShapeData in Shapes)
             {
-                ExtLog.AddLine("Opening File: " + FileName);
-                ExtLog.AddLine("Inverted: " + flipX);
-                
-                //load and parse data;
-                Shapes = new List<rawShapeData>();
-                PageWidth = 11.0f;
-                PageHeight = 11.0f; 
-                DrillNodes = new List<DrillNode>();
-
-                try
-                {
-                    var f = File.OpenText(FileName);
-                    SeekShape(f);
-                    f.Close();
-                }
-                catch (IOException ex)
-                {
-                    ExtLog.AddLine(ex.Message);
-                    DrillNodes.Clear();
-                    return;
-                }
-
-                ExtLog.AddLine(Shapes.Count.ToString("D") + " Shapes");
-                cleanList();
-                ExtLog.AddLine("Page Width: " + PageWidth.ToString("F1"));
-                ExtLog.AddLine("Page Height: " + PageHeight.ToString("F1"));
-                
-                foreach (var rawShape in Shapes)
-                {
-                    if (rawShape.isEllipse && !rawShape.isDuplicate && !rawShape.isZero)
-                    {
-                        DrillNodes.Add(new DrillNode(new PointF(flipX? (PageWidth-rawShape.x) : rawShape.x, PageHeight - rawShape.y),-1));
-                    }
-                }
-
+                rawShapeData.x = PageWidth - rawShapeData.x;
             }
         }
+
+        private void FlipYShapes()
+        {
+            foreach (var rawShapeData in Shapes)
+            {
+                rawShapeData.y = PageHeight - rawShapeData.y;
+            }
+        }
+
+        public void Load(string Filename, DrawingTypeDialog.DrawingConfigStruct DrawingConfig)
+        {
+            PageWidth = 11.0f;
+            PageHeight = 11.0f;
+            DrillNodes = new List<DrillNode>();
+
+            ReadNodes(Filename);
+
+            RemoveZero();
+            RemoveNonEllipses();
+            RemoveDuplicates();
+            if (DrawingConfig.Inverted) FlipXShapes();
+            if (DrawingConfig.vdx_vertical_flip) FlipYShapes(); 
+
+            for (var i = 0; i < Shapes.Count; i++)
+            {
+                DrillNodes.Add(new DrillNode(new PointF(Shapes[i].x, Shapes[i].y), i));
+            }
+        }
+
+        private void ReadNodes(string filename)
+        {
+            Shapes = new List<rawShapeData>();
+            try
+            {
+                var f = File.OpenText(filename);
+                SeekShape(f);
+                f.Close();
+            }
+            catch (IOException ex)
+            {
+                ExtLog.AddLine(ex.Message);
+                DrillNodes.Clear();
+            }
+        }
+
 
         private void SeekShape(StreamReader reader)
         {
@@ -131,12 +134,14 @@ namespace CNC_Drill_Controller1
                     }
                     if (l.StartsWith("<PageHeight Unit='IN'>"))
                     {
-                        PageHeight = SafeFloatParse(TrimString(l, "<PageHeight Unit='IN'>", "</PageHeight>"), PageWidth);
+                        PageHeight = SafeFloatParse(TrimString(l, "<PageHeight Unit='IN'>", "</PageHeight>"), PageHeight);
                     }
                     //<PageWidth Unit='IN'>8.5</PageWidth>
                     //<PageHeight Unit='IN'>11</PageHeight>
                 }
             }
+
+            ExtLog.AddLine(Shapes.Count.ToString("D") + " Shapes");
         }
 
         private rawShapeData readUntilEndOfShape(StreamReader reader)

@@ -24,7 +24,7 @@ namespace CNC_Drill_Controller1
         private DrillNode.DrillNodeStatus lastSelectedStatus;
         private int lastSelectedIndex;
         private char[] trimChars = { ' ' };
-        private RawUSBForm RawUsbForm = new RawUSBForm();
+        private RawUSBForm RawUsbForm = new RawUSBForm {Visible = false};
         private TaskDialog taskDialog = new TaskDialog();
 
         #endregion
@@ -124,10 +124,11 @@ namespace CNC_Drill_Controller1
 
             USB.OnProgress = OnProgress;
             USB.OnMove = onMove;
+            USB.OnMoveCompleted = OnMoveCompleted;
 
-            USB.X_Driver = checkBoxX.Checked;
-            USB.Y_Driver = checkBoxY.Checked;
-            USB.TQA_Driver = checkBoxT.Checked;
+            USB.X_StepMotor_Driver_Enable = checkBoxX.Checked;
+            USB.Y_StepMotor_Driver_Enable = checkBoxY.Checked;
+            USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
@@ -211,9 +212,9 @@ namespace CNC_Drill_Controller1
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
-            USB.X_Driver = checkBoxX.Checked;
-            USB.Y_Driver = checkBoxY.Checked;
-            USB.TQA_Driver = checkBoxT.Checked;
+            USB.X_StepMotor_Driver_Enable = checkBoxX.Checked;
+            USB.Y_StepMotor_Driver_Enable = checkBoxY.Checked;
+            USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             if (!CheckBoxInhibit) USB.Transfer();
@@ -232,8 +233,15 @@ namespace CNC_Drill_Controller1
         }
         private void showRawCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            RawUsbForm.Visible = showRawCheckbox.Checked;
-            if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
+            if (showRawCheckbox.Checked)
+            {
+                RawUsbForm.Show();
+                RawUsbForm.Update(USB.InputBuffer);
+            }
+            else
+            {
+                RawUsbForm.Hide();
+            }
         }
 
         private void setXButton_Click(object sender, EventArgs e)
@@ -325,6 +333,12 @@ namespace CNC_Drill_Controller1
         private void onMove(float X, float Y)
         {
             moveTarget.UpdatePosition(X, Y);
+            listBox1.Hide();
+        }
+
+        private void OnMoveCompleted()
+        {
+            listBox1.Show();
         }
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
@@ -354,6 +368,10 @@ namespace CNC_Drill_Controller1
                 }
 
                 if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
+                else
+                {
+                    showRawCheckbox.Checked = false;
+                }
 
                 XMinStatusLabel.BackColor = !USB.MinXswitch ? Color.Lime : Color.Red;
                 XMaxStatusLabel.BackColor = !USB.MaxXswitch ? Color.Lime : Color.Red;
@@ -405,7 +423,6 @@ namespace CNC_Drill_Controller1
                 logger1.Refresh();
 
                 lastUIupdate = DateTime.Now;
-
                 Application.DoEvents();
             }
 
@@ -460,21 +477,56 @@ namespace CNC_Drill_Controller1
 
         private void LoadFileButton_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "*.vdx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-
                 if (dtypeDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var dresult = dtypeDialog.DrawingConfig;
-                    var loader = new VDXLoader(openFileDialog1.FileName, dresult.Inverted);
-                    Nodes = loader.DrillNodes;
-                    logger1.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+                    if (File.Exists(openFileDialog1.FileName))
+                    {
+                        ExtLog.AddLine("Opening File: " + openFileDialog1.FileName);
 
-                    drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
-                    lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
-                    RebuildListBoxAndViewerFromNodes();
-                    lastSelectedIndex = -1;
+                        var loader = (INodeLoader) null;
+                        if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".VDX")) loader = new VDXLoader();
+                        else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".SVG")) loader = new SVGLoader();
+                        else ExtLog.AddLine("File Type not supported.");
+
+                        if (loader != null)
+                        {
+                            loader.PageWidth = 11.0f;
+                            loader.PageHeight = 11.0f;
+                            loader.DrillNodes = new List<DrillNode>();
+
+                            var dresult = dtypeDialog.DrawingConfig;
+                            loader.Load(openFileDialog1.FileName, dresult);
+
+                            Nodes = loader.DrillNodes;
+
+                            if (dresult.reset_origin)
+                            {
+                                var leftmost = loader.PageWidth;
+                                var topmost = loader.PageHeight;
+
+                                for (var i = 0; i < Nodes.Count; i++)
+                                {
+                                    if (Nodes[i].location.X < leftmost) leftmost = Nodes[i].location.X;
+                                    if (Nodes[i].location.Y < topmost) topmost = Nodes[i].location.Y;
+                                }
+
+                                XoriginTextbox.Text = (leftmost - dresult.origin_x).ToString("F4");
+                                YoriginTextbox.Text = (topmost - dresult.origin_y).ToString("F4");
+                                OffsetOriginBtton_Click(sender, e);
+                            }
+
+                            ExtLog.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+                            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1"));
+                            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1"));
+
+                            drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
+                            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
+                            RebuildListBoxAndViewerFromNodes();
+                            lastSelectedIndex = -1;
+                        }
+                    }
                 }
             }
         }
@@ -563,12 +615,12 @@ namespace CNC_Drill_Controller1
 
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
-            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YOriginTextbox.Text));
+            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YoriginTextbox.Text));
             for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
-            YOriginTextbox.Text = "0.000";
+            YoriginTextbox.Text = "0.000";
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -601,7 +653,7 @@ namespace CNC_Drill_Controller1
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.X, Nodes[i].location.Y - origOffset.Y);
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
-            YOriginTextbox.Text = "0.000";
+            YoriginTextbox.Text = "0.000";
         }
         private void ViewSetXYContext_Click(object sender, EventArgs e)
         {
@@ -717,5 +769,6 @@ namespace CNC_Drill_Controller1
         }
 
         #endregion
+
     }
 }

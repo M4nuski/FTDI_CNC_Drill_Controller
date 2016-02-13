@@ -22,9 +22,9 @@ namespace CNC_Drill_Controller1
         public bool TopSwitch { get; set; }
         public bool BottomSwitch { get; set; }
 
-        public bool X_Driver { get; set; }
-        public bool Y_Driver { get; set; }
-        public bool TQA_Driver { get; set; }
+        public bool X_StepMotor_Driver_Enable { get; set; }
+        public bool Y_StepMotor_Driver_Enable { get; set; }
+        public bool TQA_Driver_Enable { get; set; }
         public bool Cycle_Drill { get; set; }
 
         public bool Inhibit_Backlash_Compensation { get; set; }
@@ -43,6 +43,7 @@ namespace CNC_Drill_Controller1
 
         public ProgressDelegate OnProgress { get; set; }
         public MoveDelegate OnMove { get; set; }
+        public Action OnMoveCompleted { get; set; }
 
         public USB_Control_Emulator() 
         {
@@ -78,8 +79,10 @@ namespace CNC_Drill_Controller1
 
         public void Transfer()
         {
-            SignalGenerator.OutputByte0 = CreateStepByte();
-            SignalGenerator.OutputByte1 = CreateControlByte();
+            SignalGenerator.OutputByte0 = CreateXAxisByte();
+            SignalGenerator.OutputByte1 = CreateYAxisByte();
+            SignalGenerator.OutputByte2 = CreateDrillByte();
+
             SignalGenerator.Serialize(ref obuf);
             InputBuffer = obuf;
             Thread.Sleep(1);
@@ -107,30 +110,35 @@ namespace CNC_Drill_Controller1
 
         }
 
-        private byte CreateStepByte()
+        private byte CreateXAxisByte()
         {
             var x = (byte)(X_Abs_Location & GlobalProperties.numStepMask);
-            var y = (byte)(Y_Abs_Location & GlobalProperties.numStepMask);
-            return (byte)((GlobalProperties.stepBytes[x] & 0x0F) | (GlobalProperties.stepBytes[y] & 0xF0));
+            x = GlobalProperties.stepBytes[x]; //bits 0-3
+            x = SignalGenerator.SetBit(x, GlobalProperties.StepMotor_Enable_Bit, X_StepMotor_Driver_Enable); //bit4
+
+            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Pos_Bit, (X_Last_Direction == 1)); //bit5
+            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Neg_Bit, (X_Last_Direction == -1)); //bit6
+            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Enable); //bit7
+            return x;
         }
 
-        private byte CreateControlByte()
+        private byte CreateYAxisByte()
         {
-            byte output = 0;
+            var y = (byte)(Y_Abs_Location & GlobalProperties.numStepMask);
+            y = GlobalProperties.stepBytes[y]; //bits 0-3
+            y = SignalGenerator.SetBit(y, GlobalProperties.StepMotor_Enable_Bit, Y_StepMotor_Driver_Enable); //bit4
 
-            output = SignalGenerator.SetBit(output, GlobalProperties.X_Driver_Bit, X_Driver);
-            output = SignalGenerator.SetBit(output, GlobalProperties.Y_Driver_Bit, Y_Driver);
+            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Pos_Bit, (Y_Last_Direction == 1)); //bit5
+            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Neg_Bit, (Y_Last_Direction == -1)); //bit6
+            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Enable); //bit7
+            return y;
+        }
 
-            output = SignalGenerator.SetBit(output, GlobalProperties.D_Driver_Bit, Cycle_Drill);
-
-            output = SignalGenerator.SetBit(output, GlobalProperties.T_Driver_Bit, TQA_Driver);
-
-            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Pos_Bit, (X_Last_Direction == 1));
-            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_X_Neg_Bit, (X_Last_Direction == -1));
-            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Pos_Bit, (Y_Last_Direction == 1));
-            output = SignalGenerator.SetBit(output, GlobalProperties.TQA_Driver_Y_Neg_Bit, (Y_Last_Direction == -1));
-
-            return output;
+        private byte CreateDrillByte()
+        {
+            var d = SignalGenerator.SetBit(0, GlobalProperties.Drill_Cycle_Enable_Bit, Cycle_Drill);
+            //d = SignalGenerator.SetBit(0, GlobalProperties.StepMotor_Throttle_Bit, Axis_Driver_Throttle);
+            return d;
         }
 
         public PointF CurrentLocation()
@@ -242,6 +250,7 @@ namespace CNC_Drill_Controller1
                 var deltaY = Y - current_pos.Y;
                 if (OnMove != null) OnMove(X, Y);
                 success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
+                if (OnMoveCompleted != null) OnMoveCompleted();
             }
             else ExtLog.AddLine("Limit switch warning must be cleared before moving.");
             return success;

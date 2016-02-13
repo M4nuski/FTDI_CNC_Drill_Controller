@@ -1,0 +1,157 @@
+﻿7.5 deg / step = 48 steps / turn
+1/4-20 = 20 turns / inch
+960 steps / inch
+
+Single phase
+17  = 0x11 = b'00010001'
+34  = 0x22 = b'00100010'
+68  = 0x44 = b'01000100'
+136 = 0x88 = b'10001000'
+{0x11, 0x22, 0x44, 0x88};
+
+Double phase
+51  = 0x33 = b'00110011'
+102 = 0x66 = b'01100110'
+204 = 0xCC = b'11001100'
+153 = 0x99 = b'10011001'
+{0x33, 0x66, 0xCC, 0x99};
+
+Quad phase
+17  = 0x11 = b'00010001'
+51  = 0x33 = b'00110011'
+34  = 0x22 = b'00100010'
+102 = 0x66 = b'01100110'
+68  = 0x44 = b'01000100'
+204 = 0xCC = b'11001100'
+136 = 0x88 = b'10001000'
+153 = 0x99 = b'10011001'
+{0x11, 0x33, 0x22, 0x66, 0x44, 0xCC, 0x88, 0x99};
+
+InputBuffer0:
+0 X Axis Min Limit Switch
+1 X Axis Max Limit Switch
+2 Y Axis Min Limit Switch
+3 Y Axis Max Limit Switch
+
+4 Drill top switch (0 active | bottom, 1 Top position reached)
+5 Drill bottom switch (0 active | top, 1 Bottom position reached)
+6
+7
+
+InputBuffer1:
+0
+1
+2
+3
+
+4
+5
+6
+7
+
+OutputBuffer0:
+0 X Axis Step Motor Phase 1 
+1 X Axis Step Motor Phase 2
+2 X Axis Step Motor Phase 3
+3 X Axis Step Motor Phase 4
+
+4 X Axis Step Motor Enable
+5 X Axis Torque Assist +
+6 X Axis Torque Assist -
+7 X Axis Torque Assist Enable
+
+OutputBuffer1:
+0 Y Axis Step Motor Phase 1 
+1 Y Axis Step Motor Phase 2
+2 Y Axis Step Motor Phase 3
+3 Y Axis Step Motor Phase 4
+
+4 Y Axis Step Motor Enable
+5 Y Axis Torque Assist +
+6 Y Axis Torque Assist -
+7 Y Axis Torque Assist Enable
+
+OutputBuffer2:
+0 Drill Head Enable
+1 
+2
+3
+
+4 Step Motor Throttle?
+5
+6
+7
+
+USB interface:
+Bit/Direction/Description/Default 
+0 In  InputBuffer0 Data		N/A
+1 Out OutputBuffer2 Data	N/A
+2 In  InputBuffer1 Data		N/A
+3 Out Latch USB to Outputs	Down
+
+4 Out Latch Input to USB	Up
+5 Out OutputBuffer1 Data	N/A
+6 Out OutputBuffer0 Data	N/A
+7 Out Clock					Down
+
+Data:
+	Clock : 
+		from B0, 74LS166(in) on clock UP, 74LS164(out) on clock UP
+		______|¯|_|¯|_|¯|_|¯|_____
+		idle  0   1   2   3   idle
+		default state : 0;
+
+		set bit
+		clock up
+		clock down
+
+		set bit
+		clock up
+		clock down
+
+	InputBuffers : 
+		74LS166
+		Data is read from usb port before clocking new data from internal buffer
+		shift/!load, default HIGH
+		load data into shift register
+		 
+	OutputBuffers :
+		74LS164 -> 74LS574
+		on clock up, data is shifted to D-latches
+		Latch : 574 on UP, data is latched to output buffers.
+
+
+all down except b5, set byte to 0 at the end of transfert
+Transfert Sequence:
+Read-modify-write
+Latch input to input-shift-register
+
+B5 Down
+B5 Up
+
+cycle clock 8 times
+
+set B2 and B3 to Bit 7 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 6 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 5 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 4 of Step and Ctrl
+B0 up down
+
+set B2 and B3 to Bit 3 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 2 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 1 of Step and Ctrl
+B0 up down
+set B2 and B3 to Bit 0 of Step and Ctrl
+B0 up down
+
+Latch output to 574 D-latches
+B4 Up
+B4 Down
+(also reads the last bit of input shift-register
+
+20 bytes to transfer.
