@@ -28,5 +28,11 @@ namespace CNC_Drill_Controller1
                 textBox1.Text = sb.ToString();
             }
         }
+
+        private void RawUSBForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            Visible = false;
+        }
     }
 }

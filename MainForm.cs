@@ -24,7 +24,7 @@ namespace CNC_Drill_Controller1
         private DrillNode.DrillNodeStatus lastSelectedStatus;
         private int lastSelectedIndex;
         private char[] trimChars = { ' ' };
-        private RawUSBForm RawUsbForm = new RawUSBForm();
+        private RawUSBForm RawUsbForm = new RawUSBForm {Visible = false};
         private TaskDialog taskDialog = new TaskDialog();
 
         #endregion
@@ -233,8 +233,15 @@ namespace CNC_Drill_Controller1
         }
         private void showRawCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            RawUsbForm.Visible = showRawCheckbox.Checked;
-            if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
+            if (showRawCheckbox.Checked)
+            {
+                RawUsbForm.Show();
+                RawUsbForm.Update(USB.InputBuffer);
+            }
+            else
+            {
+                RawUsbForm.Hide();
+            }
         }
 
         private void setXButton_Click(object sender, EventArgs e)
@@ -361,6 +368,10 @@ namespace CNC_Drill_Controller1
                 }
 
                 if (RawUsbForm.Visible) RawUsbForm.Update(USB.InputBuffer);
+                else
+                {
+                    showRawCheckbox.Checked = false;
+                }
 
                 XMinStatusLabel.BackColor = !USB.MinXswitch ? Color.Lime : Color.Red;
                 XMaxStatusLabel.BackColor = !USB.MaxXswitch ? Color.Lime : Color.Red;
@@ -412,12 +423,6 @@ namespace CNC_Drill_Controller1
                 logger1.Refresh();
 
                 lastUIupdate = DateTime.Now;
-                //todo remove after debug
-                Text = Convert.ToString(SignalGenerator.OutputByte0, 2).PadLeft(8, '0') + ' ' +
-                       Convert.ToString(SignalGenerator.OutputByte1, 2).PadLeft(8, '0') + ' ' +
-                       Convert.ToString(SignalGenerator.OutputByte2, 2).PadLeft(8, '0') + ' ' +
-                       Convert.ToString(SignalGenerator.InputByte0, 2).PadLeft(8, '0') + ' ' +
-                       Convert.ToString(SignalGenerator.InputByte1, 2).PadLeft(8, '0');
                 Application.DoEvents();
             }
 
