@@ -2,9 +2,9 @@
 USB controller for custom CNC drilling machine.
 
 Interface is a FTDI UM245R module with custom breakout board to expose 3 output bytes and 2 input bytes.
-Stepper motor control is real-time over the interface, with only high current motor drivers betwwen board and steppers.
+Stepper motor control is real-time over the interface, with only high current motor drivers between board and steppers.
 
-Software allow for basic cnc configuration and controls, loading of svg and vdx files to find holes positions.
+Software allow for basic CNC configuration and controls (jog, steps/units, backlash, moveTo, moveBy), loading of svg and vdx files to find holes positions.
 Path algorithm tries a few differents patterns and select shortest.
 
 PCB of breakout board is included in project.

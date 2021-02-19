@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,10 +25,10 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("961")]
-        public int X_Scale {
+        [global::System.Configuration.DefaultSettingValueAttribute("110.41")]
+        public float X_Scale {
             get {
-                return ((int)(this["X_Scale"]));
+                return ((float)(this["X_Scale"]));
             }
             set {
                 this["X_Scale"] = value;
@@ -37,10 +37,10 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("961")]
-        public int Y_Scale {
+        [global::System.Configuration.DefaultSettingValueAttribute("110.42")]
+        public float Y_Scale {
             get {
-                return ((int)(this["Y_Scale"]));
+                return ((float)(this["Y_Scale"]));
             }
             set {
                 this["Y_Scale"] = value;
@@ -50,9 +50,9 @@ namespace CNC_Drill_Controller1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int X_Backlash {
+        public float X_Backlash {
             get {
-                return ((int)(this["X_Backlash"]));
+                return ((float)(this["X_Backlash"]));
             }
             set {
                 this["X_Backlash"] = value;
@@ -62,9 +62,9 @@ namespace CNC_Drill_Controller1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int Y_Backlash {
+        public float Y_Backlash {
             get {
-                return ((int)(this["Y_Backlash"]));
+                return ((float)(this["Y_Backlash"]));
             }
             set {
                 this["Y_Backlash"] = value;
@@ -152,6 +152,18 @@ namespace CNC_Drill_Controller1.Properties {
             }
             set {
                 this["Y_Delta"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public byte usbTransferLatency {
+            get {
+                return ((byte)(this["usbTransferLatency"]));
+            }
+            set {
+                this["usbTransferLatency"] = value;
             }
         }
     }

@@ -113,7 +113,7 @@ Data:
 		74LS166
 		Data is read from usb port before clocking new data from internal buffer
 		shift/!load, default HIGH
-		load data into shift register
+		when low: load data into shift register at clock up
 		 
 	OutputBuffers :
 		74LS164 -> 74LS574

@@ -207,7 +207,7 @@ namespace CNC_Drill_Controller1
         {
             var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
             var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
-            USB.MoveBy(-delta_X, -delta_Y);
+            USB.MoveBy((int)(-delta_X), (int)(-delta_Y));
         }
 
         public void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)

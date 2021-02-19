@@ -107,6 +107,7 @@
             this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
             this.DrillAllNodebutton = new System.Windows.Forms.Button();
             this.AbortMoveButton = new System.Windows.Forms.Button();
+            this.ArrowCaptureTextbox = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -381,27 +382,41 @@
             this.AxisOffsetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AxisOffsetComboBox.FormattingEnabled = true;
             this.AxisOffsetComboBox.Items.AddRange(new object[] {
-            "1",
-            "3",
-            "4",
-            "6",
-            "8",
-            "12",
-            "16",
-            "24 (0.025 / 0.5T)",
-            "48 (0.050 / 1T) ",
-            "96 (0.100 / 2T)",
-            "120 (0.125 2.5T)",
-            "240 (0.250 / 5T)",
-            "480 (0.500 / 10T)",
-            "960 (1.000 / 20T)"});
+            "1 step",
+            "2 step",
+            "3 step",
+            "4 step",
+            "6 step",
+            "8 step",
+            "10 step",
+            "11 step",
+            "12 step",
+            "16 step",
+            "20 step",
+            "24 step",
+            "48 step",
+            "50 step",
+            "52 step",
+            "96 step",
+            "100 step",
+            "200 step",
+            "600 step",
+            "1200 step",
+            "0.001 in",
+            "0.002 in",
+            "0.005 in",
+            "0.010 in",
+            "0.020 in",
+            "0.100 in",
+            "0.250 in",
+            "0.500 in",
+            "1.000 in"});
             this.AxisOffsetComboBox.Location = new System.Drawing.Point(9, 307);
             this.AxisOffsetComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.AxisOffsetComboBox.MaxDropDownItems = 16;
             this.AxisOffsetComboBox.Name = "AxisOffsetComboBox";
             this.AxisOffsetComboBox.Size = new System.Drawing.Size(127, 21);
             this.AxisOffsetComboBox.TabIndex = 13;
-            this.AxisOffsetComboBox.SelectedIndexChanged += new System.EventHandler(this.AxisOffsetComboBox_SelectedIndexChanged);
             // 
             // bevel1
             // 
@@ -844,6 +859,8 @@
             // IgnoreBacklashBox
             // 
             this.IgnoreBacklashBox.AutoSize = true;
+            this.IgnoreBacklashBox.Checked = true;
+            this.IgnoreBacklashBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IgnoreBacklashBox.Location = new System.Drawing.Point(15, 150);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(103, 17);
@@ -855,8 +872,6 @@
             // checkBoxT
             // 
             this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Checked = true;
-            this.checkBoxT.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxT.Location = new System.Drawing.Point(15, 106);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(121, 17);
@@ -922,11 +937,21 @@
             this.AbortMoveButton.UseVisualStyleBackColor = true;
             this.AbortMoveButton.Click += new System.EventHandler(this.AbortMoveButton_Click);
             // 
+            // ArrowCaptureTextbox
+            // 
+            this.ArrowCaptureTextbox.Location = new System.Drawing.Point(59, 237);
+            this.ArrowCaptureTextbox.Name = "ArrowCaptureTextbox";
+            this.ArrowCaptureTextbox.Size = new System.Drawing.Size(27, 20);
+            this.ArrowCaptureTextbox.TabIndex = 70;
+            this.ArrowCaptureTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ArrowCaptureTextbox_KeyDown);
+            this.ArrowCaptureTextbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ArrowCaptureTextbox_KeyUp);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.Controls.Add(this.ArrowCaptureTextbox);
             this.Controls.Add(this.AbortMoveButton);
             this.Controls.Add(this.DrillAllNodebutton);
             this.Controls.Add(this.AsyncDrillSelectedButton);
@@ -1074,6 +1099,7 @@
         private System.Windows.Forms.Button AsyncDrillSelectedButton;
         private System.Windows.Forms.Button DrillAllNodebutton;
         private System.Windows.Forms.Button AbortMoveButton;
+        private System.Windows.Forms.TextBox ArrowCaptureTextbox;
     }
 }
 

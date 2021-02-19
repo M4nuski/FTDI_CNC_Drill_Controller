@@ -290,8 +290,8 @@ namespace CNC_Drill_Controller1
         public void Draw(Viewer.viewData data)
         {
             var out_rectangle = ViewerHelper.ScaleRectangle(_x, _y, data.Size.X, data.Size.Y, data);
-            data.OutputGraphic.DrawLine(_color, out_rectangle.X, 0, out_rectangle.X, out_rectangle.Height);
-            data.OutputGraphic.DrawLine(_color, 0, out_rectangle.Y, out_rectangle.Width, out_rectangle.Y);
+            data.OutputGraphic.DrawLine(_color, out_rectangle.X, 0, out_rectangle.X, out_rectangle.Height*2);
+            data.OutputGraphic.DrawLine(_color, 0, out_rectangle.Y, out_rectangle.Width*2, out_rectangle.Y);
         }
 
         public void UpdatePosition(PointF newPosition)

@@ -52,6 +52,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "RawUSBForm";
             this.Text = "RawUSBForm";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RawUSBForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

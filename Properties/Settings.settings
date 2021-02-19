@@ -2,16 +2,16 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CNC_Drill_Controller1.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="X_Scale" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">961</Value>
+    <Setting Name="X_Scale" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">110.41</Value>
     </Setting>
-    <Setting Name="Y_Scale" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">961</Value>
+    <Setting Name="Y_Scale" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">110.42</Value>
     </Setting>
-    <Setting Name="X_Backlash" Type="System.Int32" Scope="User">
+    <Setting Name="X_Backlash" Type="System.Single" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
-    <Setting Name="Y_Backlash" Type="System.Int32" Scope="User">
+    <Setting Name="Y_Backlash" Type="System.Single" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="Logfile_Filename" Type="System.String" Scope="User">
@@ -34,6 +34,9 @@
     </Setting>
     <Setting Name="Y_Delta" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="usbTransferLatency" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">10</Value>
     </Setting>
   </Settings>
 </SettingsFile>

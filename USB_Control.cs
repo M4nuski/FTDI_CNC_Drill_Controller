@@ -125,6 +125,17 @@ namespace CNC_Drill_Controller1
                 return false;
             }
 
+
+            /* 2021 inline mod ! */
+            ExtLog.AddLine($"Setting Latency to {GlobalProperties.latency}");
+            ftStatus = USB_Interface.SetLatency(GlobalProperties.latency);
+                if (ftStatus != FTDI.FT_STATUS.FT_OK)
+                {
+                    ExtLog.AddLine("Failed to set Latency (error " + ftStatus + ")");
+                    return false;
+                }
+        
+
             UpdateProgress(100, true);
             return true;
         }
@@ -261,14 +272,14 @@ namespace CNC_Drill_Controller1
             {
                 if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
                 {
-                    abyX += GlobalProperties.X_Backlash;
-                    X_Delta += GlobalProperties.X_Backlash * XStepDirection;
+                    abyX += (int)GlobalProperties.X_Backlash;
+                    X_Delta += (int)GlobalProperties.X_Backlash * XStepDirection;
                     X_Last_Direction = XStepDirection;
                 }
                 if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
                 {
-                    abyY += GlobalProperties.Y_Backlash;
-                    Y_Delta += GlobalProperties.Y_Backlash * YStepDirection;
+                    abyY += (int)GlobalProperties.Y_Backlash;
+                    Y_Delta += (int)GlobalProperties.Y_Backlash * YStepDirection;
                     Y_Last_Direction = YStepDirection;
                 }
             }

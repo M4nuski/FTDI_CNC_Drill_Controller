@@ -14,7 +14,6 @@ namespace CNC_Drill_Controller1
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
         private IUSB_Controller USB = new USB_Control();
         private DateTime lastUIupdate;
-        private int AxisOffsetCount;
 
         #endregion
 
@@ -95,11 +94,10 @@ namespace CNC_Drill_Controller1
             #region UI Initialization
 
             AxisOffsetComboBox.SelectedIndex = 0;
-            AxisOffsetCount = 1;
-            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("D");
-            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("D");
-            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("D");
-            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("D");
+            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("F8");
+            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("F8");
+            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F8");
+            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F8");
 
             #endregion
 
@@ -196,19 +194,19 @@ namespace CNC_Drill_Controller1
 
         private void PlusXbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(AxisOffsetCount, 0);
+            USB.MoveBy(getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
         }
         private void MinusXbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(-AxisOffsetCount, 0);
+            USB.MoveBy(-getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
         }
         private void PlusYbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(0, AxisOffsetCount);
+            USB.MoveBy(0, getAxisOffsetStepCount(GlobalProperties.Y_Scale));
         }
         private void MinusYbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(0, -AxisOffsetCount);
+            USB.MoveBy(0, -getAxisOffsetStepCount(GlobalProperties.Y_Scale));
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
@@ -277,19 +275,26 @@ namespace CNC_Drill_Controller1
             zeroXbutton_Click(this, e);
             zeroYbutton_Click(this, e);
         }
-        private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+
+        private int getAxisOffsetStepCount(float scale)
         {
-            var toParse = (string)AxisOffsetComboBox.SelectedItem;
-            toParse = toParse.Split(new[] { ' ' })[0];
+            var selection = ((string)AxisOffsetComboBox.SelectedItem).Split(new[] { ' ' });
             try
             {
-                AxisOffsetCount = Convert.ToInt32(toParse);
+                var delta = selection[0];
+                var units = selection[1];
+                var count = Convert.ToSingle(delta);
+                return ((units != null) && (units == "in")) ? (int)(count * scale) : (int)count;
             }
             catch
             {
-                AxisOffsetCount = 1;
+                return 1;
             }
         }
+        private void AxisOffsetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
         private void AbortMoveButton_Click(object sender, EventArgs e)
         {
             USB.CancelMove();
@@ -343,15 +348,15 @@ namespace CNC_Drill_Controller1
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
         {
-            GlobalProperties.X_Scale = TextConverter.SafeTextToInt(XScaleTextBox.Text);
-            GlobalProperties.X_Backlash = TextConverter.SafeTextToInt(XBacklastTextbox.Text);
+            GlobalProperties.X_Scale = TextConverter.SafeTextToFloat(XScaleTextBox.Text);
+            GlobalProperties.X_Backlash = TextConverter.SafeTextToFloat(XBacklastTextbox.Text);
             logger1.AddLine("Set X Axis Scale to: " + GlobalProperties.X_Scale + " steps/inch, Backlash to: " + GlobalProperties.X_Backlash + "steps.");
         }
 
         private void YSetTransformButton_Click(object sender, EventArgs e)
         {
-            GlobalProperties.Y_Scale = TextConverter.SafeTextToInt(YScaleTextBox.Text);
-            GlobalProperties.Y_Backlash = TextConverter.SafeTextToInt(YBacklastTextbox.Text);
+            GlobalProperties.Y_Scale = TextConverter.SafeTextToFloat(YScaleTextBox.Text);
+            GlobalProperties.Y_Backlash = TextConverter.SafeTextToFloat(YBacklastTextbox.Text);
             logger1.AddLine("Set Y Axis Scale to: " + GlobalProperties.Y_Scale + " steps/inch, Backlash to: " + GlobalProperties.Y_Backlash + "steps.");
         }
 
@@ -675,31 +680,34 @@ namespace CNC_Drill_Controller1
 
         private void OptimizeButton_Click(object sender, EventArgs e)
         {
-            var old_length = DrillNodeHelper.getPathLength(Nodes, USB.CurrentLocation());
-
-            var NodesNN = DrillNodeHelper.OptimizeNodesNN(Nodes, USB.CurrentLocation());
-            var NN_Length = DrillNodeHelper.getPathLength(NodesNN, USB.CurrentLocation());
-
-            var NodesHSL = DrillNodeHelper.OptimizeNodesHScanLine(Nodes, new PointF(0, 0));
-            var HSL_Length = DrillNodeHelper.getPathLength(NodesHSL, USB.CurrentLocation());
-
-            var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(Nodes, new PointF(0, 0));
-            var VSL_Length = DrillNodeHelper.getPathLength(NodesVSL, USB.CurrentLocation());
-
-            var best_SL_length = (VSL_Length < HSL_Length) ? VSL_Length : HSL_Length;
-            var best_SL_path = (VSL_Length < HSL_Length) ? NodesVSL : NodesHSL;
-
-            var best_length = (NN_Length < best_SL_length) ? NN_Length : best_SL_length;
-            var best_path = (NN_Length < best_SL_length) ? NodesNN : best_SL_path;
-
-            if (best_length < old_length)
+            if ((Nodes != null) && (Nodes.Count > 0))
             {
-                Nodes = best_path;
-            }
+                var old_length = DrillNodeHelper.getPathLength(Nodes, USB.CurrentLocation());
 
-            else logger1.AddLine("Optimization test returned path longer or equal.");
+                var NodesNN = DrillNodeHelper.OptimizeNodesNN(Nodes, USB.CurrentLocation());
+                var NN_Length = DrillNodeHelper.getPathLength(NodesNN, USB.CurrentLocation());
 
-            RebuildListBoxAndViewerFromNodes();
+                var NodesHSL = DrillNodeHelper.OptimizeNodesHScanLine(Nodes, new PointF(0, 0));
+                var HSL_Length = DrillNodeHelper.getPathLength(NodesHSL, USB.CurrentLocation());
+
+                var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(Nodes, new PointF(0, 0));
+                var VSL_Length = DrillNodeHelper.getPathLength(NodesVSL, USB.CurrentLocation());
+
+                var best_SL_length = (VSL_Length < HSL_Length) ? VSL_Length : HSL_Length;
+                var best_SL_path = (VSL_Length < HSL_Length) ? NodesVSL : NodesHSL;
+
+                var best_length = (NN_Length < best_SL_length) ? NN_Length : best_SL_length;
+                var best_path = (NN_Length < best_SL_length) ? NodesNN : best_SL_path;
+
+                if (best_length < old_length)
+                {
+                    Nodes = best_path;
+                }
+
+                else logger1.AddLine("Optimization test returned path longer or equal.");
+
+                RebuildListBoxAndViewerFromNodes();
+            } else logger1.AddLine("No nodes to optimize.");
         }
 
         #endregion
@@ -770,5 +778,26 @@ namespace CNC_Drill_Controller1
 
         #endregion
 
+        private void ArrowCaptureTextbox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up) MinusYbutton_Click(sender, null);
+            if (e.KeyCode == Keys.Down) PlusYbutton_Click(sender, null);
+            if (e.KeyCode == Keys.Left) MinusXbutton_Click(sender, null);
+            if (e.KeyCode == Keys.Right) PlusXbutton_Click(sender, null);
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+        }
+
+        private void ArrowCaptureTextbox_KeyUp(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+        }
+
+
+        private void bevel1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

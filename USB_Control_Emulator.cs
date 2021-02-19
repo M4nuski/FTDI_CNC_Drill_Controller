@@ -85,7 +85,7 @@ namespace CNC_Drill_Controller1
 
             SignalGenerator.Serialize(ref obuf);
             InputBuffer = obuf;
-            Thread.Sleep(1);
+            Thread.Sleep(GlobalProperties.latency);
             LastUpdate = DateTime.Now;
 
             if (drilldelay > 0)

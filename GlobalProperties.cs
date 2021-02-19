@@ -6,14 +6,24 @@ namespace CNC_Drill_Controller1
     static class GlobalProperties
     {
         //Hardware config 
-        public static int numStepsPerTurns = 48;//48 steps per turn, double phase
-        public static byte[] stepBytes = { 0x03, 0x06, 0x0C, 0x09 };
+        public static int numStepsPerTurns = 200;//48 steps per turn, double phase
+        //public static byte[] stepBytes = { 0x03, 0x06, 0x0C, 0x09 };// single phase
+        // 0011 0110 1100 1001 
+        public static byte[] stepBytes = { 0b1001, 0b1010, 0b0110, 0b0101 };// dual phase
+        // 1001 1010 0110 0101
+        // P N  P P  N P  N N
+      //  public static byte[] stepBytes = { 0b1001, 0b1000, 0b1010, 0b0010, 0b0110, 0b0100, 0b0101, 0b0001 };// dual phase double step
+        // 1001 1000 1010 0010  0110 0100 0101 0001
+        // P N  P X  P P  X P   N P  N X  N N  X N
         public static int numStepBytes = 4;
         public static byte numStepMask = 0x03;//b'0000 0011' //(stepByte.length-1)
-        
+        //public static int numStepBytes = 8;
+        //public static byte numStepMask = 0x07;//b'0000 0111' //(stepByte.length-1)// should be auto computed
+
         //Interface config
         public static uint baudRate = 3000000;
         public static byte portDirectionMask = 250;//250 = 0xFA = b'11111010' = out out out out  out in out in
+        public static byte latency = 24;
 
         //Switches bits of InputByte0
         public static int X_MinSwitch_Bit = 0;
@@ -37,10 +47,10 @@ namespace CNC_Drill_Controller1
 
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";
-        public static int X_Scale = 960;//961;
-        public static int Y_Scale = 960;//961;
-        public static int X_Backlash = 0;//4;
-        public static int Y_Backlash = 0;//4;
+        public static float X_Scale = 110.43478260869565f;//960;//961;
+        public static float Y_Scale = 110.43478260869565f;//960;//961;
+        public static float X_Backlash = 0;//4;
+        public static float Y_Backlash = 0;//4;
 
         //UI refresh throttler
         public static int USB_Refresh_Period = 250;
@@ -68,6 +78,7 @@ namespace CNC_Drill_Controller1
                 Y_Pos = (int)Properties.Settings.Default["Y_Abs_Position"];
                 X_Delta = (int)Properties.Settings.Default["X_Delta"];
                 Y_Delta = (int)Properties.Settings.Default["Y_Delta"];
+                latency = (byte)Properties.Settings.Default["usbTransferLatency"];
             }
             catch (Exception ex)
             {
@@ -78,10 +89,10 @@ namespace CNC_Drill_Controller1
             try
             {
                 Logfile_Filename = (string)Properties.Settings.Default["Logfile_Filename"];
-                X_Scale = (int)Properties.Settings.Default["X_Scale"];
-                Y_Scale = (int)Properties.Settings.Default["Y_Scale"];
-                X_Backlash = (int)Properties.Settings.Default["X_Backlash"];
-                Y_Backlash = (int)Properties.Settings.Default["Y_Backlash"];
+                X_Scale = (float)Properties.Settings.Default["X_Scale"];
+                Y_Scale = (float)Properties.Settings.Default["Y_Scale"];
+                X_Backlash = (float)Properties.Settings.Default["X_Backlash"];
+                Y_Backlash = (float)Properties.Settings.Default["Y_Backlash"];
             }
             catch (Exception ex)
             {
