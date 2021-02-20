@@ -83,7 +83,7 @@ namespace CNC_Drill_Controller1
             CNCTableBox = new Box(0, 0, 6, 6, Color.LightGray);
             drawingPageBox = new Box(0, 0, 8.5f, 11, Color.GhostWhite);
             moveTarget = new Cross(0, 0, Color.Yellow);
-            nodeViewer = new Viewer(OutputLabel, new PointF(11.0f, 11.0f));
+            nodeViewer = new Viewer(OutputLabel, new PointF(12.0f, 12.0f), new PointF(3.0f, 3.0f));
             nodeViewer.OnSelect += OnSelect;
             lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
             lastSelectedIndex = -1;
@@ -324,7 +324,7 @@ namespace CNC_Drill_Controller1
 
         private PointF GetViewCursorLocation()
         {
-            var snapLocation = nodeViewer.MousePositionF;
+            var snapLocation = nodeViewer.ViewMousePosition;
             if (SnapViewBox.Checked)
             {
                 var snapSize = TextConverter.SafeTextToFloat(SnapSizeTextBox.Text);
@@ -654,7 +654,7 @@ namespace CNC_Drill_Controller1
         private void ViewSetDRGOrigin_Click(object sender, EventArgs e)
         {
             var origOffset = GetViewCursorLocation();
-            for (var i = 0; i < Nodes.Count; i++)
+            if (Nodes?.Count > 0) for (var i = 0; i < Nodes.Count; i++)
                 Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.X, Nodes[i].location.Y - origOffset.Y);
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";

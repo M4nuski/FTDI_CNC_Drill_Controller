@@ -8,25 +8,32 @@ namespace CNC_Drill_Controller1
 {
     class Viewer : IDisposable
     {
-        public PointF Size
+        // Float values for the view are in the native data units relative to it's origin
+        // Int values for the control are in pixel relative to the control's location
+
+        public PointF ViewSize
         {
             get { return ViewData.Size; }
         }
 
+        // Event
         public delegate void SelectionDelegate(List<IViewerElements> Selection);
         public SelectionDelegate OnSelect;
-        public PointF MousePositionF;
-        public Point MousePosition;
+
+        public PointF ViewMousePosition;
+        public Point ControlMousePosition;
         public List<IViewerElements> Elements;
 
-        private Control _outputControl;
+        private readonly Control _outputControl;
 
+        private Point maxPan;
+        private Point minPan;
+        private PointF viewOrigin;
 
-        private int maxPanX, maxPanY;
-        private int minPanX, minPanY;
+        public Point ControlPanPosition;
+
         private bool panning;
-        private int lastMouseX, lastMouseY;
-        public Point PanPosition;
+        private Point lastMousePosition;
         public float ZoomIncrements = 1.25f;
         private float zoomLevel;
         private float fitZoomLevel; //also happens to be minimum zoom level
@@ -62,8 +69,8 @@ namespace CNC_Drill_Controller1
         public struct viewData
         {
             public Graphics OutputGraphic;
-            public PointF Size;                     //size of control in "units"
-            public float Scale;                   //scale from "units" to pixels
+            public PointF Size;        //size of control in "units"
+            public float Scale;        //pixels per units           //scale from "units" to pixels
             public PointF PanPosition; //datum //in screen pixels
             public float ZoomLevel;    //slope //float based on 1.0f = 100%
         }
@@ -74,14 +81,36 @@ namespace CNC_Drill_Controller1
         /// Create a vector-drawing-style viewer with basic mouse controls
         /// </summary>
         /// <param name="OutputControl">Set the control in which the mouse event and paint output will be overriden to display the view</param>
-        /// <param name="Size">The maximum diplay area of the view in you unit</param>
+        /// <param name="Size">The maximum diplay area of the view in your unit</param>
+
+        public Viewer(Control OutputControl)
+        {
+            _outputControl = OutputControl;
+            ViewData.Size = new PointF(1.0f, 1.0f);
+            ViewData.Scale = Math.Min(OutputControl.Width / ViewSize.X, OutputControl.Height / ViewSize.Y);
+            init();
+        }
 
         public Viewer(Control OutputControl, PointF Size)
         {
             _outputControl = OutputControl;
             ViewData.Size = Size;
             ViewData.Scale = Math.Min(OutputControl.Width / Size.X, OutputControl.Height / Size.Y);
+            init();
+        }
 
+        public Viewer(Control OutputControl, PointF Size, PointF Origin)
+        {
+            _outputControl = OutputControl;
+            ViewData.Size = Size;
+            ViewData.Scale = Math.Min(OutputControl.Width / Size.X, OutputControl.Height / Size.Y);
+            viewOrigin = Origin;
+
+            init();
+        }
+
+        private void init()
+        {
             _outputControl.Paint += OutputControlOnPaint;
             _outputControl.MouseMove += OutputControlOnMouseMove;
             _outputControl.MouseDown += OutputControlOnMouseDown;
@@ -92,8 +121,6 @@ namespace CNC_Drill_Controller1
 
             FitImageToControl();
         }
-
-
 
         public void Dispose()
         {
@@ -108,7 +135,7 @@ namespace CNC_Drill_Controller1
 
         public PointF GetPointFromPix(int x, int y)
         {
-            return new PointF((x + PanPosition.X) / ViewData.Scale / zoomLevel, (y + PanPosition.Y) / ViewData.Scale / zoomLevel);
+            return new PointF((x + ControlPanPosition.X) / ViewData.Scale / zoomLevel, (y + ControlPanPosition.Y) / ViewData.Scale / zoomLevel);
         }
 
         private void OutputControlOnResize(object sender, EventArgs eventArgs)
@@ -131,10 +158,7 @@ namespace CNC_Drill_Controller1
 
         private void OutputControlOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            if (OnSelect != null)
-            {
-                OnSelect(Elements.Where(viewerElements => viewerElements.Selected(MousePositionF)).ToList());
-            }
+            OnSelect?.Invoke(Elements.Where(viewerElements => viewerElements.Selected(ViewMousePosition)).ToList());
         }
 
         private void OutputControlOnMouseUp(object sender, MouseEventArgs mouseEventArgs)
@@ -150,26 +174,26 @@ namespace CNC_Drill_Controller1
         private void OutputControlOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
         {
             _outputControl.Select();
-            MousePosition = mouseEventArgs.Location;
-            MousePositionF = GetPointFromPix(mouseEventArgs.X, mouseEventArgs.Y);
+            ControlMousePosition = mouseEventArgs.Location;
+            ViewMousePosition = GetPointFromPix(mouseEventArgs.X, mouseEventArgs.Y);
             if (panning)
             {
-                var tempX = clamp(PanPosition.X + lastMouseX - mouseEventArgs.X, minPanX, maxPanX);
-                var tempY = clamp(PanPosition.Y + lastMouseY - mouseEventArgs.Y, minPanY, maxPanY);
+                var tempX = clamp(ControlPanPosition.X + lastMousePosition.X - mouseEventArgs.X, minPan.X, maxPan.X);
+                var tempY = clamp(ControlPanPosition.Y + lastMousePosition.Y - mouseEventArgs.Y, minPan.Y, maxPan.Y);
 
-                PanPosition = new Point(tempX, tempY);
+                ControlPanPosition = new Point(tempX, tempY);
 
                 _outputControl.Refresh();
             }
-            lastMouseX = mouseEventArgs.X;
-            lastMouseY = mouseEventArgs.Y;
+            lastMousePosition.X = mouseEventArgs.X;
+            lastMousePosition.Y = mouseEventArgs.Y;
         }
 
         private void OutputControlOnPaint(object sender, PaintEventArgs paintEventArgs)
         {
             ViewData.OutputGraphic = paintEventArgs.Graphics;
             ViewData.ZoomLevel = zoomLevel;
-            ViewData.PanPosition = PanPosition;
+            ViewData.PanPosition = ControlPanPosition;
 
             if (Elements != null)
                 foreach (var viewerElements in Elements)
@@ -180,47 +204,50 @@ namespace CNC_Drill_Controller1
         }
         private static int clamp(int val, int min, int max)
         {
-            if (val > max) val = max;
-            if (val < min) val = min;
+            if (val > max) return max;
+            if (val < min) return min;
             return val;
         }
 
         private static float clamp(float val, float min, float max)
         {
-            if (val > max) val = max;
-            if (val < min) val = min;
+            if (val > max) return max;
+            if (val < min) return min;
             return val;
         }
         private void setZoomLevel(float newLevel)
         {
-            var vdX = ViewData.Size.X * ViewData.Scale;
-            var vdY = ViewData.Size.Y * ViewData.Scale;
+            var vMaxX = (ViewData.Size.X - viewOrigin.X) * ViewData.Scale;
+            var vMaxY = (ViewData.Size.Y - viewOrigin.Y) * ViewData.Scale;
 
-            maxPanX = (int)((newLevel * vdX) - _outputControl.Width);
-            maxPanY = (int)((newLevel * vdY) - _outputControl.Height);
+            var vMinX = -viewOrigin.X * ViewData.Scale;
+            var vMinY = -viewOrigin.Y * ViewData.Scale;
 
-            if ((newLevel * vdX) < _outputControl.Width)
+            maxPan.X = (int)((newLevel * vMaxX) - _outputControl.Width);
+            maxPan.Y = (int)((newLevel * vMaxY) - _outputControl.Height);
+
+            if ((newLevel * vMaxX) < _outputControl.Width)
             {
-                minPanX = (int)(_outputControl.Width - (newLevel * vdX)) / -2;
+                minPan.X = (int)(_outputControl.Width - (newLevel * vMinX)) / -2;
             }
             else
             {
-                minPanX = 0;
+                minPan.X = (int)(vMinX * newLevel);
             }
-            if ((newLevel * vdY) < _outputControl.Height)
+            if ((newLevel * vMaxY) < _outputControl.Height)
             {
-                minPanY = (int)(_outputControl.Height - (newLevel * vdY)) / -2;
+                minPan.Y = (int)(_outputControl.Height - (newLevel * vMinY)) / -2;
             }
             else
             {
-                minPanY = 0;
+                minPan.Y = (int)(vMinY * newLevel);
             }
 
             //find new pan offset
-            var tempX = (((PanPosition.X + lastMouseX) / zoomLevel) * newLevel) - lastMouseX;
-            var tempY = (((PanPosition.Y + lastMouseY) / zoomLevel) * newLevel) - lastMouseY;
+            var tempX = (((ControlPanPosition.X + lastMousePosition.X) / zoomLevel) * newLevel) - lastMousePosition.X;
+            var tempY = (((ControlPanPosition.Y + lastMousePosition.Y) / zoomLevel) * newLevel) - lastMousePosition.Y;
 
-            PanPosition = new Point((int)clamp(tempX, minPanX, maxPanX), (int)clamp(tempY, minPanY, maxPanY));
+            ControlPanPosition = new Point((int)clamp(tempX, minPan.X, maxPan.X), (int)clamp(tempY, minPan.Y, maxPan.Y));
 
             zoomLevel = newLevel;
             _outputControl.Refresh();
@@ -246,7 +273,7 @@ namespace CNC_Drill_Controller1
         public void FitImageToControl()
         {
             setFitZoomLevel();
-            PanPosition = new Point((int)(((ViewData.Size.X * ViewData.Scale * fitZoomLevel) - _outputControl.Width) * 0.5f), (int)(((ViewData.Size.Y * ViewData.Scale * fitZoomLevel) - _outputControl.Height) * 0.5f));
+            ControlPanPosition = new Point((int)(((ViewData.Size.X * ViewData.Scale * fitZoomLevel) - _outputControl.Width) * 0.5f), (int)(((ViewData.Size.Y * ViewData.Scale * fitZoomLevel) - _outputControl.Height) * 0.5f));
             zoomLevel = fitZoomLevel;//override panPosition compensation
             ZoomLevel = fitZoomLevel;
         }
