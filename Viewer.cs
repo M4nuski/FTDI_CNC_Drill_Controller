@@ -88,6 +88,7 @@ namespace CNC_Drill_Controller1
             _outputControl = OutputControl;
             ViewData.Size = new PointF(1.0f, 1.0f);
             ViewData.Scale = Math.Min(OutputControl.Width / ViewSize.X, OutputControl.Height / ViewSize.Y);
+
             init();
         }
 
@@ -96,6 +97,7 @@ namespace CNC_Drill_Controller1
             _outputControl = OutputControl;
             ViewData.Size = Size;
             ViewData.Scale = Math.Min(OutputControl.Width / Size.X, OutputControl.Height / Size.Y);
+
             init();
         }
 
@@ -178,10 +180,8 @@ namespace CNC_Drill_Controller1
             ViewMousePosition = GetPointFromPix(mouseEventArgs.X, mouseEventArgs.Y);
             if (panning)
             {
-                var tempX = clamp(ControlPanPosition.X + lastMousePosition.X - mouseEventArgs.X, minPan.X, maxPan.X);
-                var tempY = clamp(ControlPanPosition.Y + lastMousePosition.Y - mouseEventArgs.Y, minPan.Y, maxPan.Y);
-
-                ControlPanPosition = new Point(tempX, tempY);
+                ControlPanPosition.X = clamp(ControlPanPosition.X + lastMousePosition.X - mouseEventArgs.X, minPan.X, maxPan.X);
+                ControlPanPosition.Y = clamp(ControlPanPosition.Y + lastMousePosition.Y - mouseEventArgs.Y, minPan.Y, maxPan.Y);
 
                 _outputControl.Refresh();
             }
@@ -220,34 +220,27 @@ namespace CNC_Drill_Controller1
             var vMaxX = (ViewData.Size.X - viewOrigin.X) * ViewData.Scale;
             var vMaxY = (ViewData.Size.Y - viewOrigin.Y) * ViewData.Scale;
 
-            var vMinX = -viewOrigin.X * ViewData.Scale;
-            var vMinY = -viewOrigin.Y * ViewData.Scale;
-
             maxPan.X = (int)((newLevel * vMaxX) - _outputControl.Width);
             maxPan.Y = (int)((newLevel * vMaxY) - _outputControl.Height);
+            minPan.X = (int) (newLevel * (-viewOrigin.X * ViewData.Scale));
+            minPan.Y = (int) (newLevel * (-viewOrigin.Y * ViewData.Scale));
 
-            if ((newLevel * vMaxX) < _outputControl.Width)
+            if ((newLevel * ViewData.Size.X * ViewData.Scale) < _outputControl.Width) 
             {
-                minPan.X = (int)(_outputControl.Width - (newLevel * vMinX)) / -2;
+                minPan.X = (int)(_outputControl.Width - vMaxX) / -2;
+                maxPan.X = minPan.X;
             }
-            else
+            if ((newLevel * ViewData.Size.Y * ViewData.Scale) < _outputControl.Height) 
             {
-                minPan.X = (int)(vMinX * newLevel);
+                minPan.Y = (int)(_outputControl.Height - vMaxY) / -2;
+                maxPan.Y = minPan.Y;
             }
-            if ((newLevel * vMaxY) < _outputControl.Height)
-            {
-                minPan.Y = (int)(_outputControl.Height - (newLevel * vMinY)) / -2;
-            }
-            else
-            {
-                minPan.Y = (int)(vMinY * newLevel);
-            }
-
             //find new pan offset
-            var tempX = (((ControlPanPosition.X + lastMousePosition.X) / zoomLevel) * newLevel) - lastMousePosition.X;
-            var tempY = (((ControlPanPosition.Y + lastMousePosition.Y) / zoomLevel) * newLevel) - lastMousePosition.Y;
+            var tempX = ((ControlPanPosition.X + lastMousePosition.X) / zoomLevel * newLevel) - lastMousePosition.X;
+            var tempY = ((ControlPanPosition.Y + lastMousePosition.Y) / zoomLevel * newLevel) - lastMousePosition.Y;
 
-            ControlPanPosition = new Point((int)clamp(tempX, minPan.X, maxPan.X), (int)clamp(tempY, minPan.Y, maxPan.Y));
+            ControlPanPosition.X = (int)clamp(tempX, minPan.X, maxPan.X);
+            ControlPanPosition.Y = (int)clamp(tempY, minPan.Y, maxPan.Y);
 
             zoomLevel = newLevel;
             _outputControl.Refresh();
@@ -273,7 +266,8 @@ namespace CNC_Drill_Controller1
         public void FitImageToControl()
         {
             setFitZoomLevel();
-            ControlPanPosition = new Point((int)(((ViewData.Size.X * ViewData.Scale * fitZoomLevel) - _outputControl.Width) * 0.5f), (int)(((ViewData.Size.Y * ViewData.Scale * fitZoomLevel) - _outputControl.Height) * 0.5f));
+            ControlPanPosition.X = (int)( ( (ViewData.Size.X * ViewData.Scale * fitZoomLevel) - _outputControl.Width ) * 0.5f);
+            ControlPanPosition.Y = (int)( ( (ViewData.Size.Y * ViewData.Scale * fitZoomLevel) - _outputControl.Height) * 0.5f);
             zoomLevel = fitZoomLevel;//override panPosition compensation
             ZoomLevel = fitZoomLevel;
         }
@@ -470,7 +464,7 @@ namespace CNC_Drill_Controller1
 
         public Box(PointF TopLeft, PointF Size, Color color)
         {
-            box(TopLeft.X, TopLeft.Y,Size.X, Size.Y, color, -1);
+            box(TopLeft.X, TopLeft.Y, Size.X, Size.Y, color, -1);
         }
 
         public Box(float X, float Y, float Width, float Height, Color color)
