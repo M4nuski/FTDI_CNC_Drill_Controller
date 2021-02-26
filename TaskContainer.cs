@@ -145,7 +145,7 @@ namespace CNC_Drill_Controller1
             var maxTries = GlobalProperties.numSeek;
             while ((USB.MinXswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
             {
-                USB.MoveBy(byX, byY);
+                USB.MoveByStep(byX, byY);
                 maxTries--;
                 Thread.Sleep(TriesDelay);
                 USB.Transfer();
@@ -159,7 +159,7 @@ namespace CNC_Drill_Controller1
             var maxTries = GlobalProperties.numSeek;
             while ((USB.MinYswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
             {
-                USB.MoveBy(byX, byY);
+                USB.MoveByStep(byX, byY);
                 maxTries--;
                 Thread.Sleep(TriesDelay);
                 USB.Transfer();
@@ -172,7 +172,7 @@ namespace CNC_Drill_Controller1
         {
             var loc = doWorkEventArgs.Argument as PointF? ?? PointF.Empty;
 
-            USB.MoveTo(loc.X, loc.Y);
+            USB.MoveToPosition(loc.X, loc.Y);
 
             var success = USB.Check_Limit_Switches();
             asyncWorker.ReportProgress(50);
@@ -202,17 +202,9 @@ namespace CNC_Drill_Controller1
             doWorkEventArgs.Result = success;
         }
 
-
-        private void GetCloserToOrigin()
-        {
-            var delta_X = (USB.X_Rel_Location > GlobalProperties.X_Scale) ? USB.X_Rel_Location - GlobalProperties.X_Scale : 0;
-            var delta_Y = (USB.Y_Rel_Location > GlobalProperties.Y_Scale) ? USB.Y_Rel_Location - GlobalProperties.Y_Scale : 0;
-            USB.MoveBy((int)(-delta_X), (int)(-delta_Y));
-        }
-
         public void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
         {
-            GetCloserToOrigin();
+
 
             var success = USB.Check_Limit_Switches();
             asyncWorker.ReportProgress(30);
@@ -274,7 +266,7 @@ namespace CNC_Drill_Controller1
                                 UpdateNodes(i, DrillNode.DrillNodeStatus.Next);
 
                                 ExtLog.AddLine("Moving to [" + (i + 1) + "/" + nodes.Count + "]: " + nodes[i].Location);
-                                USB.MoveTo(nodes[i].location.X, nodes[i].location.Y);
+                                USB.MoveToPosition(nodes[i].location.X, nodes[i].location.Y);
 
                                 ExtLog.AddLine("Drilling...");
 

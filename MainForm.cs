@@ -194,19 +194,19 @@ namespace CNC_Drill_Controller1
 
         private void PlusXbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
+            USB.MoveByStep(getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
         }
         private void MinusXbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(-getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
+            USB.MoveByStep(-getAxisOffsetStepCount(GlobalProperties.X_Scale), 0);
         }
         private void PlusYbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(0, getAxisOffsetStepCount(GlobalProperties.Y_Scale));
+            USB.MoveByStep(0, getAxisOffsetStepCount(GlobalProperties.Y_Scale));
         }
         private void MinusYbutton_Click(object sender, EventArgs e)
         {
-            USB.MoveBy(0, -getAxisOffsetStepCount(GlobalProperties.Y_Scale));
+            USB.MoveByStep(0, -getAxisOffsetStepCount(GlobalProperties.Y_Scale));
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
@@ -546,7 +546,7 @@ namespace CNC_Drill_Controller1
                 var mx = TextConverter.SafeTextToFloat(axisdata[0].Trim(trimChars));
                 var my = TextConverter.SafeTextToFloat(axisdata[1].Trim(trimChars));
                 logger1.AddLine("Moving to: " + mx.ToString("F3") + ", " + my.ToString("F3"));
-                USB.MoveTo(mx, my);
+                USB.MoveToPosition(mx, my);
             }
         }
         private void SetAsXYbutton_Click(object sender, EventArgs e)
@@ -672,7 +672,7 @@ namespace CNC_Drill_Controller1
         {
             var targetLocation = GetViewCursorLocation();
             logger1.AddLine("Moving to: " + targetLocation.X.ToString("F3") + ", " + targetLocation.Y.ToString("F3"));
-            USB.MoveTo(targetLocation.X, targetLocation.Y);
+            USB.MoveToPosition(targetLocation.X, targetLocation.Y);
         }
         #endregion
 

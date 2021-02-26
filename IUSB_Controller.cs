@@ -56,7 +56,9 @@ namespace CNC_Drill_Controller1
         //Movements and Updates
         void CancelMove();
         void Transfer();
-        bool MoveBy(int byX, int byY);
-        bool MoveTo(float X, float Y);
+        bool MoveByPosition(float X, float Y);
+        bool MoveByStep(int X, int Y);
+        bool MoveToPosition(float X, float Y);
+        bool MoveToStep(int X, int Y);
     }
 }

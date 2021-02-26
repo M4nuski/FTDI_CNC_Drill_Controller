@@ -47,7 +47,7 @@ namespace CNC_Drill_Controller1
             
         private void UpdateProgress(int Progress, bool Done)
         {
-            if (OnProgress != null) OnProgress(Progress, Done);
+            OnProgress?.Invoke(Progress, Done);
         }
 
         public USB_Control() 
@@ -125,8 +125,6 @@ namespace CNC_Drill_Controller1
                 return false;
             }
 
-
-            /* 2021 inline mod ! */
             ExtLog.AddLine($"Setting Latency to {GlobalProperties.latency}");
             ftStatus = USB_Interface.SetLatency(GlobalProperties.latency);
                 if (ftStatus != FTDI.FT_STATUS.FT_OK)
@@ -233,9 +231,7 @@ namespace CNC_Drill_Controller1
 
         public PointF CurrentLocation()
         {
-            var current_X = ((float)X_Abs_Location - X_Delta) / GlobalProperties.X_Scale;
-            var current_Y = ((float)Y_Abs_Location - Y_Delta) / GlobalProperties.Y_Scale;
-            return new PointF(current_X, current_Y);
+            return new PointF(X_Rel_Location / GlobalProperties.X_Scale, Y_Rel_Location / GlobalProperties.Y_Scale);
         }
 
         public bool Check_Limit_Switches()
@@ -255,30 +251,30 @@ namespace CNC_Drill_Controller1
             return cancelJob;
         }
 
-        public bool MoveBy(int byX, int byY)
+        public bool MoveByStep(int dX, int dY)
         {
             cancelJob = false;
             var success = true;
 
-            var abyX = Math.Abs(byX);
-            var abyY = Math.Abs(byY);
+            var absDX = Math.Abs(dX);
+            var absDY = Math.Abs(dY);
 
             //process directions
-            var XStepDirection = (byX == 0) ? 0 : byX / abyX;
-            var YStepDirection = (byY == 0) ? 0 : byY / abyY;
+            var XStepDirection = (dX == 0) ? 0 : dX / absDX;
+            var YStepDirection = (dY == 0) ? 0 : dY / absDY;
 
             //process backlash
             if (!Inhibit_Backlash_Compensation)
             {
                 if ((XStepDirection != 0) && (XStepDirection != X_Last_Direction))
                 {
-                    abyX += (int)GlobalProperties.X_Backlash;
+                    absDX += (int)GlobalProperties.X_Backlash;
                     X_Delta += (int)GlobalProperties.X_Backlash * XStepDirection;
                     X_Last_Direction = XStepDirection;
                 }
                 if ((YStepDirection != 0) && (YStepDirection != Y_Last_Direction))
                 {
-                    abyY += (int)GlobalProperties.Y_Backlash;
+                    absDY += (int)GlobalProperties.Y_Backlash;
                     Y_Delta += (int)GlobalProperties.Y_Backlash * YStepDirection;
                     Y_Last_Direction = YStepDirection;
                 }
@@ -293,20 +289,20 @@ namespace CNC_Drill_Controller1
             TQA_Driver_Bit = TQA_Driver_Enable;
             Transfer();
             //process moves
-            var numMoves = (abyX >= abyY) ? abyX : abyY;
+            var numMoves = (absDX >= absDY) ? absDX : absDY;
 
             var stridex = 1.0f; //default maximum stride
             var stridey = 1.0f;
 
-            if ((abyX != 0) || (abyY != 0)) //adjust stride
+            if ((absDX != 0) || (absDY != 0)) //adjust stride
             {
-                if (abyX > abyY)
+                if (absDX > absDY)
                 {
-                    stridey = (float)abyY / abyX;
+                    stridey = (float)absDY / absDX;
                 }
-                else if (abyY > abyX)
+                else if (absDY > absDX)
                 {
-                    stridex = (float)abyX / abyY;
+                    stridex = (float)absDX / absDY;
                 }
             }
 
@@ -355,24 +351,56 @@ namespace CNC_Drill_Controller1
             return success;
         }
 
-        public bool MoveTo(float X, float Y)
+        public bool MoveByPosition(float dX, float dY)
         {
-            var success = false;
-            var current_pos = CurrentLocation();
-            if (!MaxXswitch && !MinXswitch &&
-                !MaxYswitch && !MinYswitch)
+            if (!MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch)
             {
-                var deltaX = X - current_pos.X;
-                var deltaY = Y - current_pos.Y;
-                if (OnMove != null) OnMove(X, Y);
-                success = MoveBy((int)(deltaX * GlobalProperties.X_Scale), (int)(deltaY * GlobalProperties.Y_Scale));
-                if (OnMoveCompleted != null) OnMoveCompleted();
+                OnMove?.Invoke(dX, dY);
+                var success = MoveByStep((int)(dX * GlobalProperties.X_Scale), (int)(dY * GlobalProperties.Y_Scale));
+                OnMoveCompleted?.Invoke();
+                return success;
             }
-            else ExtLog.AddLine("Limit switch warning must be cleared before moving.");
-            return success;
+            else {
+                ExtLog.AddLine("Limit switch warning must be cleared before moving.");
+                return false;
+            }
         }
+
+        public bool MoveToPosition(float X, float Y)
+        {
+            var current_pos = CurrentLocation();
+            if (!MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch)
+            {
+                var dX = X - current_pos.X;
+                var dY = Y - current_pos.Y;
+                OnMove?.Invoke(X, Y);
+                var success = MoveByStep((int)(dX * GlobalProperties.X_Scale), (int)(dY * GlobalProperties.Y_Scale));
+                OnMoveCompleted?.Invoke();
+                return success;
+            }
+            else
+            {
+                ExtLog.AddLine("Limit switch warning must be cleared before moving.");
+                return false;
+            }
+        }
+        public bool MoveToStep(int X, int Y)
+        {
+            if (!MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch)
+            {
+                OnMove?.Invoke(X, Y);
+                var success = MoveByStep(X - X_Rel_Location, Y - Y_Rel_Location);
+                OnMoveCompleted?.Invoke();
+                return success;
+            }
+            else
+            {
+                ExtLog.AddLine("Limit switch warning must be cleared before moving.");
+                return false;
+            }
+        }
+
+
         #endregion
-
-
     }
 }
