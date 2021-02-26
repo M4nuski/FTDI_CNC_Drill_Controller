@@ -110,7 +110,7 @@ namespace CNC_Drill_Controller1
         }
 
 
-        private bool Initiate_Drill_From_Top(int numTries, int TriesPeriod)
+        private bool Initiate_Drill_From_Top(int numTries, int TriesDelay)
         {
             var success = true;
             USB.Cycle_Drill = true;
@@ -120,11 +120,11 @@ namespace CNC_Drill_Controller1
                 USB.Transfer();
                 success = USB.IsOpen && (numTries >= 0);
                 numTries--;
-                Thread.Sleep(TriesPeriod);
+                Thread.Sleep(TriesDelay);
             }
             return success;
         }
-        private bool Wait_For_Drill_To_Top(int numTries, int TriesPeriod)
+        private bool Wait_For_Drill_To_Top(int numTries, int TriesDelay)
         {
             var success = true;
             USB.Cycle_Drill = false;
@@ -134,34 +134,34 @@ namespace CNC_Drill_Controller1
                 USB.Transfer();
                 success = !USB.IsOpen || (numTries >= 0);
                 numTries--;
-                Thread.Sleep(TriesPeriod);
+                Thread.Sleep(TriesDelay);
             }
             return success;
         }
 
-        private bool SeekXminSwitch(bool AxisDirection, int byX, int byY, int TriesPeriod)
+        private bool SeekXminSwitch(bool AxisDirection, int byX, int byY, int TriesDelay)
         {
             var success = true;
-            var maxTries = GlobalProperties.numStepsPerTurns;
+            var maxTries = GlobalProperties.numSeek;
             while ((USB.MinXswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
             {
                 USB.MoveBy(byX, byY);
                 maxTries--;
-                Thread.Sleep(TriesPeriod);
+                Thread.Sleep(TriesDelay);
                 USB.Transfer();
                 success = maxTries >= 0;
             }
             return success && (USB.MinXswitch != AxisDirection);
         }
-        private bool SeekYminSwitch(bool AxisDirection, int byX, int byY, int TriesPeriod)
+        private bool SeekYminSwitch(bool AxisDirection, int byX, int byY, int TriesDelay)
         {
             var success = true;
-            var maxTries = GlobalProperties.numStepsPerTurns;
+            var maxTries = GlobalProperties.numSeek;
             while ((USB.MinYswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
             {
                 USB.MoveBy(byX, byY);
                 maxTries--;
-                Thread.Sleep(TriesPeriod);
+                Thread.Sleep(TriesDelay);
                 USB.Transfer();
                 success = maxTries >= 0;
             }
@@ -182,7 +182,7 @@ namespace CNC_Drill_Controller1
             {
                 if (success && USB.IsOpen && USB.Check_Limit_Switches())
                 {
-                    success = Initiate_Drill_From_Top(20, 50);
+                    success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
                 }
                 asyncWorker.ReportProgress(75);
             }
@@ -193,7 +193,7 @@ namespace CNC_Drill_Controller1
             {
                 if (success && USB.IsOpen && USB.Check_Limit_Switches())
                 {
-                    success = Wait_For_Drill_To_Top(20, 50);
+                    success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
                 }
                 asyncWorker.ReportProgress(100);
             }
@@ -219,28 +219,28 @@ namespace CNC_Drill_Controller1
 
             if (!asyncWorker.CancellationPending)
             {
-                success = SeekXminSwitch(false, -30, 0, 20); //1.5in
+                success = SeekXminSwitch(false, GlobalProperties.fastSeekSteps, 0, GlobalProperties.fastSeekDelay); 
                 asyncWorker.ReportProgress(45);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekXminSwitch(true, 1, 0, 100); //1 turn
+                if (success) success = SeekXminSwitch(true, 1, 0, GlobalProperties.slowSeekDelay);
                 asyncWorker.ReportProgress(60);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekYminSwitch(false, 0, -30, 20);
+                if (success) success = SeekYminSwitch(false, 0, GlobalProperties.fastSeekSteps, GlobalProperties.fastSeekDelay);
                 asyncWorker.ReportProgress(75);
             }
             else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
-                if (success) success = SeekYminSwitch(true, 0, 1, 100);
+                if (success) success = SeekYminSwitch(true, 0, 1, GlobalProperties.slowSeekDelay);
                 asyncWorker.ReportProgress(90);
             }
             else doWorkEventArgs.Cancel = true;
@@ -281,13 +281,13 @@ namespace CNC_Drill_Controller1
                                 //start drill from top
                                 if (USB.IsOpen && USB.Check_Limit_Switches())
                                 {
-                                    success = Initiate_Drill_From_Top(20, 50);
+                                    success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
                                 }
 
                                 //wait for drill to reach back top
                                 if (success && USB.IsOpen && USB.Check_Limit_Switches())
                                 {
-                                    success = Wait_For_Drill_To_Top(20, 50);
+                                    success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
                                 }
 
                                 UpdateNodes(i, DrillNode.DrillNodeStatus.Drilled);

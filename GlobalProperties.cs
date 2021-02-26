@@ -6,7 +6,16 @@ namespace CNC_Drill_Controller1
     static class GlobalProperties
     {
         //Hardware config 
-        public static int numStepsPerTurns = 200;//48 steps per turn, double phase
+        public static int numSeek = 50;
+        public static int fastSeekSteps = -20;
+        public static int fastSeekDelay = 20;
+        public static int slowSeekDelay = 250;
+
+        public static int drillReleaseNumWait = 20; // 1sec per 0.05 sec test
+        public static int drillReleaseWaitTime = 50;
+
+        public static int drillCycleNumWait = 50; // 5sec per 0.1 sec test
+        public static int drillCycleWaitTime = 100;
         //public static byte[] stepBytes = { 0x03, 0x06, 0x0C, 0x09 };// single phase
         // 0011 0110 1100 1001 
         public static byte[] stepBytes = { 0b1001, 0b1010, 0b0110, 0b0101 };// dual phase
@@ -53,7 +62,7 @@ namespace CNC_Drill_Controller1
         public static float Y_Backlash = 0;//4;
 
         //UI refresh throttler
-        public static int USB_Refresh_Period = 250;
+        public static int USB_Refresh_Period = 100;
         public static int GlobalProperties_Refresh_Period = 10000;
         public static int Label_Refresh_Period = 100;
 
