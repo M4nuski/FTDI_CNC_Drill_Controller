@@ -436,8 +436,8 @@ namespace CNC_Drill_Controller1
             YStatusLabel.Text = USB.Y_Rel_Location.ToString("D5");
 
             var curLoc = USB.CurrentLocation();
-            Xlabel.Text = string.Format("X: {0,8}", curLoc.X.ToString("F3"));
-            Ylabel.Text = string.Format("Y: {0,8}", curLoc.Y.ToString("F3"));
+            Xlabel.Text = string.Format("X: {0,8:F3}", curLoc.X);
+            Ylabel.Text = string.Format("Y: {0,8:F3}", curLoc.Y);
 
             var snapLocation = GetViewCursorLocation();
             cursorCrossHair.UpdatePosition(snapLocation);
