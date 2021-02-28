@@ -3,16 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="X_Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">110.41</Value>
+      <Value Profile="(Default)">112</Value>
     </Setting>
     <Setting Name="Y_Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">110.42</Value>
+      <Value Profile="(Default)">111</Value>
     </Setting>
     <Setting Name="X_Backlash" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">4</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Y_Backlash" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">4</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Logfile_Filename" Type="System.String" Scope="User">
       <Value Profile="(Default)">CNC_Drill_CTRL.log</Value>
@@ -36,7 +36,13 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="usbTransferLatency" Type="System.Byte" Scope="User">
-      <Value Profile="(Default)">10</Value>
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="X_Length" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="Y_Length" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">6</Value>
     </Setting>
   </Settings>
 </SettingsFile>

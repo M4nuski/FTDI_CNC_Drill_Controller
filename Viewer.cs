@@ -271,6 +271,47 @@ namespace CNC_Drill_Controller1
             zoomLevel = fitZoomLevel;//override panPosition compensation
             ZoomLevel = fitZoomLevel;
         }
+
+        public void FitContentToControl()
+        {
+            var Xmax = float.MinValue;
+            var Xmin = float.MaxValue;
+            var Ymax = float.MinValue;
+            var Ymin = float.MaxValue;
+
+            if (Elements != null) foreach (var viewerElement in Elements)
+                {
+                  if (Math.Abs(viewerElement.size) > float.Epsilon)
+                    {
+                        Xmax = Math.Max(Xmax, viewerElement.position.X + viewerElement.size);
+                        Xmin = Math.Min(Xmin, viewerElement.position.X - viewerElement.size);
+                        Ymax = Math.Max(Ymax, viewerElement.position.Y + viewerElement.size);
+                        Ymin = Math.Min(Ymin, viewerElement.position.Y - viewerElement.size);
+                    }
+
+                }
+
+            var w = Xmax - Xmin;
+            var h = Ymax - Ymin;
+
+            if (w < 1.0f) w = 1.0f;
+            if (h < 1.0f) h = 1.0f;
+
+            w = ViewData.Scale * w;
+            h = ViewData.Scale * h;
+
+            var zw = _outputControl.Width / w;
+            var zh = _outputControl.Height / h;
+
+            var z = Math.Min(zh, zw);
+            setZoomLevel(z);
+
+          //  w = (Xmax + Xmin) / 2.0f;
+           // h = (Ymax + Ymin) / 2.0f;
+
+            ControlPanPosition.X = (int)(Xmin * zoomLevel * ViewData.Scale);
+            ControlPanPosition.Y = (int)(Ymin * zoomLevel * ViewData.Scale);
+        }
     }
 
 
@@ -278,6 +319,9 @@ namespace CNC_Drill_Controller1
     internal interface IViewerElements
     {
         int ID { get; }
+        PointF position { get; }
+        float size { get; }
+
         Color color { get; set; }
         void Draw(Viewer.viewData data);
         bool Selected(PointF SelectionLocation);
@@ -292,6 +336,8 @@ namespace CNC_Drill_Controller1
         }
         private Pen _color;
         private float _x, _y;
+        public PointF position { get { return new PointF(_x, _y); } }
+        public float size { get { return 0.0f; } }
 
         public CrossHair(float X, float Y, Color color)
         {
@@ -346,6 +392,9 @@ namespace CNC_Drill_Controller1
         private PointF _pos;
         public int ID { get; set; }
 
+        public PointF position { get { return new PointF(_pos.X, _pos.Y); } }
+        public float size { get { return _diameter; } }
+
         public Node(PointF position, float diameter, Color color)
         {
             _diameter = diameter;
@@ -387,6 +436,9 @@ namespace CNC_Drill_Controller1
             get { return _color.Color; }
             set { _color = new Pen(value); }
         }
+
+        public PointF position { get { return new PointF(_fx, _fy); } }
+        public float size { get { return 0.0f; } }
 
         public Line(float fromX, float fromY, float toX, float toY, Color color)
         {
@@ -448,6 +500,9 @@ namespace CNC_Drill_Controller1
                 _fill = new SolidBrush(value);
             }
         }
+        public PointF position { get { return new PointF(_x + _w/2.0f, _y + _h/2.0f); } }
+        //public float size { get { return Math.Max(_w, _h); } }
+        public float size { get { return 0.0f; } }
 
         public int ID { get; set; }
 
@@ -492,6 +547,12 @@ namespace CNC_Drill_Controller1
             return ((SelectionLocation.X > _x) && (SelectionLocation.Y > _y) && (SelectionLocation.X < (_x + _w)) &&
                     (SelectionLocation.Y < (_y + _h)));
         }
+
+        public void UpdateSize(float w, float h)
+        {
+            _w = w;
+            _h = h;
+        }
     }
 
     internal class Cross : IViewerElements
@@ -506,6 +567,9 @@ namespace CNC_Drill_Controller1
 
         private Pen _color;
         private float _x, _y, _s;
+
+        public PointF position { get { return new PointF(_x, _y); } }
+        public float size { get { return 0.0f; } }
 
         public Cross(float X, float Y, Color color)
         {

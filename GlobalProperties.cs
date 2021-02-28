@@ -7,7 +7,7 @@ namespace CNC_Drill_Controller1
     {
         //Hardware config 
         public static int numSeek = 50;
-        public static int fastSeekSteps = -20;
+        public static int fastSeekSteps = -5;
         public static int fastSeekDelay = 20;
         public static int slowSeekDelay = 250;
 
@@ -56,10 +56,12 @@ namespace CNC_Drill_Controller1
 
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";
-        public static float X_Scale = 110.43478260869565f;//960;//961;
-        public static float Y_Scale = 110.43478260869565f;//960;//961;
-        public static float X_Backlash = 0;//4;
-        public static float Y_Backlash = 0;//4;
+        public static float X_Scale = 110.43478260869565f;
+        public static float Y_Scale = 110.43478260869565f;
+        public static float X_Backlash = 0.0f;
+        public static float Y_Backlash = 0.0f;
+        public static float X_Length = 6.000f;
+        public static float Y_Length = 6.000f;
 
         //UI refresh throttler
         public static int USB_Refresh_Period = 100;
@@ -102,6 +104,8 @@ namespace CNC_Drill_Controller1
                 Y_Scale = (float)Properties.Settings.Default["Y_Scale"];
                 X_Backlash = (float)Properties.Settings.Default["X_Backlash"];
                 Y_Backlash = (float)Properties.Settings.Default["Y_Backlash"];
+                X_Length = (float)Properties.Settings.Default["X_Length"];
+                Y_Length = (float)Properties.Settings.Default["Y_Length"];
             }
             catch (Exception ex)
             {
@@ -134,6 +138,8 @@ namespace CNC_Drill_Controller1
                 Properties.Settings.Default["Y_Scale"] = Y_Scale;
                 Properties.Settings.Default["X_Backlash"] = X_Backlash;
                 Properties.Settings.Default["Y_Backlash"] = Y_Backlash;
+                Properties.Settings.Default["X_Length"] = X_Length;
+                Properties.Settings.Default["Y_Length"] = Y_Length;
             }
             catch (Exception ex)
             {

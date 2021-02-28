@@ -265,29 +265,35 @@ namespace CNC_Drill_Controller1
 
                                 UpdateNodes(i, DrillNode.DrillNodeStatus.Next);
 
-                                ExtLog.AddLine("Moving to [" + (i + 1) + "/" + nodes.Count + "]: " + nodes[i].Location);
-                                USB.MoveToPosition(nodes[i].location.X, nodes[i].location.Y);
-
-                                ExtLog.AddLine("Drilling...");
-
-                                //start drill from top
-                                if (USB.IsOpen && USB.Check_Limit_Switches())
+                                if ((nodes[i].location.X <= GlobalProperties.X_Length) && (nodes[i].location.Y <= GlobalProperties.Y_Length))
                                 {
-                                    success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
-                                }
+                                    ExtLog.AddLine($"Moving to [{(i + 1)}/{nodes.Count}]: {nodes[i].Location}");
+                                    USB.MoveToPosition(nodes[i].location.X, nodes[i].location.Y);
 
-                                //wait for drill to reach back top
-                                if (success && USB.IsOpen && USB.Check_Limit_Switches())
+                                    ExtLog.AddLine("Drilling...");
+
+                                    //start drill from top
+                                    if (USB.IsOpen && USB.Check_Limit_Switches())
+                                    {
+                                        success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
+                                    }
+
+                                    //wait for drill to reach back top
+                                    if (success && USB.IsOpen && USB.Check_Limit_Switches())
+                                    {
+                                        success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
+                                    }
+
+                                    UpdateNodes(i, DrillNode.DrillNodeStatus.Drilled);
+                                } else
                                 {
-                                    success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
+                                    ExtLog.AddLine($"Skipping Node [{(i + 1)}/{nodes.Count}]: {nodes[i].Location} -> Out Of Range");
                                 }
-
-                                UpdateNodes(i, DrillNode.DrillNodeStatus.Drilled);
                                 asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, true);
                             }
                             else
                             {
-                                ExtLog.AddLine("Node [" + (i + 1) + "/" + nodes.Count + "] already drilled");
+                                ExtLog.AddLine($"Skipping Node [{(i + 1)}/{nodes.Count}] -> Already Drilled");
                             }
                         }
                         else

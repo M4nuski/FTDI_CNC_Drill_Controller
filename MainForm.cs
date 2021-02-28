@@ -49,6 +49,8 @@ namespace CNC_Drill_Controller1
         //for UI
         private ProgressDelegate ProgressCallback;
         private UpdateNodeDelegate UpdateNodeCallback;
+        private VoidDelgetate HideBox;
+        private VoidDelgetate ShowBox;
 
         #endregion
 
@@ -61,6 +63,8 @@ namespace CNC_Drill_Controller1
 
             ProgressCallback = progressCallback;
             UpdateNodeCallback = updateNodeCallback;
+            HideBox = hideBox;
+            ShowBox = showBox;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -178,6 +182,15 @@ namespace CNC_Drill_Controller1
             UIupdateTimer_Tick(this, null);
         }
 
+        private void showBox()
+        {
+            listBox1.Show();
+        }
+
+        private void hideBox()
+        {
+            listBox1.Hide();
+        }
         public void OnUpdateNode(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
         {
             Invoke(UpdateNodeCallback, new object[] { nodeIndex, newStatus });
@@ -338,26 +351,43 @@ namespace CNC_Drill_Controller1
         private void onMove(float X, float Y)
         {
             moveTarget.UpdatePosition(X, Y);
-            listBox1.Hide();
+            if (InvokeRequired)
+            {
+                listBox1.BeginInvoke(HideBox);
+            } else
+            {
+                listBox1.Hide();
+            }
         }
 
         private void OnMoveCompleted()
         {
-            listBox1.Show();
+            if (InvokeRequired)
+            {
+                listBox1.BeginInvoke(ShowBox);
+            }
+            else
+            {
+                listBox1.Show();
+            }
         }
 
         private void XSetTransformButton_Click(object sender, EventArgs e)
         {
             GlobalProperties.X_Scale = TextConverter.SafeTextToFloat(XScaleTextBox.Text);
             GlobalProperties.X_Backlash = TextConverter.SafeTextToFloat(XBacklastTextbox.Text);
-            logger1.AddLine("Set X Axis Scale to: " + GlobalProperties.X_Scale + " steps/inch, Backlash to: " + GlobalProperties.X_Backlash + "steps.");
+            GlobalProperties.X_Length = TextConverter.SafeTextToFloat(XLengthTextBox.Text);
+            logger1.AddLine($"Set X Axis Scale to: {GlobalProperties.X_Scale} steps/inch, Backlash to: {GlobalProperties.X_Backlash} steps, Length to: {GlobalProperties.X_Length}");
+            CNCTableBox.UpdateSize(GlobalProperties.X_Length, GlobalProperties.Y_Length);
         }
 
         private void YSetTransformButton_Click(object sender, EventArgs e)
         {
             GlobalProperties.Y_Scale = TextConverter.SafeTextToFloat(YScaleTextBox.Text);
             GlobalProperties.Y_Backlash = TextConverter.SafeTextToFloat(YBacklastTextbox.Text);
-            logger1.AddLine("Set Y Axis Scale to: " + GlobalProperties.Y_Scale + " steps/inch, Backlash to: " + GlobalProperties.Y_Backlash + "steps.");
+            GlobalProperties.Y_Length = TextConverter.SafeTextToFloat(YLengthTextBox.Text);
+            logger1.AddLine($"Set Y Axis Scale to: {GlobalProperties.Y_Scale} steps/inch, Backlash to: {GlobalProperties.Y_Backlash} steps, Length to: {GlobalProperties.Y_Length}");
+            CNCTableBox.UpdateSize(GlobalProperties.X_Length, GlobalProperties.Y_Length);
         }
 
         private void UIupdateTimer_Tick(object sender, EventArgs e)
@@ -766,6 +796,7 @@ namespace CNC_Drill_Controller1
         {
             if ((Nodes != null) && (Nodes.Count > 0))
             {
+                nodeViewer.FitContentToControl();
                 TaskRunner.startAsyncWorkerWithTask("Drill All Nodes (Async)...",
                     TaskRunner.asyncWorkerDoWork_DrillAll, asyncWorkerDoWork_DrillAll_Cleanup, Nodes);
             }
@@ -794,8 +825,26 @@ namespace CNC_Drill_Controller1
             e.SuppressKeyPress = true;
         }
 
+        private void AsyncStartFindLengthButton_Click(object sender, EventArgs e)
+        {
+            //     TaskRunner.startAsyncWorkerWithTask("Seeking Axis Lengths (Async)...",
+            //        TaskRunner.asyncWorkerDoWork_FindAxisLength,
+            //       asyncWorkerDoWork_FindAxisLength_Cleanup, null);
+            ExtLog.AddLine("AsyncStartFindLengthButton_Click not implemented");
 
-        private void bevel1_Click(object sender, EventArgs e)
+        }
+
+        private void asyncWorkerDoWork_FindAxisLength_Cleanup(bool success)
+        {
+            ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
+        }
+
+        private void zoomToFitcontent_button_Click(object sender, EventArgs e)
+        {
+            nodeViewer.FitContentToControl();
+        }
+
+        private void XLengthTextBox_TextChanged(object sender, EventArgs e)
         {
 
         }

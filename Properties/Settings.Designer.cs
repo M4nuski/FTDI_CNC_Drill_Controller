@@ -25,7 +25,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("110.41")]
+        [global::System.Configuration.DefaultSettingValueAttribute("112")]
         public float X_Scale {
             get {
                 return ((float)(this["X_Scale"]));
@@ -37,7 +37,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("110.42")]
+        [global::System.Configuration.DefaultSettingValueAttribute("111")]
         public float Y_Scale {
             get {
                 return ((float)(this["Y_Scale"]));
@@ -49,7 +49,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public float X_Backlash {
             get {
                 return ((float)(this["X_Backlash"]));
@@ -61,7 +61,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public float Y_Backlash {
             get {
                 return ((float)(this["Y_Backlash"]));
@@ -157,13 +157,37 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public byte usbTransferLatency {
             get {
                 return ((byte)(this["usbTransferLatency"]));
             }
             set {
                 this["usbTransferLatency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public float X_Length {
+            get {
+                return ((float)(this["X_Length"]));
+            }
+            set {
+                this["X_Length"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public float Y_Length {
+            get {
+                return ((float)(this["Y_Length"]));
+            }
+            set {
+                this["Y_Length"] = value;
             }
         }
     }

@@ -108,6 +108,11 @@
             this.DrillAllNodebutton = new System.Windows.Forms.Button();
             this.AbortMoveButton = new System.Windows.Forms.Button();
             this.ArrowCaptureTextbox = new System.Windows.Forms.TextBox();
+            this.YLengthTextBox = new System.Windows.Forms.TextBox();
+            this.XLengthTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.FitContentButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -121,7 +126,7 @@
             this.USBdevicesComboBox.Location = new System.Drawing.Point(85, 5);
             this.USBdevicesComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.USBdevicesComboBox.Name = "USBdevicesComboBox";
-            this.USBdevicesComboBox.Size = new System.Drawing.Size(912, 21);
+            this.USBdevicesComboBox.Size = new System.Drawing.Size(1051, 21);
             this.USBdevicesComboBox.TabIndex = 0;
             this.USBdevicesComboBox.Text = "[None]";
             this.USBdevicesComboBox.SelectedIndexChanged += new System.EventHandler(this.USBdevicesComboBox_SelectedIndexChanged);
@@ -152,7 +157,7 @@
             this.logger1.Name = "logger1";
             this.logger1.ReadOnly = true;
             this.logger1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.logger1.Size = new System.Drawing.Size(1006, 102);
+            this.logger1.Size = new System.Drawing.Size(1145, 102);
             this.logger1.TabIndex = 2;
             this.logger1.TimeStamp = true;
             this.logger1.TimeStampFormat = "HH-mm-ss";
@@ -221,7 +226,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 677);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1008, 25);
+            this.statusStrip1.Size = new System.Drawing.Size(1147, 25);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -643,7 +648,7 @@
             this.OutputLabel.Location = new System.Drawing.Point(497, 63);
             this.OutputLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OutputLabel.Name = "OutputLabel";
-            this.OutputLabel.Size = new System.Drawing.Size(500, 500);
+            this.OutputLabel.Size = new System.Drawing.Size(639, 500);
             this.OutputLabel.TabIndex = 40;
             this.OutputLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutputLabel_MouseDown);
             this.OutputLabel.MouseEnter += new System.EventHandler(this.OutputLabel_MouseEnter);
@@ -840,7 +845,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(72, 507);
+            this.label2.Location = new System.Drawing.Point(73, 507);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 60;
@@ -850,7 +855,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(137, 507);
+            this.label3.Location = new System.Drawing.Point(131, 507);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(54, 13);
             this.label3.TabIndex = 61;
@@ -905,7 +910,7 @@
             // AsyncDrillSelectedButton
             // 
             this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 59);
+            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 101);
             this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
             this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(172, 21);
             this.AsyncDrillSelectedButton.TabIndex = 67;
@@ -916,7 +921,7 @@
             // DrillAllNodebutton
             // 
             this.DrillAllNodebutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 86);
+            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 128);
             this.DrillAllNodebutton.Name = "DrillAllNodebutton";
             this.DrillAllNodebutton.Size = new System.Drawing.Size(172, 21);
             this.DrillAllNodebutton.TabIndex = 68;
@@ -929,9 +934,9 @@
             this.AbortMoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
-            this.AbortMoveButton.Location = new System.Drawing.Point(196, 543);
+            this.AbortMoveButton.Location = new System.Drawing.Point(151, 173);
             this.AbortMoveButton.Name = "AbortMoveButton";
-            this.AbortMoveButton.Size = new System.Drawing.Size(127, 23);
+            this.AbortMoveButton.Size = new System.Drawing.Size(172, 23);
             this.AbortMoveButton.TabIndex = 69;
             this.AbortMoveButton.Text = "Abort Move";
             this.AbortMoveButton.UseVisualStyleBackColor = true;
@@ -946,11 +951,68 @@
             this.ArrowCaptureTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ArrowCaptureTextbox_KeyDown);
             this.ArrowCaptureTextbox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ArrowCaptureTextbox_KeyUp);
             // 
+            // YLengthTextBox
+            // 
+            this.YLengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.YLengthTextBox.Location = new System.Drawing.Point(195, 545);
+            this.YLengthTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.YLengthTextBox.Name = "YLengthTextBox";
+            this.YLengthTextBox.Size = new System.Drawing.Size(57, 20);
+            this.YLengthTextBox.TabIndex = 72;
+            this.YLengthTextBox.Text = "6.000";
+            // 
+            // XLengthTextBox
+            // 
+            this.XLengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.XLengthTextBox.Location = new System.Drawing.Point(195, 522);
+            this.XLengthTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.XLengthTextBox.Name = "XLengthTextBox";
+            this.XLengthTextBox.Size = new System.Drawing.Size(57, 20);
+            this.XLengthTextBox.TabIndex = 71;
+            this.XLengthTextBox.Text = "6.000";
+            this.XLengthTextBox.TextChanged += new System.EventHandler(this.XLengthTextBox_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(191, 507);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(40, 13);
+            this.label4.TabIndex = 73;
+            this.label4.Text = "Length";
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(151, 57);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(172, 21);
+            this.button1.TabIndex = 74;
+            this.button1.Text = "[Find Axis Length]";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.AsyncStartFindLengthButton_Click);
+            // 
+            // FitContentButton
+            // 
+            this.FitContentButton.Location = new System.Drawing.Point(998, 31);
+            this.FitContentButton.Name = "FitContentButton";
+            this.FitContentButton.Size = new System.Drawing.Size(139, 23);
+            this.FitContentButton.TabIndex = 75;
+            this.FitContentButton.Text = "Fit Content To View";
+            this.FitContentButton.UseVisualStyleBackColor = true;
+            this.FitContentButton.Click += new System.EventHandler(this.zoomToFitcontent_button_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1008, 702);
+            this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.FitContentButton);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.YLengthTextBox);
+            this.Controls.Add(this.XLengthTextBox);
             this.Controls.Add(this.ArrowCaptureTextbox);
             this.Controls.Add(this.AbortMoveButton);
             this.Controls.Add(this.DrillAllNodebutton);
@@ -1100,6 +1162,11 @@
         private System.Windows.Forms.Button DrillAllNodebutton;
         private System.Windows.Forms.Button AbortMoveButton;
         private System.Windows.Forms.TextBox ArrowCaptureTextbox;
+        private System.Windows.Forms.TextBox YLengthTextBox;
+        private System.Windows.Forms.TextBox XLengthTextBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button FitContentButton;
     }
 }
 
