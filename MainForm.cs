@@ -128,8 +128,8 @@ namespace CNC_Drill_Controller1
             USB.OnMove = onMove;
             USB.OnMoveCompleted = OnMoveCompleted;
 
-            USB.X_StepMotor_Driver_Enable = checkBoxX.Checked;
-            USB.Y_StepMotor_Driver_Enable = checkBoxY.Checked;
+            USB.X_StepMotor_Driver_Enable = radioButtonAxisX.Checked || radioButtonAxisAll.Checked;
+            USB.Y_StepMotor_Driver_Enable = radioButtonAxisY.Checked || radioButtonAxisAll.Checked;
             USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
@@ -223,13 +223,16 @@ namespace CNC_Drill_Controller1
         }
         private void checkBoxB_CheckedChanged(object sender, EventArgs e)
         {
-            USB.X_StepMotor_Driver_Enable = checkBoxX.Checked;
-            USB.Y_StepMotor_Driver_Enable = checkBoxY.Checked;
+            USB.X_StepMotor_Driver_Enable = radioButtonAxisX.Checked || radioButtonAxisAll.Checked;
+            USB.Y_StepMotor_Driver_Enable = radioButtonAxisY.Checked || radioButtonAxisAll.Checked;
             USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             if (!CheckBoxInhibit) USB.Transfer();
         }
+
+
+
         private void Sendbutton_Click(object sender, EventArgs e)
         {
             USB.Transfer();
@@ -842,11 +845,6 @@ namespace CNC_Drill_Controller1
         private void zoomToFitcontent_button_Click(object sender, EventArgs e)
         {
             nodeViewer.FitContentToControl();
-        }
-
-        private void XLengthTextBox_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

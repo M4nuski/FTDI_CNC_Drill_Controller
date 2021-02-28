@@ -50,8 +50,6 @@
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.saveLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkBoxX = new System.Windows.Forms.CheckBox();
-            this.checkBoxY = new System.Windows.Forms.CheckBox();
             this.checkBoxD = new System.Windows.Forms.CheckBox();
             this.forcePullButton = new System.Windows.Forms.Button();
             this.AxisOffsetComboBox = new System.Windows.Forms.ComboBox();
@@ -113,6 +111,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.FitContentButton = new System.Windows.Forms.Button();
+            this.radioButtonAxisAll = new System.Windows.Forms.RadioButton();
+            this.radioButtonAxisX = new System.Windows.Forms.RadioButton();
+            this.radioButtonAxisY = new System.Windows.Forms.RadioButton();
+            this.radioButtonAxisNone = new System.Windows.Forms.RadioButton();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -123,10 +125,10 @@
             this.USBdevicesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.USBdevicesComboBox.FormattingEnabled = true;
-            this.USBdevicesComboBox.Location = new System.Drawing.Point(85, 5);
+            this.USBdevicesComboBox.Location = new System.Drawing.Point(233, 5);
             this.USBdevicesComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.USBdevicesComboBox.Name = "USBdevicesComboBox";
-            this.USBdevicesComboBox.Size = new System.Drawing.Size(1051, 21);
+            this.USBdevicesComboBox.Size = new System.Drawing.Size(903, 21);
             this.USBdevicesComboBox.TabIndex = 0;
             this.USBdevicesComboBox.Text = "[None]";
             this.USBdevicesComboBox.SelectedIndexChanged += new System.EventHandler(this.USBdevicesComboBox_SelectedIndexChanged);
@@ -134,7 +136,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 7);
+            this.label1.Location = new System.Drawing.Point(155, 9);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(74, 13);
@@ -331,34 +333,6 @@
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
             // 
-            // checkBoxX
-            // 
-            this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Checked = true;
-            this.checkBoxX.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxX.Location = new System.Drawing.Point(15, 63);
-            this.checkBoxX.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxX.Name = "checkBoxX";
-            this.checkBoxX.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxX.TabIndex = 8;
-            this.checkBoxX.Text = "X Axis Step Driver";
-            this.checkBoxX.UseVisualStyleBackColor = true;
-            this.checkBoxX.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
-            // 
-            // checkBoxY
-            // 
-            this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Checked = true;
-            this.checkBoxY.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxY.Location = new System.Drawing.Point(15, 84);
-            this.checkBoxY.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBoxY.Name = "checkBoxY";
-            this.checkBoxY.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxY.TabIndex = 9;
-            this.checkBoxY.Text = "Y Axis Step Driver";
-            this.checkBoxY.UseVisualStyleBackColor = true;
-            this.checkBoxY.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
-            // 
             // checkBoxD
             // 
             this.checkBoxD.AutoSize = true;
@@ -373,7 +347,7 @@
             // 
             // forcePullButton
             // 
-            this.forcePullButton.Location = new System.Drawing.Point(4, 32);
+            this.forcePullButton.Location = new System.Drawing.Point(6, 7);
             this.forcePullButton.Margin = new System.Windows.Forms.Padding(2);
             this.forcePullButton.Name = "forcePullButton";
             this.forcePullButton.Size = new System.Drawing.Size(70, 19);
@@ -426,10 +400,10 @@
             // bevel1
             // 
             this.bevel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.bevel1.Location = new System.Drawing.Point(4, 58);
+            this.bevel1.Location = new System.Drawing.Point(4, 33);
             this.bevel1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.bevel1.Name = "bevel1";
-            this.bevel1.Size = new System.Drawing.Size(142, 270);
+            this.bevel1.Size = new System.Drawing.Size(142, 295);
             this.bevel1.TabIndex = 14;
             // 
             // UIupdateTimer
@@ -557,7 +531,7 @@
             this.Xlabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.Xlabel.Size = new System.Drawing.Size(133, 21);
             this.Xlabel.TabIndex = 35;
-            this.Xlabel.Text = "X: -0.0000";
+            this.Xlabel.Text = "X:   0.0000";
             // 
             // Ylabel
             // 
@@ -569,7 +543,7 @@
             this.Ylabel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 2);
             this.Ylabel.Size = new System.Drawing.Size(133, 21);
             this.Ylabel.TabIndex = 36;
-            this.Ylabel.Text = "Y: 0.0000";
+            this.Ylabel.Text = "Y:   0.0000";
             // 
             // listBox1
             // 
@@ -710,7 +684,7 @@
             // 
             // ReloadUSBbutton
             // 
-            this.ReloadUSBbutton.Location = new System.Drawing.Point(76, 32);
+            this.ReloadUSBbutton.Location = new System.Drawing.Point(78, 7);
             this.ReloadUSBbutton.Margin = new System.Windows.Forms.Padding(2);
             this.ReloadUSBbutton.Name = "ReloadUSBbutton";
             this.ReloadUSBbutton.Size = new System.Drawing.Size(70, 19);
@@ -866,6 +840,7 @@
             this.IgnoreBacklashBox.AutoSize = true;
             this.IgnoreBacklashBox.Checked = true;
             this.IgnoreBacklashBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IgnoreBacklashBox.Enabled = false;
             this.IgnoreBacklashBox.Location = new System.Drawing.Point(15, 150);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(103, 17);
@@ -877,12 +852,14 @@
             // checkBoxT
             // 
             this.checkBoxT.AutoSize = true;
-            this.checkBoxT.Location = new System.Drawing.Point(15, 106);
+            this.checkBoxT.Enabled = false;
+            this.checkBoxT.Location = new System.Drawing.Point(158, 484);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(121, 17);
             this.checkBoxT.TabIndex = 63;
             this.checkBoxT.Text = "Torque Assist Driver";
             this.checkBoxT.UseVisualStyleBackColor = true;
+            this.checkBoxT.Visible = false;
             this.checkBoxT.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
             // showRawCheckbox
@@ -970,7 +947,6 @@
             this.XLengthTextBox.Size = new System.Drawing.Size(57, 20);
             this.XLengthTextBox.TabIndex = 71;
             this.XLengthTextBox.Text = "6.000";
-            this.XLengthTextBox.TextChanged += new System.EventHandler(this.XLengthTextBox_TextChanged);
             // 
             // label4
             // 
@@ -1003,11 +979,61 @@
             this.FitContentButton.UseVisualStyleBackColor = true;
             this.FitContentButton.Click += new System.EventHandler(this.zoomToFitcontent_button_Click);
             // 
+            // radioButtonAxisAll
+            // 
+            this.radioButtonAxisAll.AutoSize = true;
+            this.radioButtonAxisAll.Checked = true;
+            this.radioButtonAxisAll.Location = new System.Drawing.Point(15, 37);
+            this.radioButtonAxisAll.Name = "radioButtonAxisAll";
+            this.radioButtonAxisAll.Size = new System.Drawing.Size(130, 17);
+            this.radioButtonAxisAll.TabIndex = 76;
+            this.radioButtonAxisAll.TabStop = true;
+            this.radioButtonAxisAll.Text = "Enable All Axis Drivers";
+            this.radioButtonAxisAll.UseVisualStyleBackColor = true;
+            this.radioButtonAxisAll.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // radioButtonAxisX
+            // 
+            this.radioButtonAxisX.AutoSize = true;
+            this.radioButtonAxisX.Location = new System.Drawing.Point(15, 57);
+            this.radioButtonAxisX.Name = "radioButtonAxisX";
+            this.radioButtonAxisX.Size = new System.Drawing.Size(121, 17);
+            this.radioButtonAxisX.TabIndex = 77;
+            this.radioButtonAxisX.Text = "Enable X Axis Driver";
+            this.radioButtonAxisX.UseVisualStyleBackColor = true;
+            this.radioButtonAxisX.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // radioButtonAxisY
+            // 
+            this.radioButtonAxisY.AutoSize = true;
+            this.radioButtonAxisY.Location = new System.Drawing.Point(15, 77);
+            this.radioButtonAxisY.Name = "radioButtonAxisY";
+            this.radioButtonAxisY.Size = new System.Drawing.Size(121, 17);
+            this.radioButtonAxisY.TabIndex = 78;
+            this.radioButtonAxisY.Text = "Enable Y Axis Driver";
+            this.radioButtonAxisY.UseVisualStyleBackColor = true;
+            this.radioButtonAxisY.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
+            // radioButtonAxisNone
+            // 
+            this.radioButtonAxisNone.AutoSize = true;
+            this.radioButtonAxisNone.Location = new System.Drawing.Point(15, 97);
+            this.radioButtonAxisNone.Name = "radioButtonAxisNone";
+            this.radioButtonAxisNone.Size = new System.Drawing.Size(118, 17);
+            this.radioButtonAxisNone.TabIndex = 79;
+            this.radioButtonAxisNone.Text = "Disable Axis Drivers";
+            this.radioButtonAxisNone.UseVisualStyleBackColor = true;
+            this.radioButtonAxisNone.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.radioButtonAxisNone);
+            this.Controls.Add(this.radioButtonAxisY);
+            this.Controls.Add(this.radioButtonAxisX);
+            this.Controls.Add(this.radioButtonAxisAll);
             this.Controls.Add(this.FitContentButton);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
@@ -1055,8 +1081,6 @@
             this.Controls.Add(this.AxisOffsetComboBox);
             this.Controls.Add(this.forcePullButton);
             this.Controls.Add(this.checkBoxD);
-            this.Controls.Add(this.checkBoxY);
-            this.Controls.Add(this.checkBoxX);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.MinusXbutton);
             this.Controls.Add(this.PlusXbutton);
@@ -1099,8 +1123,6 @@
         private System.Windows.Forms.ToolStripStatusLabel YMaxStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel TopStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel BottomStatusLabel;
-        private System.Windows.Forms.CheckBox checkBoxX;
-        private System.Windows.Forms.CheckBox checkBoxY;
         private System.Windows.Forms.CheckBox checkBoxD;
         private System.Windows.Forms.ToolStripStatusLabel XStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel YStatusLabel;
@@ -1167,6 +1189,10 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button FitContentButton;
+        private System.Windows.Forms.RadioButton radioButtonAxisAll;
+        private System.Windows.Forms.RadioButton radioButtonAxisX;
+        private System.Windows.Forms.RadioButton radioButtonAxisY;
+        private System.Windows.Forms.RadioButton radioButtonAxisNone;
     }
 }
 
