@@ -25,7 +25,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("112")]
+        [global::System.Configuration.DefaultSettingValueAttribute("110")]
         public float X_Scale {
             get {
                 return ((float)(this["X_Scale"]));
@@ -37,7 +37,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("111")]
+        [global::System.Configuration.DefaultSettingValueAttribute("110.85")]
         public float Y_Scale {
             get {
                 return ((float)(this["Y_Scale"]));

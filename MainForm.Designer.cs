@@ -441,6 +441,7 @@
             this.XScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.XScaleTextBox.TabIndex = 16;
             this.XScaleTextBox.Text = "960";
+            this.XScaleTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // YScaleTextBox
             // 
@@ -451,6 +452,7 @@
             this.YScaleTextBox.Size = new System.Drawing.Size(57, 20);
             this.YScaleTextBox.TabIndex = 17;
             this.YScaleTextBox.Text = "960";
+            this.YScaleTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // XCurrentPosTextBox
             // 
@@ -460,6 +462,7 @@
             this.XCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.XCurrentPosTextBox.TabIndex = 18;
             this.XCurrentPosTextBox.Text = "0.000";
+            this.XCurrentPosTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // YCurrentPosTextBox
             // 
@@ -469,6 +472,7 @@
             this.YCurrentPosTextBox.Size = new System.Drawing.Size(55, 20);
             this.YCurrentPosTextBox.TabIndex = 19;
             this.YCurrentPosTextBox.Text = "0.000";
+            this.YCurrentPosTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // setXButton
             // 
@@ -672,19 +676,21 @@
             this.ViewXLabel.Location = new System.Drawing.Point(496, 32);
             this.ViewXLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewXLabel.Name = "ViewXLabel";
-            this.ViewXLabel.Size = new System.Drawing.Size(40, 19);
+            this.ViewXLabel.Size = new System.Drawing.Size(49, 19);
             this.ViewXLabel.TabIndex = 44;
             this.ViewXLabel.Text = "X: ";
+            this.ViewXLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ViewYLabel
             // 
             this.ViewYLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ViewYLabel.Location = new System.Drawing.Point(540, 32);
+            this.ViewYLabel.Location = new System.Drawing.Point(547, 32);
             this.ViewYLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ViewYLabel.Name = "ViewYLabel";
-            this.ViewYLabel.Size = new System.Drawing.Size(40, 19);
+            this.ViewYLabel.Size = new System.Drawing.Size(49, 19);
             this.ViewYLabel.TabIndex = 45;
             this.ViewYLabel.Text = "Y: ";
+            this.ViewYLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // ReloadUSBbutton
             // 
@@ -716,6 +722,7 @@
             this.YoriginTextbox.Size = new System.Drawing.Size(40, 20);
             this.YoriginTextbox.TabIndex = 51;
             this.YoriginTextbox.Text = "0.000";
+            this.YoriginTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // XoriginTextbox
             // 
@@ -725,6 +732,7 @@
             this.XoriginTextbox.Size = new System.Drawing.Size(40, 20);
             this.XoriginTextbox.TabIndex = 50;
             this.XoriginTextbox.Text = "0.000";
+            this.XoriginTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // OptimizeButton
             // 
@@ -769,19 +777,20 @@
             // 
             // SnapSizeTextBox
             // 
-            this.SnapSizeTextBox.Location = new System.Drawing.Point(660, 31);
+            this.SnapSizeTextBox.Location = new System.Drawing.Point(676, 31);
             this.SnapSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.SnapSizeTextBox.Name = "SnapSizeTextBox";
             this.SnapSizeTextBox.Size = new System.Drawing.Size(40, 20);
             this.SnapSizeTextBox.TabIndex = 55;
             this.SnapSizeTextBox.Text = "0.050";
+            this.SnapSizeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // SnapViewBox
             // 
             this.SnapViewBox.AutoSize = true;
             this.SnapViewBox.Checked = true;
             this.SnapViewBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SnapViewBox.Location = new System.Drawing.Point(585, 33);
+            this.SnapViewBox.Location = new System.Drawing.Point(610, 34);
             this.SnapViewBox.Name = "SnapViewBox";
             this.SnapViewBox.Size = new System.Drawing.Size(70, 17);
             this.SnapViewBox.TabIndex = 56;
@@ -808,6 +817,7 @@
             this.YBacklastTextbox.Size = new System.Drawing.Size(57, 20);
             this.YBacklastTextbox.TabIndex = 59;
             this.YBacklastTextbox.Text = "4";
+            this.YBacklastTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // XBacklastTextbox
             // 
@@ -818,6 +828,7 @@
             this.XBacklastTextbox.Size = new System.Drawing.Size(57, 20);
             this.XBacklastTextbox.TabIndex = 58;
             this.XBacklastTextbox.Text = "4";
+            this.XBacklastTextbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label2
             // 
@@ -941,6 +952,7 @@
             this.YLengthTextBox.Size = new System.Drawing.Size(57, 20);
             this.YLengthTextBox.TabIndex = 72;
             this.YLengthTextBox.Text = "6.000";
+            this.YLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // XLengthTextBox
             // 
@@ -951,6 +963,7 @@
             this.XLengthTextBox.Size = new System.Drawing.Size(57, 20);
             this.XLengthTextBox.TabIndex = 71;
             this.XLengthTextBox.Text = "6.000";
+            this.XLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label4
             // 
@@ -1078,6 +1091,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.AsyncStartFindYLengthButton);
             this.Controls.Add(this.AsyncStartFindXLengthButton);
             this.Controls.Add(this.AsyncStartFindYOriginButton);
@@ -1104,8 +1118,6 @@
             this.Controls.Add(this.YBacklastTextbox);
             this.Controls.Add(this.XBacklastTextbox);
             this.Controls.Add(this.SetAllButton);
-            this.Controls.Add(this.SnapViewBox);
-            this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.OptimizeButton);
             this.Controls.Add(this.OffsetOriginBtton);
             this.Controls.Add(this.YoriginTextbox);
@@ -1142,6 +1154,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.USBdevicesComboBox);
             this.Controls.Add(this.bevel1);
+            this.Controls.Add(this.SnapViewBox);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";

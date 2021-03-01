@@ -84,13 +84,13 @@ namespace CNC_Drill_Controller1
             //USB interface state
             try
             {
-                X_Dir = (int)Properties.Settings.Default["X_Last_Direction"];
-                Y_Dir = (int)Properties.Settings.Default["Y_Last_Direction"];
-                X_Pos = (int)Properties.Settings.Default["X_Abs_Position"];
-                Y_Pos = (int)Properties.Settings.Default["Y_Abs_Position"];
-                X_Delta = (int)Properties.Settings.Default["X_Delta"];
-                Y_Delta = (int)Properties.Settings.Default["Y_Delta"];
-                latency = (byte)Properties.Settings.Default["usbTransferLatency"];
+                X_Dir = Properties.Settings.Default.X_Last_Direction; 
+                Y_Dir = Properties.Settings.Default.Y_Last_Direction;
+                X_Pos = Properties.Settings.Default.X_Abs_Position;
+                Y_Pos = Properties.Settings.Default.Y_Abs_Position;
+                X_Delta = Properties.Settings.Default.X_Delta;
+                Y_Delta = Properties.Settings.Default.Y_Delta;
+                latency = Properties.Settings.Default.usbTransferLatency;
             }
             catch (Exception ex)
             {
@@ -100,13 +100,13 @@ namespace CNC_Drill_Controller1
             //UI settings
             try
             {
-                Logfile_Filename = (string)Properties.Settings.Default["Logfile_Filename"];
-                X_Scale = (float)Properties.Settings.Default["X_Scale"];
-                Y_Scale = (float)Properties.Settings.Default["Y_Scale"];
-                X_Backlash = (float)Properties.Settings.Default["X_Backlash"];
-                Y_Backlash = (float)Properties.Settings.Default["Y_Backlash"];
-                X_Length = (float)Properties.Settings.Default["X_Length"];
-                Y_Length = (float)Properties.Settings.Default["Y_Length"];
+                Logfile_Filename = Properties.Settings.Default.Logfile_Filename;
+                X_Scale = Properties.Settings.Default.X_Scale;
+                Y_Scale = Properties.Settings.Default.Y_Scale;
+                X_Backlash = Properties.Settings.Default.X_Backlash;
+                Y_Backlash = Properties.Settings.Default.Y_Backlash;
+                X_Length = Properties.Settings.Default.X_Length;
+                Y_Length = Properties.Settings.Default.Y_Length;
             }
             catch (Exception ex)
             {
@@ -119,12 +119,12 @@ namespace CNC_Drill_Controller1
             //USB interface state
             try
             {
-                Properties.Settings.Default["X_Last_Direction"] = X_Dir;
-                Properties.Settings.Default["Y_Last_Direction"] = Y_Dir;
-                Properties.Settings.Default["X_Abs_Position"] = X_Pos;
-                Properties.Settings.Default["Y_Abs_Position"] = Y_Pos;
-                Properties.Settings.Default["X_Delta"] = X_Delta;
-                Properties.Settings.Default["Y_Delta"] = Y_Delta;
+                Properties.Settings.Default.X_Last_Direction = X_Dir;
+                Properties.Settings.Default.Y_Last_Direction = Y_Dir;
+                Properties.Settings.Default.X_Abs_Position = X_Pos;
+                Properties.Settings.Default.Y_Abs_Position = Y_Pos;
+                Properties.Settings.Default.X_Delta = X_Delta;
+                Properties.Settings.Default.Y_Delta = Y_Delta;
             }
             catch (Exception ex)
             {
@@ -134,13 +134,13 @@ namespace CNC_Drill_Controller1
             //UI settings
             try
             {
-                Properties.Settings.Default["Logfile_Filename"] = Logfile_Filename;
-                Properties.Settings.Default["X_Scale"] = X_Scale;
-                Properties.Settings.Default["Y_Scale"] = Y_Scale;
-                Properties.Settings.Default["X_Backlash"] = X_Backlash;
-                Properties.Settings.Default["Y_Backlash"] = Y_Backlash;
-                Properties.Settings.Default["X_Length"] = X_Length;
-                Properties.Settings.Default["Y_Length"] = Y_Length;
+                Properties.Settings.Default.Logfile_Filename = Logfile_Filename;
+                Properties.Settings.Default.X_Scale = X_Scale;
+                Properties.Settings.Default.Y_Scale = Y_Scale;
+                Properties.Settings.Default.X_Backlash = X_Backlash;
+                Properties.Settings.Default.Y_Backlash = Y_Backlash;
+                Properties.Settings.Default.X_Length = X_Length;
+                Properties.Settings.Default.Y_Length = Y_Length;
             }
             catch (Exception ex)
             {

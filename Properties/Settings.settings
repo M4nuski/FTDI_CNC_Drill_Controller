@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="X_Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">112</Value>
+      <Value Profile="(Default)">110</Value>
     </Setting>
     <Setting Name="Y_Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">111</Value>
+      <Value Profile="(Default)">110.85</Value>
     </Setting>
     <Setting Name="X_Backlash" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0</Value>

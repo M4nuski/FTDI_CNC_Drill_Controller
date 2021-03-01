@@ -98,10 +98,10 @@ namespace CNC_Drill_Controller1
             #region UI Initialization
 
             AxisOffsetComboBox.SelectedIndex = 0;
-            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("F8");
-            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("F8");
-            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F8");
-            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F8");
+            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("F3");
+            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("F3");
+            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F3");
+            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F3");
 
             #endregion
 
