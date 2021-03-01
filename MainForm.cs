@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
+[assembly: AssemblyVersion("2.1.*")]
 namespace CNC_Drill_Controller1
 {
     public partial class MainForm : Form
