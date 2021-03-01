@@ -6,10 +6,11 @@ namespace CNC_Drill_Controller1
     static class GlobalProperties
     {
         //Hardware config 
-        public static int numSeek = 50;
+        public static int numSeekMin = 50; // about an inch
         public static int fastSeekSteps = -5;
         public static int fastSeekDelay = 20;
         public static int slowSeekDelay = 250;
+        public static int numSeekMax = 500; // about 10 inches
 
         public static int drillReleaseNumWait = 20; // 1sec per 0.05 sec test
         public static int drillReleaseWaitTime = 50;

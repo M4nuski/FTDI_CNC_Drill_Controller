@@ -101,7 +101,7 @@
             this.IgnoreBacklashBox = new System.Windows.Forms.CheckBox();
             this.checkBoxT = new System.Windows.Forms.CheckBox();
             this.showRawCheckbox = new System.Windows.Forms.CheckBox();
-            this.AsyncStartFindOriginButton = new System.Windows.Forms.Button();
+            this.AsyncStartFindOriginsButton = new System.Windows.Forms.Button();
             this.AsyncDrillSelectedButton = new System.Windows.Forms.Button();
             this.DrillAllNodebutton = new System.Windows.Forms.Button();
             this.AbortMoveButton = new System.Windows.Forms.Button();
@@ -109,12 +109,16 @@
             this.YLengthTextBox = new System.Windows.Forms.TextBox();
             this.XLengthTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.AsyncStartFindLengthsButton = new System.Windows.Forms.Button();
             this.FitContentButton = new System.Windows.Forms.Button();
             this.radioButtonAxisAll = new System.Windows.Forms.RadioButton();
             this.radioButtonAxisX = new System.Windows.Forms.RadioButton();
             this.radioButtonAxisY = new System.Windows.Forms.RadioButton();
             this.radioButtonAxisNone = new System.Windows.Forms.RadioButton();
+            this.AsyncStartFindXOriginButton = new System.Windows.Forms.Button();
+            this.AsyncStartFindYOriginButton = new System.Windows.Forms.Button();
+            this.AsyncStartFindYLengthButton = new System.Windows.Forms.Button();
+            this.AsyncStartFindXLengthButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -873,21 +877,21 @@
             this.showRawCheckbox.UseVisualStyleBackColor = true;
             this.showRawCheckbox.CheckedChanged += new System.EventHandler(this.showRawCheckbox_CheckedChanged);
             // 
-            // AsyncStartFindOriginButton
+            // AsyncStartFindOriginsButton
             // 
-            this.AsyncStartFindOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncStartFindOriginButton.Location = new System.Drawing.Point(151, 31);
-            this.AsyncStartFindOriginButton.Name = "AsyncStartFindOriginButton";
-            this.AsyncStartFindOriginButton.Size = new System.Drawing.Size(172, 21);
-            this.AsyncStartFindOriginButton.TabIndex = 66;
-            this.AsyncStartFindOriginButton.Text = "[Find Axis Origin]";
-            this.AsyncStartFindOriginButton.UseVisualStyleBackColor = true;
-            this.AsyncStartFindOriginButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
+            this.AsyncStartFindOriginsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindOriginsButton.Location = new System.Drawing.Point(151, 31);
+            this.AsyncStartFindOriginsButton.Name = "AsyncStartFindOriginsButton";
+            this.AsyncStartFindOriginsButton.Size = new System.Drawing.Size(172, 21);
+            this.AsyncStartFindOriginsButton.TabIndex = 66;
+            this.AsyncStartFindOriginsButton.Text = "[Find Axis Origins]";
+            this.AsyncStartFindOriginsButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindOriginsButton.Click += new System.EventHandler(this.AsyncStartFindOriginButton_Click);
             // 
             // AsyncDrillSelectedButton
             // 
             this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 101);
+            this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(151, 160);
             this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
             this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(172, 21);
             this.AsyncDrillSelectedButton.TabIndex = 67;
@@ -898,7 +902,7 @@
             // DrillAllNodebutton
             // 
             this.DrillAllNodebutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 128);
+            this.DrillAllNodebutton.Location = new System.Drawing.Point(151, 187);
             this.DrillAllNodebutton.Name = "DrillAllNodebutton";
             this.DrillAllNodebutton.Size = new System.Drawing.Size(172, 21);
             this.DrillAllNodebutton.TabIndex = 68;
@@ -911,7 +915,7 @@
             this.AbortMoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
-            this.AbortMoveButton.Location = new System.Drawing.Point(151, 173);
+            this.AbortMoveButton.Location = new System.Drawing.Point(151, 232);
             this.AbortMoveButton.Name = "AbortMoveButton";
             this.AbortMoveButton.Size = new System.Drawing.Size(172, 23);
             this.AbortMoveButton.TabIndex = 69;
@@ -958,16 +962,16 @@
             this.label4.TabIndex = 73;
             this.label4.Text = "Length";
             // 
-            // button1
+            // AsyncStartFindLengthsButton
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(151, 57);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(172, 21);
-            this.button1.TabIndex = 74;
-            this.button1.Text = "[Find Axis Length]";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.AsyncStartFindLengthButton_Click);
+            this.AsyncStartFindLengthsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindLengthsButton.Location = new System.Drawing.Point(151, 83);
+            this.AsyncStartFindLengthsButton.Name = "AsyncStartFindLengthsButton";
+            this.AsyncStartFindLengthsButton.Size = new System.Drawing.Size(172, 21);
+            this.AsyncStartFindLengthsButton.TabIndex = 74;
+            this.AsyncStartFindLengthsButton.Text = "[Find Axis Lengths]";
+            this.AsyncStartFindLengthsButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindLengthsButton.Click += new System.EventHandler(this.AsyncStartFindLengthButton_Click);
             // 
             // FitContentButton
             // 
@@ -1025,17 +1029,65 @@
             this.radioButtonAxisNone.UseVisualStyleBackColor = true;
             this.radioButtonAxisNone.CheckedChanged += new System.EventHandler(this.checkBoxB_CheckedChanged);
             // 
+            // AsyncStartFindXOriginButton
+            // 
+            this.AsyncStartFindXOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindXOriginButton.Location = new System.Drawing.Point(151, 57);
+            this.AsyncStartFindXOriginButton.Name = "AsyncStartFindXOriginButton";
+            this.AsyncStartFindXOriginButton.Size = new System.Drawing.Size(84, 21);
+            this.AsyncStartFindXOriginButton.TabIndex = 80;
+            this.AsyncStartFindXOriginButton.Text = "[Find X Ori]";
+            this.AsyncStartFindXOriginButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindXOriginButton.Click += new System.EventHandler(this.AsyncStartFindXOriginButton_Click);
+            // 
+            // AsyncStartFindYOriginButton
+            // 
+            this.AsyncStartFindYOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindYOriginButton.Location = new System.Drawing.Point(239, 57);
+            this.AsyncStartFindYOriginButton.Name = "AsyncStartFindYOriginButton";
+            this.AsyncStartFindYOriginButton.Size = new System.Drawing.Size(84, 21);
+            this.AsyncStartFindYOriginButton.TabIndex = 81;
+            this.AsyncStartFindYOriginButton.Text = "[Find Y Ori]";
+            this.AsyncStartFindYOriginButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindYOriginButton.Click += new System.EventHandler(this.AsyncStartFindYOriginButton_Click);
+            // 
+            // AsyncStartFindYLengthButton
+            // 
+            this.AsyncStartFindYLengthButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindYLengthButton.Location = new System.Drawing.Point(239, 110);
+            this.AsyncStartFindYLengthButton.Name = "AsyncStartFindYLengthButton";
+            this.AsyncStartFindYLengthButton.Size = new System.Drawing.Size(84, 21);
+            this.AsyncStartFindYLengthButton.TabIndex = 83;
+            this.AsyncStartFindYLengthButton.Text = "[Find Y Len]";
+            this.AsyncStartFindYLengthButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindYLengthButton.Click += new System.EventHandler(this.AsyncStartFindYLengthButton_Click);
+            // 
+            // AsyncStartFindXLengthButton
+            // 
+            this.AsyncStartFindXLengthButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AsyncStartFindXLengthButton.Location = new System.Drawing.Point(151, 110);
+            this.AsyncStartFindXLengthButton.Name = "AsyncStartFindXLengthButton";
+            this.AsyncStartFindXLengthButton.Size = new System.Drawing.Size(84, 21);
+            this.AsyncStartFindXLengthButton.TabIndex = 82;
+            this.AsyncStartFindXLengthButton.Text = "[Find X Len]";
+            this.AsyncStartFindXLengthButton.UseVisualStyleBackColor = true;
+            this.AsyncStartFindXLengthButton.Click += new System.EventHandler(this.AsyncStartFindXLengthButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.AsyncStartFindYLengthButton);
+            this.Controls.Add(this.AsyncStartFindXLengthButton);
+            this.Controls.Add(this.AsyncStartFindYOriginButton);
+            this.Controls.Add(this.AsyncStartFindXOriginButton);
             this.Controls.Add(this.radioButtonAxisNone);
             this.Controls.Add(this.radioButtonAxisY);
             this.Controls.Add(this.radioButtonAxisX);
             this.Controls.Add(this.radioButtonAxisAll);
             this.Controls.Add(this.FitContentButton);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.AsyncStartFindLengthsButton);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.YLengthTextBox);
             this.Controls.Add(this.XLengthTextBox);
@@ -1043,7 +1095,7 @@
             this.Controls.Add(this.AbortMoveButton);
             this.Controls.Add(this.DrillAllNodebutton);
             this.Controls.Add(this.AsyncDrillSelectedButton);
-            this.Controls.Add(this.AsyncStartFindOriginButton);
+            this.Controls.Add(this.AsyncStartFindOriginsButton);
             this.Controls.Add(this.showRawCheckbox);
             this.Controls.Add(this.checkBoxT);
             this.Controls.Add(this.IgnoreBacklashBox);
@@ -1179,7 +1231,7 @@
         private System.Windows.Forms.CheckBox IgnoreBacklashBox;
         private System.Windows.Forms.CheckBox checkBoxT;
         private System.Windows.Forms.CheckBox showRawCheckbox;
-        private System.Windows.Forms.Button AsyncStartFindOriginButton;
+        private System.Windows.Forms.Button AsyncStartFindOriginsButton;
         private System.Windows.Forms.Button AsyncDrillSelectedButton;
         private System.Windows.Forms.Button DrillAllNodebutton;
         private System.Windows.Forms.Button AbortMoveButton;
@@ -1187,12 +1239,16 @@
         private System.Windows.Forms.TextBox YLengthTextBox;
         private System.Windows.Forms.TextBox XLengthTextBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button AsyncStartFindLengthsButton;
         private System.Windows.Forms.Button FitContentButton;
         private System.Windows.Forms.RadioButton radioButtonAxisAll;
         private System.Windows.Forms.RadioButton radioButtonAxisX;
         private System.Windows.Forms.RadioButton radioButtonAxisY;
         private System.Windows.Forms.RadioButton radioButtonAxisNone;
+        private System.Windows.Forms.Button AsyncStartFindXOriginButton;
+        private System.Windows.Forms.Button AsyncStartFindYOriginButton;
+        private System.Windows.Forms.Button AsyncStartFindYLengthButton;
+        private System.Windows.Forms.Button AsyncStartFindXLengthButton;
     }
 }
 

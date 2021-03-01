@@ -105,7 +105,7 @@ namespace CNC_Drill_Controller1
             else
             {
                 var success = e.Result as bool? ?? false;
-                if (CleanupCallback != null) CleanupCallback(success);
+                CleanupCallback?.Invoke(success);
             }
         }
 
@@ -139,33 +139,61 @@ namespace CNC_Drill_Controller1
             return success;
         }
 
-        private bool SeekXminSwitch(bool AxisDirection, int byX, int byY, int TriesDelay)
+        private bool SeekXminSwitch(bool ExpectedInitialSwitchState, int byX, int byY, int TriesDelay)
         {
             var success = true;
-            var maxTries = GlobalProperties.numSeek;
-            while ((USB.MinXswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
+            var numTryLeft = GlobalProperties.numSeekMin;
+            while ((USB.MinXswitch == ExpectedInitialSwitchState) && USB.IsOpen && (numTryLeft > 0))
             {
                 USB.MoveByStep(byX, byY);
-                maxTries--;
+                numTryLeft--;
                 Thread.Sleep(TriesDelay);
                 USB.Transfer();
-                success = maxTries >= 0;
+                success = numTryLeft >= 0;
             }
-            return success && (USB.MinXswitch != AxisDirection);
+            return success && (USB.MinXswitch != ExpectedInitialSwitchState);
         }
-        private bool SeekYminSwitch(bool AxisDirection, int byX, int byY, int TriesDelay)
+        private bool SeekYminSwitch(bool ExpectedInitialSwitchState, int byX, int byY, int TriesDelay)
         {
             var success = true;
-            var maxTries = GlobalProperties.numSeek;
-            while ((USB.MinYswitch == AxisDirection) && USB.IsOpen && (maxTries > 0))
+            var numTryLeft = GlobalProperties.numSeekMin;
+            while ((USB.MinYswitch == ExpectedInitialSwitchState) && USB.IsOpen && (numTryLeft > 0))
             {
                 USB.MoveByStep(byX, byY);
-                maxTries--;
+                numTryLeft--;
                 Thread.Sleep(TriesDelay);
                 USB.Transfer();
-                success = maxTries >= 0;
+                success = numTryLeft >= 0;
             }
-            return success && (USB.MinYswitch != AxisDirection);
+            return success && (USB.MinYswitch != ExpectedInitialSwitchState);
+        }
+        private bool SeekXmaxSwitch(bool ExpectedInitialSwitchState, int byX, int byY, int TriesDelay)
+        {
+            var success = true;
+            var numTryLeft = GlobalProperties.numSeekMax;
+            while ((USB.MaxXswitch == ExpectedInitialSwitchState) && USB.IsOpen && (numTryLeft > 0))
+            {
+                USB.MoveByStep(byX, byY);
+                numTryLeft--;
+                Thread.Sleep(TriesDelay);
+                USB.Transfer();
+                success = numTryLeft >= 0;
+            }
+            return success && (USB.MaxXswitch != ExpectedInitialSwitchState);
+        }
+        private bool SeekYmaxSwitch(bool ExpectedInitialSwitchState, int byX, int byY, int TriesDelay)
+        {
+            var success = true;
+            var numTryLeft = GlobalProperties.numSeekMax;
+            while ((USB.MaxYswitch == ExpectedInitialSwitchState) && USB.IsOpen && (numTryLeft > 0))
+            {
+                USB.MoveByStep(byX, byY);
+                numTryLeft--;
+                Thread.Sleep(TriesDelay);
+                USB.Transfer();
+                success = numTryLeft >= 0;
+            }
+            return success && (USB.MaxYswitch != ExpectedInitialSwitchState);
         }
 
         public void asyncWorkerDoWork_DrillSelected(object sender, DoWorkEventArgs doWorkEventArgs)
@@ -204,38 +232,44 @@ namespace CNC_Drill_Controller1
 
         public void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
         {
-
-
             var success = USB.Check_Limit_Switches();
             asyncWorker.ReportProgress(30);
 
-            if (!asyncWorker.CancellationPending)
-            {
-                success = SeekXminSwitch(false, GlobalProperties.fastSeekSteps, 0, GlobalProperties.fastSeekDelay); 
-                asyncWorker.ReportProgress(45);
-            }
-            else doWorkEventArgs.Cancel = true;
+            var axises = doWorkEventArgs.Argument as Tuple<bool, bool> ?? new Tuple<bool, bool>(false, false);
 
-            if (!asyncWorker.CancellationPending)
+            if (axises.Item1)
             {
-                if (success) success = SeekXminSwitch(true, 1, 0, GlobalProperties.slowSeekDelay);
-                asyncWorker.ReportProgress(60);
-            }
-            else doWorkEventArgs.Cancel = true;
+                if (!asyncWorker.CancellationPending)
+                {
+                    success = SeekXminSwitch(false, GlobalProperties.fastSeekSteps, 0, GlobalProperties.fastSeekDelay);
+                    asyncWorker.ReportProgress(45);
+                }
+                else doWorkEventArgs.Cancel = true;
 
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success) success = SeekYminSwitch(false, 0, GlobalProperties.fastSeekSteps, GlobalProperties.fastSeekDelay);
-                asyncWorker.ReportProgress(75);
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekXminSwitch(true, 1, 0, GlobalProperties.slowSeekDelay);
+                    asyncWorker.ReportProgress(60);
+                }
+                else doWorkEventArgs.Cancel = true;
             }
-            else doWorkEventArgs.Cancel = true;
 
-            if (!asyncWorker.CancellationPending)
+            if (axises.Item2)
             {
-                if (success) success = SeekYminSwitch(true, 0, 1, GlobalProperties.slowSeekDelay);
-                asyncWorker.ReportProgress(90);
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekYminSwitch(false, 0, GlobalProperties.fastSeekSteps, GlobalProperties.fastSeekDelay);
+                    asyncWorker.ReportProgress(75);
+                }
+                else doWorkEventArgs.Cancel = true;
+
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekYminSwitch(true, 0, 1, GlobalProperties.slowSeekDelay);
+                    asyncWorker.ReportProgress(90);
+                }
+                else doWorkEventArgs.Cancel = true;
             }
-            else doWorkEventArgs.Cancel = true;
 
             if (!asyncWorker.CancellationPending)
             {
@@ -246,7 +280,55 @@ namespace CNC_Drill_Controller1
             doWorkEventArgs.Result = success;
         }
 
+        public void asyncWorkerDoWork_FindAxisLengths(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            var success = USB.Check_Limit_Switches();
+            asyncWorker.ReportProgress(30);
 
+            var axises = doWorkEventArgs.Argument as Tuple<bool, bool> ?? new Tuple<bool, bool>(false, false);
+
+            if (axises.Item1)
+            {
+                if (!asyncWorker.CancellationPending)
+                {
+                    success = SeekXmaxSwitch(false, -GlobalProperties.fastSeekSteps, 0, GlobalProperties.fastSeekDelay);
+                    asyncWorker.ReportProgress(45);
+                }
+                else doWorkEventArgs.Cancel = true;
+
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekXmaxSwitch(true, -1, 0, GlobalProperties.slowSeekDelay);
+                    asyncWorker.ReportProgress(60);
+                }
+                else doWorkEventArgs.Cancel = true;
+            }
+
+            if (axises.Item2)
+            {
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekYmaxSwitch(false, 0, -GlobalProperties.fastSeekSteps, GlobalProperties.fastSeekDelay);
+                    asyncWorker.ReportProgress(75);
+                }
+                else doWorkEventArgs.Cancel = true;
+
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success) success = SeekYmaxSwitch(true, 0, -1, GlobalProperties.slowSeekDelay);
+                    asyncWorker.ReportProgress(90);
+                }
+                else doWorkEventArgs.Cancel = true;
+            }
+
+            if (!asyncWorker.CancellationPending)
+            {
+                asyncWorker.ReportProgress(100);
+            }
+            else doWorkEventArgs.Cancel = true;
+
+            doWorkEventArgs.Result = success;
+        }
 
 
         public void asyncWorkerDoWork_DrillAll(object sender, DoWorkEventArgs e)

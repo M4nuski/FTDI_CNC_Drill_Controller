@@ -747,6 +747,84 @@ namespace CNC_Drill_Controller1
 
         #region Async Tasks Handlers
 
+        #region Async Find Axis Origins
+        private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
+        {
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking Axis Origins (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisOrigin,
+                asyncWorkerDoWork_FindAllAxisOrigin_Cleanup, 
+                new Tuple<bool, bool>(true, true));
+        }
+        private void AsyncStartFindXOriginButton_Click(object sender, EventArgs e)
+        {
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking X Axis Origin (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisOrigin,
+                asyncWorkerDoWork_FindXAxisOrigin_Cleanup,
+                new Tuple<bool, bool>(true, false));
+        }
+        private void AsyncStartFindYOriginButton_Click(object sender, EventArgs e)
+        {
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking Y Axis Origin (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisOrigin,
+                asyncWorkerDoWork_FindYAxisOrigin_Cleanup,
+                new Tuple<bool, bool>(false, true));
+        }
+        private void asyncWorkerDoWork_FindAllAxisOrigin_Cleanup(bool success)
+        {
+            ExtLog.AddLine("Task Completed");
+            if (success)
+            {
+                var loc = USB.CurrentLocation();
+                ExtLog.AddLine($"Location Set to Zero, Origin was found at X={loc.X:F3} Y={loc.Y:F3}");
+                zeroAllbutton_Click(this, null);
+            }
+            else ExtLog.AddLine("Origin not found (out of reach / farther than 1 inch from initial location)");
+        }
+        private void asyncWorkerDoWork_FindXAxisOrigin_Cleanup(bool success)
+        {
+            ExtLog.AddLine("Task Completed");
+            if (success)
+            {
+                var loc = USB.CurrentLocation();
+                ExtLog.AddLine($"X Location Set to Zero, Origin was found at X={loc.X:F3}");
+                zeroXbutton_Click(this, null);
+            }
+            else ExtLog.AddLine("Origin not found (out of reach / farther than 1 inch from initial location)");
+        }
+        private void asyncWorkerDoWork_FindYAxisOrigin_Cleanup(bool success)
+        {
+            ExtLog.AddLine("Task Completed");
+            if (success)
+            {
+                var loc = USB.CurrentLocation();
+                ExtLog.AddLine($"Y Location Set to Zero, Origin was found at Y={loc.X:F3}");
+                zeroYbutton_Click(this, null);
+            }
+            else ExtLog.AddLine("Origin not found (out of reach / farther than 1 inch from initial location)");
+        }
+        #endregion
+
+        #region Async Node Drilling
+        private void DrillAllNodebutton_Click(object sender, EventArgs e)
+        {
+            if ((Nodes != null) && (Nodes.Count > 0))
+            {
+                nodeViewer.FitContentToControl();
+                TaskRunner.startAsyncWorkerWithTask(
+                    "Drill All Nodes (Async)...",
+                    TaskRunner.asyncWorkerDoWork_DrillAll,
+                    asyncWorkerDoWork_DrillAll_Cleanup, 
+                    Nodes);
+            }
+            else ExtLog.AddLine("No Nodes to Drill");
+        }
+        private void asyncWorkerDoWork_DrillAll_Cleanup(bool success)
+        {
+            ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
+        }
         private void AsyncDrillSelectedButton_Click(object sender, EventArgs e)
         {
             if ((listBox1.SelectedIndex > 0) && (listBox1.SelectedIndex <= Nodes.Count))
@@ -756,8 +834,11 @@ namespace CNC_Drill_Controller1
 
                 var toDrill = Nodes[listBox1.SelectedIndex].location;
 
-                TaskRunner.startAsyncWorkerWithTask("Drill Selected Node (Async)...",
-                    TaskRunner.asyncWorkerDoWork_DrillSelected, asyncWorkerDoWork_DrillSelected_Cleanup, toDrill);
+                TaskRunner.startAsyncWorkerWithTask(
+                    "Drill Selected Node (Async)...",
+                    TaskRunner.asyncWorkerDoWork_DrillSelected,
+                    asyncWorkerDoWork_DrillSelected_Cleanup,
+                    toDrill);
 
             }
             else ExtLog.AddLine("Invalid Selection");
@@ -772,43 +853,76 @@ namespace CNC_Drill_Controller1
             }
             else ExtLog.AddLine("Drill Sequence Failed");
         }
+        #endregion
 
-
-
-        private void AsyncStartFindOriginButton_Click(object sender, EventArgs e)
+        #region Async Find Axis Lengths
+        private void AsyncStartFindLengthButton_Click(object sender, EventArgs e)
         {
-            TaskRunner.startAsyncWorkerWithTask("Seeking Axis Origins (Async)...",
-                TaskRunner.asyncWorkerDoWork_FindAxisOrigin,
-                asyncWorkerDoWork_FindAxisOrigin_Cleanup, null);
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking Axis Lengths (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisLengths,
+                asyncWorkerDoWork_FindAllAxisLengths_Cleanup, 
+                new Tuple<bool, bool>(true, true));
         }
-        private void asyncWorkerDoWork_FindAxisOrigin_Cleanup(bool success)
+        private void AsyncStartFindXLengthButton_Click(object sender, EventArgs e)
+        {
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking Axis Lengths (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisLengths,
+                asyncWorkerDoWork_FindXAxisLength_Cleanup,
+                new Tuple<bool, bool>(true, false));
+        }
+
+        private void AsyncStartFindYLengthButton_Click(object sender, EventArgs e)
+        {
+            TaskRunner.startAsyncWorkerWithTask(
+                "Seeking Axis Lengths (Async)...",
+                TaskRunner.asyncWorkerDoWork_FindAxisLengths,
+                asyncWorkerDoWork_FindYAxisLength_Cleanup,
+                new Tuple<bool, bool>(false, true));
+        }
+
+        private void asyncWorkerDoWork_FindAllAxisLengths_Cleanup(bool success)
         {
             ExtLog.AddLine("Task Completed");
             if (success)
             {
                 var loc = USB.CurrentLocation();
-                ExtLog.AddLine("Location Set to Zero, Origin was found at X=" + loc.X.ToString("F3") + " Y=" + loc.Y.ToString("F3"));
-                zeroAllbutton_Click(this, null);
+                ExtLog.AddLine($"Lengths found as X={loc.X:F3} Y={loc.Y:F3}");
+                GlobalProperties.X_Length = loc.X;
+                XLengthTextBox.Text = loc.X.ToString("F3");
+                GlobalProperties.Y_Length = loc.Y;
+                YLengthTextBox.Text = loc.Y.ToString("F3");
+
             }
-            else ExtLog.AddLine("Origin not found (out of reach / farther than 1 inch from expected location)");
+            else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
         }
-
-
-
-        private void DrillAllNodebutton_Click(object sender, EventArgs e)
+        private void asyncWorkerDoWork_FindXAxisLength_Cleanup(bool success)
         {
-            if ((Nodes != null) && (Nodes.Count > 0))
+            ExtLog.AddLine("Task Completed");
+            if (success)
             {
-                nodeViewer.FitContentToControl();
-                TaskRunner.startAsyncWorkerWithTask("Drill All Nodes (Async)...",
-                    TaskRunner.asyncWorkerDoWork_DrillAll, asyncWorkerDoWork_DrillAll_Cleanup, Nodes);
+                var loc = USB.CurrentLocation();
+                ExtLog.AddLine($"Length found as X={loc.X:F3}");
+                GlobalProperties.X_Length = loc.X;
+                XLengthTextBox.Text = loc.X.ToString("F3");
             }
-            else ExtLog.AddLine("No Nodes to Drill");
+            else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
         }
-        private void asyncWorkerDoWork_DrillAll_Cleanup(bool success)
+
+        private void asyncWorkerDoWork_FindYAxisLength_Cleanup(bool success)
         {
-            ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
+            ExtLog.AddLine("Task Completed");
+            if (success)
+            {
+                var loc = USB.CurrentLocation();
+                ExtLog.AddLine($"Length found as Y={loc.Y:F3}");
+                GlobalProperties.Y_Length = loc.Y;
+                YLengthTextBox.Text = loc.Y.ToString("F3");
+            }
+            else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
         }
+        #endregion
 
         #endregion
 
@@ -828,23 +942,11 @@ namespace CNC_Drill_Controller1
             e.SuppressKeyPress = true;
         }
 
-        private void AsyncStartFindLengthButton_Click(object sender, EventArgs e)
-        {
-            //     TaskRunner.startAsyncWorkerWithTask("Seeking Axis Lengths (Async)...",
-            //        TaskRunner.asyncWorkerDoWork_FindAxisLength,
-            //       asyncWorkerDoWork_FindAxisLength_Cleanup, null);
-            ExtLog.AddLine("AsyncStartFindLengthButton_Click not implemented");
-
-        }
-
-        private void asyncWorkerDoWork_FindAxisLength_Cleanup(bool success)
-        {
-            ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
-        }
-
         private void zoomToFitcontent_button_Click(object sender, EventArgs e)
         {
             nodeViewer.FitContentToControl();
         }
+
+
     }
 }
