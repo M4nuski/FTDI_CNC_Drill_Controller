@@ -356,7 +356,7 @@ namespace CNC_Drill_Controller1
             if (!MaxXswitch && !MinXswitch && !MaxYswitch && !MinYswitch)
             {
                 OnMove?.Invoke(dX, dY);
-                var success = MoveByStep((int)(dX * GlobalProperties.X_Scale), (int)(dY * GlobalProperties.Y_Scale));
+                var success = MoveByStep((int)Math.Round(dX * GlobalProperties.X_Scale), (int)Math.Round(dY * GlobalProperties.Y_Scale));
                 OnMoveCompleted?.Invoke();
                 return success;
             }
@@ -374,7 +374,7 @@ namespace CNC_Drill_Controller1
                 var dX = X - current_pos.X;
                 var dY = Y - current_pos.Y;
                 OnMove?.Invoke(X, Y);
-                var success = MoveByStep((int)(dX * GlobalProperties.X_Scale), (int)(dY * GlobalProperties.Y_Scale));
+                var success = MoveByStep((int)Math.Round(dX * GlobalProperties.X_Scale), (int)Math.Round(dY * GlobalProperties.Y_Scale));
                 OnMoveCompleted?.Invoke();
                 return success;
             }

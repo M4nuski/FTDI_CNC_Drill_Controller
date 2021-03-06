@@ -309,8 +309,8 @@ namespace CNC_Drill_Controller1
           //  w = (Xmax + Xmin) / 2.0f;
            // h = (Ymax + Ymin) / 2.0f;
 
-            ControlPanPosition.X = (int)(Xmin * zoomLevel * ViewData.Scale);
-            ControlPanPosition.Y = (int)(Ymin * zoomLevel * ViewData.Scale);
+            ControlPanPosition.X = (int)Math.Round(Xmin * zoomLevel * ViewData.Scale);
+            ControlPanPosition.Y = (int)Math.Round(Ymin * zoomLevel * ViewData.Scale);
         }
     }
 

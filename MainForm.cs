@@ -264,11 +264,11 @@ namespace CNC_Drill_Controller1
             // (loc - delta) / scale = pos
             // loc - delta = (pos * scale)
             // loc - (pos * scale) = delta
-            USB.X_Delta = (int)(USB.X_Abs_Location - (TextConverter.SafeTextToFloat(XCurrentPosTextBox.Text) * GlobalProperties.X_Scale));
+            USB.X_Delta = (int)Math.Round(USB.X_Abs_Location - (TextConverter.SafeTextToFloat(XCurrentPosTextBox.Text) * GlobalProperties.X_Scale));
         }
         private void SetYButton_Click(object sender, EventArgs e)
         {
-            USB.Y_Delta = (int)(USB.Y_Abs_Location - (TextConverter.SafeTextToFloat(YCurrentPosTextBox.Text) * GlobalProperties.Y_Scale));
+            USB.Y_Delta = (int)Math.Round(USB.Y_Abs_Location - (TextConverter.SafeTextToFloat(YCurrentPosTextBox.Text) * GlobalProperties.Y_Scale));
         }
 
         private void SetAllButton_Click(object sender, EventArgs e)
@@ -301,7 +301,7 @@ namespace CNC_Drill_Controller1
                 var delta = selection[0];
                 var units = selection[1];
                 var count = Convert.ToSingle(delta);
-                return ((units != null) && (units == "in")) ? (int)(count * scale) : (int)count;
+                return ((units != null) && (units == "in")) ? (int)Math.Round(count * scale) : (int)count;
             }
             catch
             {
@@ -444,7 +444,7 @@ namespace CNC_Drill_Controller1
             cursorCrossHair.UpdatePosition(snapLocation);
             ViewXLabel.Text = snapLocation.X.ToString("F3");
             ViewYLabel.Text = snapLocation.Y.ToString("F3");
-            ViewZoomLabel.Text = (int)(nodeViewer.ZoomLevel * 100) + "%";
+            ViewZoomLabel.Text = (int)Math.Round(nodeViewer.ZoomLevel * 100) + "%";
 
             drillCrossHair.UpdatePosition(curLoc.X, curLoc.Y);
 
