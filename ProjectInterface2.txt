@@ -1,31 +1,10 @@
-﻿7.5 deg / step = 48 steps / turn
-1/4-20 = 20 turns / inch
-960 steps / inch
-
-Single phase
-17  = 0x11 = b'00010001'
-34  = 0x22 = b'00100010'
-68  = 0x44 = b'01000100'
-136 = 0x88 = b'10001000'
-{0x11, 0x22, 0x44, 0x88};
-
-Double phase
-51  = 0x33 = b'00110011'
-102 = 0x66 = b'01100110'
-204 = 0xCC = b'11001100'
-153 = 0x99 = b'10011001'
-{0x33, 0x66, 0xCC, 0x99};
-
-Quad phase
-17  = 0x11 = b'00010001'
-51  = 0x33 = b'00110011'
-34  = 0x22 = b'00100010'
-102 = 0x66 = b'01100110'
-68  = 0x44 = b'01000100'
-204 = 0xCC = b'11001100'
-136 = 0x88 = b'10001000'
-153 = 0x99 = b'10011001'
-{0x11, 0x33, 0x22, 0x66, 0x44, 0xCC, 0x88, 0x99};
+﻿200 steps / turn
+23 teeth / turn
+2mm pitch / tooth
+46 mm / turn
+0.23 mm / step
+0.00905511811023622047244094488189" / step
+110.43478260869565217391304347826 steps / inch
 
 InputBuffer0:
 0 X Axis Min Limit Switch
@@ -50,34 +29,34 @@ InputBuffer1:
 7
 
 OutputBuffer0:
-0 X Axis Step Motor Phase 1 
-1 X Axis Step Motor Phase 2
-2 X Axis Step Motor Phase 3
-3 X Axis Step Motor Phase 4
+0 X Axis Step Motor Phase 1 +
+1 X Axis Step Motor Phase 1 -
+2 X Axis Step Motor Phase 2 +
+3 X Axis Step Motor Phase 2 -
 
 4 X Axis Step Motor Enable
-5 X Axis Torque Assist +
-6 X Axis Torque Assist -
-7 X Axis Torque Assist Enable
+5
+6
+7
 
 OutputBuffer1:
-0 Y Axis Step Motor Phase 1 
-1 Y Axis Step Motor Phase 2
-2 Y Axis Step Motor Phase 3
-3 Y Axis Step Motor Phase 4
+0 Y Axis Step Motor Phase 1 +
+1 Y Axis Step Motor Phase 1 -
+2 Y Axis Step Motor Phase 2 +
+3 Y Axis Step Motor Phase 2 -
 
 4 Y Axis Step Motor Enable
-5 Y Axis Torque Assist +
-6 Y Axis Torque Assist -
-7 Y Axis Torque Assist Enable
+5
+6
+7
 
 OutputBuffer2:
 0 Drill Head Enable
-1 
+1 Drill Head #Enable
 2
 3
 
-4 Step Motor Throttle?
+4 Step Motor Throttle
 5
 6
 7

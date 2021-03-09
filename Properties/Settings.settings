@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="X_Scale" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">110</Value>
+      <Value Profile="(Default)">110.6</Value>
     </Setting>
     <Setting Name="Y_Scale" Type="System.Single" Scope="User">
       <Value Profile="(Default)">110.85</Value>

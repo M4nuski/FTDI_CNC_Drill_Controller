@@ -213,6 +213,7 @@ namespace CNC_Drill_Controller1
         private byte CreateDrillByte()
         {
             var d = SignalGenerator.SetBit(0, GlobalProperties.Drill_Cycle_Enable_Bit, Cycle_Drill);
+            d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Cycle_Enable_Bit, false);
             //d = SignalGenerator.SetBit(d, GlobalProperties.StepMotor_Throttle_Bit, Axis_Driver_Throttle);
             return d;
         }
