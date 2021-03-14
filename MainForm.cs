@@ -345,8 +345,11 @@ namespace CNC_Drill_Controller1
             if (SnapViewBox.Checked)
             {
                 var snapSize = TextConverter.SafeTextToFloat(SnapSizeTextBox.Text);
-                snapLocation.X = (float)Math.Round(snapLocation.X / snapSize) * snapSize;
-                snapLocation.Y = (float)Math.Round(snapLocation.Y / snapSize) * snapSize;
+                if (Math.Abs(snapSize) > 0.001f)
+                {
+                    snapLocation.X = (float)Math.Round(snapLocation.X / snapSize) * snapSize;
+                    snapLocation.Y = (float)Math.Round(snapLocation.Y / snapSize) * snapSize;
+                }
             }
 
             return snapLocation;
