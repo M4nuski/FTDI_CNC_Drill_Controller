@@ -12,7 +12,6 @@ namespace CNC_Drill_Controller1
         public float PageWidth { get; set; }
         public float PageHeight { get; set; }
         public List<DrillNode> DrillNodes { get; set; }
-        public float NodeEpsilon = 0.001f;
 
         private static void applyParentsTransforms(PointF[] pt, SvgElement node)
         {
@@ -57,7 +56,7 @@ namespace CNC_Drill_Controller1
         private void removeZeros()
         {
             DrillNodes.RemoveAll(
-                dn => (Math.Sqrt(Math.Pow(dn.location.X, 2) + Math.Pow(dn.location.Y, 2)) < NodeEpsilon));
+                dn => (Math.Sqrt(Math.Pow(dn.location.X, 2) + Math.Pow(dn.location.Y, 2)) < GlobalProperties.NodeEpsilon));
 
             ExtLog.AddLine(DrillNodes.Count.ToString("D") + " Non-Zeros");
         }
@@ -84,7 +83,7 @@ namespace CNC_Drill_Controller1
 
         private bool sameLocation(DrillNode drillNode1, DrillNode drillNode2)
         {
-            return ((Math.Sqrt(Math.Pow(drillNode1.location.X - drillNode2.location.X, 2) + Math.Pow(drillNode1.location.Y - drillNode2.location.Y, 2))) < NodeEpsilon);
+            return ((Math.Sqrt(Math.Pow(drillNode1.location.X - drillNode2.location.X, 2) + Math.Pow(drillNode1.location.Y - drillNode2.location.Y, 2))) < GlobalProperties.NodeEpsilon);
         }
 
         private void flipNodes()

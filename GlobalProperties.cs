@@ -64,6 +64,9 @@ namespace CNC_Drill_Controller1
         public static float X_Length = 6.000f;
         public static float Y_Length = 6.000f;
 
+        //Drawing parser settings
+        public static float NodeEpsilon = 0.005f;
+
         //UI refresh throttler
         public static int USB_Refresh_Period = 100;
         public static int GlobalProperties_Refresh_Period = 10000;

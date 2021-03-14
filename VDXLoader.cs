@@ -22,7 +22,6 @@ namespace CNC_Drill_Controller1
         public float PageWidth { get; set; }
         public float PageHeight { get; set; }
         public List<DrillNode> DrillNodes { get; set; }
-        public float NodeEpsilon = 0.001f;
 
         private void RemoveNonEllipses()
         {
@@ -51,7 +50,7 @@ namespace CNC_Drill_Controller1
                         {
                             var dist =
                                 Math.Sqrt(Math.Pow(Shapes[i].x - Shapes[j].x, 2) + Math.Pow(Shapes[i].y - Shapes[j].y, 2));
-                            dup[j] = dist < NodeEpsilon;
+                            dup[j] = dist < GlobalProperties.NodeEpsilon;
                         }
                     }
             }
@@ -201,7 +200,7 @@ namespace CNC_Drill_Controller1
             var numSq = 0;
             foreach (var s in Shapes)
             {
-                if ((!s.isEllipse) && (Math.Abs(s.w - 0.050f) < NodeEpsilon) && (Math.Abs(s.h - 0.050f) < NodeEpsilon) ) 
+                if ((!s.isEllipse) && (Math.Abs(s.w - 0.050f) < GlobalProperties.NodeEpsilon) && (Math.Abs(s.h - 0.050f) < GlobalProperties.NodeEpsilon) ) 
                 {
 
                     s.isEllipse = true;
