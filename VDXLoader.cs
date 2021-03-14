@@ -11,6 +11,7 @@ namespace CNC_Drill_Controller1
         private class rawShapeData
         {
             public float x, y;
+            public float w, h;
             public bool isEllipse;
             public bool isDuplicate;
             public bool isZero;
@@ -21,12 +22,12 @@ namespace CNC_Drill_Controller1
         public float PageWidth { get; set; }
         public float PageHeight { get; set; }
         public List<DrillNode> DrillNodes { get; set; }
-        public float NodeEpsilon { get; set; }
+        public float NodeEpsilon = 0.001f;
 
         private void RemoveNonEllipses()
         {
             Shapes.RemoveAll(d => !d.isEllipse);
-            ExtLog.AddLine(Shapes.Count + " Ellipses");
+            ExtLog.AddLine($"{Shapes.Count} Ellipses");
         }
 
         private void RemoveZero()
@@ -36,7 +37,7 @@ namespace CNC_Drill_Controller1
                 Shapes[i].isZero = (Math.Abs(Shapes[i].x) < float.Epsilon) && (Math.Abs(Shapes[i].y) < float.Epsilon);
             }
             Shapes.RemoveAll(d => d.isZero);
-            ExtLog.AddLine(Shapes.Count + " Non-zeros");
+            ExtLog.AddLine($"{Shapes.Count} Non-zeros");
         }
 
         private void RemoveDuplicates()
@@ -46,11 +47,11 @@ namespace CNC_Drill_Controller1
             {
                 if (!dup[i]) for (var j = 0; j < Shapes.Count; j++)
                     {
-                        if ((i != j) && (!dup[j]))
+                        if ((i != j) && !dup[j])
                         {
                             var dist =
                                 Math.Sqrt(Math.Pow(Shapes[i].x - Shapes[j].x, 2) + Math.Pow(Shapes[i].y - Shapes[j].y, 2));
-                            dup[j] = (dist < NodeEpsilon);
+                            dup[j] = dist < NodeEpsilon;
                         }
                     }
             }
@@ -60,7 +61,7 @@ namespace CNC_Drill_Controller1
             }
 
             Shapes.RemoveAll(d => d.isDuplicate);
-            ExtLog.AddLine(Shapes.Count + " Uniques");
+            ExtLog.AddLine($"{Shapes.Count} Uniques");
         }
 
         private void FlipXShapes()
@@ -88,6 +89,7 @@ namespace CNC_Drill_Controller1
             ReadNodes(Filename);
 
             RemoveZero();
+            ConvertSmallSquaresToEllipses();
             RemoveNonEllipses();
             RemoveDuplicates();
             if (DrawingConfig.Inverted) FlipXShapes();
@@ -141,7 +143,7 @@ namespace CNC_Drill_Controller1
                 }
             }
 
-            ExtLog.AddLine(Shapes.Count.ToString("D") + " Shapes");
+            ExtLog.AddLine($"{Shapes.Count} Shapes");
         }
 
         private rawShapeData readUntilEndOfShape(StreamReader reader)
@@ -151,30 +153,62 @@ namespace CNC_Drill_Controller1
             while (!reader.EndOfStream & !endFound)
             {
                 var l = reader.ReadLine();
-                if (l == "</Shape>") endFound = true;
-                if (l != null && l.StartsWith("<Shape ID="))
+                if (l != null)
                 {
-                    Shapes.Add(readUntilEndOfShape(reader));
-                }
+                    if (l == "</Shape>") endFound = true;
+                    if (l.StartsWith("<Shape ID="))
+                    {
+                        Shapes.Add(readUntilEndOfShape(reader));
+                    }
 
-                if (l != null && l.StartsWith("<PinX>"))
-                {
-                    var pin = TrimString(l, "<PinX>", "</PinX>");
-                    newShape.x = SafeFloatParse(pin, 0.0f);
-                }
-                if (l != null && l.StartsWith("<PinY>"))
-                {
-                    var pin = TrimString(l, "<PinY>", "</PinY>");
-                    newShape.y = SafeFloatParse(pin, 0.0f);
+                    if (l.StartsWith("<PinX>"))
+                    {
+                        var pin = TrimString(l, "<PinX>", "</PinX>");
+                        newShape.x = SafeFloatParse(pin, 0.0f);
+                    }
+                    if (l.StartsWith("<PinY>"))
+                    {
+                        var pin = TrimString(l, "<PinY>", "</PinY>");
+                        newShape.y = SafeFloatParse(pin, 0.0f);
 
+                    }
+                    if (l.StartsWith("<Width>"))
+                    {
+                        var w = TrimString(l, "<Width>", "</Width>");
+                        newShape.w = SafeFloatParse(w, 0.0f);
+
+                    }
+                    if (l.StartsWith("<Height>"))
+                    {
+                        var h = TrimString(l, "<Height>", "</Height>");
+                        newShape.h = SafeFloatParse(h, 0.0f);
+
+                    }
+                    if (l.StartsWith("<Ellipse IX=")) newShape.isEllipse = true;
                 }
-                if (l != null && l.StartsWith("<Ellipse IX=")) newShape.isEllipse = true;
                 //012345678901234567
                 //<PinX>4.125</PinX>
                 //<PinY>9.875</PinY>
                 //012345     0123456
+                //<Width>0.05</Width>
+                //<Height>0.049999999999997 </ Height >
             }
             return newShape;
+        }
+
+        private void ConvertSmallSquaresToEllipses() 
+        {
+            var numSq = 0;
+            foreach (var s in Shapes)
+            {
+                if ((!s.isEllipse) && (Math.Abs(s.w - 0.050f) < NodeEpsilon) && (Math.Abs(s.h - 0.050f) < NodeEpsilon) ) 
+                {
+
+                    s.isEllipse = true;
+                    numSq++;
+                }
+            }
+            if (numSq > 0) ExtLog.AddLine($"Converted {numSq} square(s) to ellipe(s)");
         }
 
         private static string TrimString(string source, string Start, string End)

@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="DrillNode.cs" />
     <Compile Include="ExtLog.cs" />
+    <Compile Include="GerberTXTLoader.cs" />
     <Compile Include="INodeLoader.cs" />
     <Compile Include="IUSB_Controller.cs" />
     <Compile Include="MainForm.cs">

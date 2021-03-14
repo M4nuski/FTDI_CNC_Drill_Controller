@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1
         public float PageWidth { get; set; }
         public float PageHeight { get; set; }
         public List<DrillNode> DrillNodes { get; set; }
-        public float NodeEpsilon { get; set; }
+        public float NodeEpsilon = 0.001f;
 
         private static void applyParentsTransforms(PointF[] pt, SvgElement node)
         {

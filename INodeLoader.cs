@@ -4,7 +4,7 @@ namespace CNC_Drill_Controller1
 {
     interface INodeLoader
     {
-        float NodeEpsilon { get; set; }
+  //      float NodeEpsilon { get; set; }
 
         float PageWidth { get; set; }
         float PageHeight { get; set; }
