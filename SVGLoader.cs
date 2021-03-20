@@ -38,7 +38,7 @@ namespace CNC_Drill_Controller1
                 pt[0].X /= 72;//svgReader.Ppi;
                 pt[0].Y /= 72;//svgReader.Ppi;
 
-                DrillNodes.Add(new DrillNode(pt[0], i));
+                DrillNodes.Add(new DrillNode(pt[0]));
             }
 
             ExtLog.AddLine(DrillNodes.Count.ToString("D") + " Shapes");

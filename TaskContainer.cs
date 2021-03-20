@@ -196,40 +196,6 @@ namespace CNC_Drill_Controller1
             return success && (USB.MaxYswitch != ExpectedInitialSwitchState);
         }
 
-        public void asyncWorkerDoWork_DrillSelected(object sender, DoWorkEventArgs doWorkEventArgs)
-        {
-            var loc = doWorkEventArgs.Argument as PointF? ?? PointF.Empty;
-
-            USB.MoveToPosition(loc.X, loc.Y);
-
-            var success = USB.Check_Limit_Switches();
-            asyncWorker.ReportProgress(50);
-
-            //start drill from top
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success && USB.IsOpen && USB.Check_Limit_Switches())
-                {
-                    success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
-                }
-                asyncWorker.ReportProgress(75);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            //wait for drill to reach back top
-            if (!asyncWorker.CancellationPending)
-            {
-                if (success && USB.IsOpen && USB.Check_Limit_Switches())
-                {
-                    success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
-                }
-                asyncWorker.ReportProgress(100);
-            }
-            else doWorkEventArgs.Cancel = true;
-
-            doWorkEventArgs.Result = success;
-        }
-
         public void asyncWorkerDoWork_FindAxisOrigin(object sender, DoWorkEventArgs doWorkEventArgs)
         {
             var success = USB.Check_Limit_Switches();
@@ -331,7 +297,7 @@ namespace CNC_Drill_Controller1
         }
 
 
-        public void asyncWorkerDoWork_DrillAll(object sender, DoWorkEventArgs e)
+        public void asyncWorkerDoWork_DrillList(object sender, DoWorkEventArgs e)
         {
             var nodes = e.Argument as List<DrillNode> ?? new List<DrillNode>();
             var success = nodes.Count > 0;
@@ -349,7 +315,7 @@ namespace CNC_Drill_Controller1
 
                                 if ((nodes[i].location.X <= GlobalProperties.X_Length) && (nodes[i].location.Y <= GlobalProperties.Y_Length))
                                 {
-                                    ExtLog.AddLine($"Moving to [{(i + 1)}/{nodes.Count}]: {nodes[i].Location}");
+                                    ExtLog.AddLine($"Moving to [{(i + 1)}/{nodes.Count}]: {nodes[i]}");
                                     USB.MoveToPosition(nodes[i].location.X, nodes[i].location.Y);
 
                                     ExtLog.AddLine("Drilling...");
@@ -369,7 +335,7 @@ namespace CNC_Drill_Controller1
                                     UpdateNodes(i, DrillNode.DrillNodeStatus.Drilled);
                                 } else
                                 {
-                                    ExtLog.AddLine($"Skipping Node [{(i + 1)}/{nodes.Count}]: {nodes[i].Location} -> Out Of Range");
+                                    ExtLog.AddLine($"Skipping Node [{(i + 1)}/{nodes.Count}]: {nodes[i]} -> Out Of Range");
                                 }
                                 asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, true);
                             }

@@ -21,8 +21,6 @@ namespace CNC_Drill_Controller1
         #region UI properties
 
         private bool CheckBoxInhibit;
-        private DrillNode.DrillNodeStatus lastSelectedStatus;
-        private int lastSelectedIndex;
         private char[] trimChars = { ' ' };
         private RawUSBForm RawUsbForm = new RawUSBForm {Visible = false};
         private TaskDialog taskDialog = new TaskDialog();
@@ -33,7 +31,6 @@ namespace CNC_Drill_Controller1
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
         private const float NodeDiameter = 0.05f;
-        private List<DrillNode> Nodes;
         private Viewer nodeViewer;
         private CrossHair cursorCrossHair;
         private CrossHair drillCrossHair;
@@ -90,8 +87,6 @@ namespace CNC_Drill_Controller1
             moveTarget = new Cross(0, 0, Color.Yellow);
             nodeViewer = new Viewer(OutputLabel, new PointF(12.0f, 12.0f), new PointF(3.0f, 3.0f));
             nodeViewer.OnSelect += OnSelect;
-            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
-            lastSelectedIndex = -1;
             RebuildListBoxAndViewerFromNodes();
 
             #endregion
@@ -185,12 +180,12 @@ namespace CNC_Drill_Controller1
 
         private void showBox()
         {
-            listBox1.Show();
+            Nodes.Show();
         }
 
         private void hideBox()
         {
-            listBox1.Hide();
+            Nodes.Hide();
         }
         public void OnUpdateNode(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
         {
@@ -198,7 +193,7 @@ namespace CNC_Drill_Controller1
         }
         private void updateNodeCallback(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
         {
-            Nodes[nodeIndex].status = newStatus;
+            (Nodes.Items[nodeIndex] as DrillNode).status = newStatus;
             UpdateNodeColors();
         }
 
@@ -360,10 +355,10 @@ namespace CNC_Drill_Controller1
             moveTarget.UpdatePosition(X, Y);
             if (InvokeRequired)
             {
-                listBox1.BeginInvoke(HideBox);
+                Nodes.BeginInvoke(HideBox);
             } else
             {
-                listBox1.Hide();
+                Nodes.Hide();
             }
         }
 
@@ -371,11 +366,11 @@ namespace CNC_Drill_Controller1
         {
             if (InvokeRequired)
             {
-                listBox1.BeginInvoke(ShowBox);
+                Nodes.BeginInvoke(ShowBox);
             }
             else
             {
-                listBox1.Show();
+                Nodes.Show();
             }
         }
 
@@ -504,17 +499,10 @@ namespace CNC_Drill_Controller1
 
         private void OnSelect(List<IViewerElements> selection)
         {
-            if ((Nodes != null) && (Nodes.Count > 0))
-                for (var i = 0; i < selection.Count; i++)
-                {
-                    for (var j = 0; j < Nodes.Count; j++)
-                    {
-                        if (selection[i].ID == Nodes[j].ID)
-                        {
-                            listBox1.SelectedIndex = Nodes[j].ID;
-                        }
-                    }
-                }
+            for (var i = 0; i < Nodes.Items.Count; ++i)
+            {
+                if (selection.Exists( (val) => { return val.ID == i; } )) Nodes.SelectedIndices.Add(i);
+            }
         }
 
         private void LoadFileButton_Click(object sender, EventArgs e)
@@ -541,17 +529,19 @@ namespace CNC_Drill_Controller1
                             var dresult = dtypeDialog.DrawingConfig;
                             loader.Load(openFileDialog1.FileName, dresult);
 
-                            Nodes = loader.DrillNodes;
+                            Nodes.Items.Clear();
+                            Nodes.Items.AddRange(loader.DrillNodes.ToArray());
 
                             if (dresult.reset_origin)
                             {
                                 var leftmost = loader.PageWidth;
                                 var topmost = loader.PageHeight;
 
-                                for (var i = 0; i < Nodes.Count; i++)
+                                for (var i = 0; i < Nodes.Items.Count; i++)
                                 {
-                                    if (Nodes[i].location.X < leftmost) leftmost = Nodes[i].location.X;
-                                    if (Nodes[i].location.Y < topmost) topmost = Nodes[i].location.Y;
+                                    var node = Nodes.Items[i] as DrillNode;
+                                    if (node.location.X < leftmost) leftmost = node.location.X;
+                                    if (node.location.Y < topmost) topmost = node.location.Y;
                                 }
 
                                 XoriginTextbox.Text = (leftmost - dresult.origin_x).ToString("F4");
@@ -559,14 +549,12 @@ namespace CNC_Drill_Controller1
                                 OffsetOriginBtton_Click(sender, e);
                             }
 
-                            ExtLog.AddLine(Nodes.Count.ToString("D") + " Nodes loaded.");
+                            ExtLog.AddLine(Nodes.Items.Count.ToString("D") + " Nodes loaded.");
                             ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1"));
                             ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1"));
 
                             drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
-                            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
                             RebuildListBoxAndViewerFromNodes();
-                            lastSelectedIndex = -1;
                         }
                     }
                 }
@@ -575,7 +563,7 @@ namespace CNC_Drill_Controller1
 
         private void MoveTobutton_Click(object sender, EventArgs e)
         {
-            var movedata = (string)listBox1.SelectedItem;
+            var movedata = (string)Nodes.SelectedItem;
 
             var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
@@ -588,7 +576,7 @@ namespace CNC_Drill_Controller1
         }
         private void SetAsXYbutton_Click(object sender, EventArgs e)
         {
-            var movedata = (string)listBox1.SelectedItem;
+            var movedata = (string)Nodes.SelectedItem;
             var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
             {
@@ -600,41 +588,42 @@ namespace CNC_Drill_Controller1
         }
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
-            NodesContextMenu.Show(listBox1, listBox1.PointToClient(Cursor.Position));
+            NodesContextMenu.Show(Nodes, Nodes.PointToClient(Cursor.Position));
         }
         private void NodeContextTARGET_Click(object sender, EventArgs e)
         {
-            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
+            foreach (int index in Nodes.SelectedIndices) (Nodes.Items[index] as DrillNode).status = DrillNode.DrillNodeStatus.Next;
             UpdateNodeColors();
         }
         private void NodeContextDRILED_Click(object sender, EventArgs e)
         {
-            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
+            foreach (int index in Nodes.SelectedIndices) (Nodes.Items[index] as DrillNode).status = DrillNode.DrillNodeStatus.Drilled;
             UpdateNodeColors();
         }
         private void NodeContextIDLE_Click(object sender, EventArgs e)
         {
-            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Idle;
+            foreach (int index in Nodes.SelectedIndices) (Nodes.Items[index] as DrillNode).status = DrillNode.DrillNodeStatus.Idle;
             UpdateNodeColors();
+        }
+        private void nodeContextDelete_Click(object sender, EventArgs e)
+        {
+            foreach (int index in Nodes.SelectedIndices) Nodes.Items.Remove(Nodes.Items[index]);
+            RebuildListBoxAndViewerFromNodes();
         }
 
         private void UpdateNodeColors()
         {
-            for (var i = 0; i < Nodes.Count; i++)
+            for (var i = 0; i < Nodes.Items.Count; i++)
             {
                 for (var j = 0; j < nodeViewer.Elements.Count; j++)
                 {
-                    if (nodeViewer.Elements[j].ID == Nodes[i].ID)
-                        nodeViewer.Elements[j].color = Nodes[i].Color;
+                    if (nodeViewer.Elements[j].ID == i) nodeViewer.Elements[j].color = (Nodes.Items[i] as DrillNode).Color;
                 }
             }
         }
 
         private void RebuildListBoxAndViewerFromNodes()
         {
-            listBox1.Items.Clear();
-            lastSelectedStatus = DrillNode.DrillNodeStatus.Idle;
-            lastSelectedIndex = -1;
             nodeViewer.Elements = new List<IViewerElements>
             {
                 drawingPageBox,
@@ -644,22 +633,25 @@ namespace CNC_Drill_Controller1
                 cursorCrossHair
             };
 
-            if ((Nodes != null) && (Nodes.Count > 0))
+            for (var i = 0; i < Nodes.Items.Count; i++)
             {
-                for (var i = 0; i < Nodes.Count; i++)
-                {
-                    nodeViewer.Elements.Add(new Node(Nodes[i].location, NodeDiameter, Nodes[i].Color, i));
-                    listBox1.Items.Add(Nodes[i].Location);
-                    Nodes[i].ID = i;
-                }
+                var node = Nodes.Items[i] as DrillNode;
+                nodeViewer.Elements.Add(new Node(node.location, NodeDiameter, node.Color, i));
             }
+
+            Nodes.DrawMode = DrawMode.OwnerDrawFixed;
+            Nodes.DrawMode = DrawMode.Normal;
+
         }
 
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
             var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YoriginTextbox.Text));
-            for (var i = 0; i < Nodes.Count; i++)
-                Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.Width, Nodes[i].location.Y - origOffset.Height);
+            for (var i = 0; i < Nodes.Items.Count; i++)
+            {
+                var node = Nodes.Items[i] as DrillNode;
+                node.location = new PointF(node.location.X - origOffset.Width, node.location.Y - origOffset.Height);
+            }
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
             YoriginTextbox.Text = "0.000";
@@ -667,15 +659,14 @@ namespace CNC_Drill_Controller1
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lastSelectedIndex >= 0)
+            foreach (var node in nodeViewer.Elements) node.isSelected = false;
+            foreach (int index in Nodes.SelectedIndices)
             {
-                if (Nodes[lastSelectedIndex].status == DrillNode.DrillNodeStatus.Selected)
-                    Nodes[lastSelectedIndex].status = lastSelectedStatus;
+                for (var i = 0; i < nodeViewer.Elements.Count; ++i)
+                {
+                    if (nodeViewer.Elements[i].ID == index) nodeViewer.Elements[i].isSelected = true;
+                }
             }
-            lastSelectedStatus = Nodes[listBox1.SelectedIndex].status;
-            Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Selected;
-            lastSelectedIndex = listBox1.SelectedIndex;
-            UpdateNodeColors();
             OutputLabel.Refresh();
         }
         #endregion
@@ -691,8 +682,11 @@ namespace CNC_Drill_Controller1
         private void ViewSetDRGOrigin_Click(object sender, EventArgs e)
         {
             var origOffset = GetViewCursorLocation();
-            if (Nodes?.Count > 0) for (var i = 0; i < Nodes.Count; i++)
-                Nodes[i].location = new PointF(Nodes[i].location.X - origOffset.X, Nodes[i].location.Y - origOffset.Y);
+            if (Nodes.Items.Count > 0) for (var i = 0; i < Nodes.Items.Count; i++)
+            {
+                    var node = Nodes.Items[i] as DrillNode;
+                    node.location = new PointF(node.location.X - origOffset.X, node.location.Y - origOffset.Y);
+            }
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";
             YoriginTextbox.Text = "0.000";
@@ -717,17 +711,20 @@ namespace CNC_Drill_Controller1
 
         private void OptimizeButton_Click(object sender, EventArgs e)
         {
-            if ((Nodes != null) && (Nodes.Count > 0))
+            if (Nodes.Items.Count > 0)
             {
-                var old_length = DrillNodeHelper.getPathLength(Nodes, USB.CurrentLocation());
+                var nl = new List<DrillNode>(Nodes.Items.Count);
+                foreach (DrillNode node in Nodes.Items) nl.Add(node);
 
-                var NodesNN = DrillNodeHelper.OptimizeNodesNN(Nodes, USB.CurrentLocation());
+                var old_length = DrillNodeHelper.getPathLength(nl, USB.CurrentLocation());
+
+                var NodesNN = DrillNodeHelper.OptimizeNodesNN(nl, USB.CurrentLocation());
                 var NN_Length = DrillNodeHelper.getPathLength(NodesNN, USB.CurrentLocation());
 
-                var NodesHSL = DrillNodeHelper.OptimizeNodesHScanLine(Nodes, new PointF(0, 0));
+                var NodesHSL = DrillNodeHelper.OptimizeNodesHScanLine(nl, new PointF(0, 0));
                 var HSL_Length = DrillNodeHelper.getPathLength(NodesHSL, USB.CurrentLocation());
 
-                var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(Nodes, new PointF(0, 0));
+                var NodesVSL = DrillNodeHelper.OptimizeNodesVScanLine(nl, new PointF(0, 0));
                 var VSL_Length = DrillNodeHelper.getPathLength(NodesVSL, USB.CurrentLocation());
 
                 var best_SL_length = (VSL_Length < HSL_Length) ? VSL_Length : HSL_Length;
@@ -738,7 +735,8 @@ namespace CNC_Drill_Controller1
 
                 if (best_length < old_length)
                 {
-                    Nodes = best_path;
+                    Nodes.Items.Clear();
+                    Nodes.Items.AddRange(best_path.ToArray());
                 }
 
                 else logger1.AddLine("Optimization test returned path longer or equal.");
@@ -814,49 +812,39 @@ namespace CNC_Drill_Controller1
         #region Async Node Drilling
         private void DrillAllNodebutton_Click(object sender, EventArgs e)
         {
-            if ((Nodes != null) && (Nodes.Count > 0))
+            if (Nodes.Items.Count > 0)
             {
+                var nodeArray = new List<DrillNode>();
+                foreach(DrillNode node in Nodes.Items) nodeArray.Add(node);
                 nodeViewer.FitContentToControl();
                 TaskRunner.startAsyncWorkerWithTask(
                     "Drill All Nodes (Async)...",
-                    TaskRunner.asyncWorkerDoWork_DrillAll,
-                    asyncWorkerDoWork_DrillAll_Cleanup, 
-                    Nodes);
+                    TaskRunner.asyncWorkerDoWork_DrillList,
+                    asyncWorkerDoWork_Drill_Cleanup,
+                    nodeArray);
             }
             else ExtLog.AddLine("No Nodes to Drill");
         }
-        private void asyncWorkerDoWork_DrillAll_Cleanup(bool success)
+        private void asyncWorkerDoWork_Drill_Cleanup(bool success)
         {
             ExtLog.AddLine(success ? "Task Completed" : "Drill Sequence Failed");
         }
         private void AsyncDrillSelectedButton_Click(object sender, EventArgs e)
         {
-            if ((listBox1.SelectedIndex > 0) && (listBox1.SelectedIndex <= Nodes.Count))
+            if (Nodes.SelectedIndices.Count > 0)
             {
-                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Next;
-                UpdateNodeColors();
-
-                var toDrill = Nodes[listBox1.SelectedIndex].location;
-
+                var nodeArray = new List<DrillNode>();
+                foreach (int index in Nodes.SelectedIndices) nodeArray.Add(Nodes.Items[index] as DrillNode);
+                nodeViewer.FitContentToControl();
                 TaskRunner.startAsyncWorkerWithTask(
-                    "Drill Selected Node (Async)...",
-                    TaskRunner.asyncWorkerDoWork_DrillSelected,
-                    asyncWorkerDoWork_DrillSelected_Cleanup,
-                    toDrill);
+                    "Drill Selected Nodes (Async)...",
+                    TaskRunner.asyncWorkerDoWork_DrillList,
+                    asyncWorkerDoWork_Drill_Cleanup,
+                    nodeArray);
+            }
+            else ExtLog.AddLine("No Nodes Selected to Drill");
+        }
 
-            }
-            else ExtLog.AddLine("Invalid Selection");
-        }
-        private void asyncWorkerDoWork_DrillSelected_Cleanup(bool success)
-        {
-            if (success)
-            {
-                ExtLog.AddLine("Task Completed");
-                Nodes[listBox1.SelectedIndex].status = DrillNode.DrillNodeStatus.Drilled;
-                UpdateNodeColors();
-            }
-            else ExtLog.AddLine("Drill Sequence Failed");
-        }
         #endregion
 
         #region Async Find Axis Lengths
@@ -952,5 +940,15 @@ namespace CNC_Drill_Controller1
         }
 
 
+        private void AddNodeButton_Click(object sender, EventArgs e)
+        {
+            // add node
+        }
+
+        private void ClearNodesButton_Click(object sender, EventArgs e)
+        {
+            Nodes.Items.Clear();
+            RebuildListBoxAndViewerFromNodes();
+        }
     }
 }

@@ -13,41 +13,39 @@ namespace CNC_Drill_Controller1
         {
             Idle,
             Next,
-            Drilled,
-            Selected
+            Drilled
         }
 
-        public string Location
+        public override string ToString()
         {
-            get { return location.X.ToString("F4") + " " + location.Y.ToString("F4"); }
+            return string.Format("{0,6:F3} {1,6:F3}", location.X, location.Y);
         }
 
         public PointF location;
 
         public DrillNodeStatus status;
 
-        public int ID;
+        //public int ID;
 
         private Dictionary<DrillNodeStatus, Color> nodeStatusColors = new Dictionary<DrillNodeStatus, Color>
         {
             {DrillNodeStatus.Idle, Color.Black}, 
             {DrillNodeStatus.Next, Color.Red}, 
-            {DrillNodeStatus.Drilled, Color.Yellow}, 
-            {DrillNodeStatus.Selected, Color.Blue}, 
+            {DrillNodeStatus.Drilled, Color.Yellow}            
         };
+
+        static public Color nodeSelectedColor = Color.Blue;
 
         public DrillNode()
         {
             location = new PointF(0, 0);
             status = DrillNodeStatus.Idle;
-            ID = -1;
         }
 
-        public DrillNode(PointF Location, int ID)
+        public DrillNode(PointF Location)
         {
             location = Location;
             status = DrillNodeStatus.Idle;
-            this.ID = ID;
         }
     }
 

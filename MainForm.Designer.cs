@@ -68,7 +68,7 @@
             this.zeroAllbutton = new System.Windows.Forms.Button();
             this.Xlabel = new System.Windows.Forms.Label();
             this.Ylabel = new System.Windows.Forms.Label();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.Nodes = new System.Windows.Forms.ListBox();
             this.NodesContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.NodeContextSETXY = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextMOVETO = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,6 +76,10 @@
             this.NodeContextIDLE = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextDRILED = new System.Windows.Forms.ToolStripMenuItem();
             this.NodeContextTARGET = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.nodeContextDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.drillNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.nodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.OutputLabel = new System.Windows.Forms.Label();
             this.XSetTranformButton = new System.Windows.Forms.Button();
             this.YSetTranformButton = new System.Windows.Forms.Button();
@@ -119,8 +123,12 @@
             this.AsyncStartFindYOriginButton = new System.Windows.Forms.Button();
             this.AsyncStartFindYLengthButton = new System.Windows.Forms.Button();
             this.AsyncStartFindXLengthButton = new System.Windows.Forms.Button();
+            this.ClearNodesButton = new System.Windows.Forms.Button();
+            this.AddNodeButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.drillNodeBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nodeBindingSource)).BeginInit();
             this.ViewContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -413,7 +421,7 @@
             // UIupdateTimer
             // 
             this.UIupdateTimer.Enabled = true;
-            this.UIupdateTimer.Interval = 125;
+            this.UIupdateTimer.Interval = 50;
             this.UIupdateTimer.Tick += new System.EventHandler(this.UIupdateTimer_Tick);
             // 
             // loadFileButton
@@ -553,20 +561,21 @@
             this.Ylabel.TabIndex = 36;
             this.Ylabel.Text = "Y:   0.0000";
             // 
-            // listBox1
+            // Nodes
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.Nodes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.listBox1.ContextMenuStrip = this.NodesContextMenu;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(328, 83);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.ScrollAlwaysVisible = true;
-            this.listBox1.Size = new System.Drawing.Size(156, 485);
-            this.listBox1.TabIndex = 37;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
+            this.Nodes.ContextMenuStrip = this.NodesContextMenu;
+            this.Nodes.FormattingEnabled = true;
+            this.Nodes.Location = new System.Drawing.Point(328, 109);
+            this.Nodes.Margin = new System.Windows.Forms.Padding(2);
+            this.Nodes.Name = "Nodes";
+            this.Nodes.ScrollAlwaysVisible = true;
+            this.Nodes.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.Nodes.Size = new System.Drawing.Size(156, 459);
+            this.Nodes.TabIndex = 37;
+            this.Nodes.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.Nodes.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
             // NodesContextMenu
             // 
@@ -576,9 +585,11 @@
             this.toolStripSeparator1,
             this.NodeContextIDLE,
             this.NodeContextDRILED,
-            this.NodeContextTARGET});
+            this.NodeContextTARGET,
+            this.toolStripSeparator2,
+            this.nodeContextDelete});
             this.NodesContextMenu.Name = "NodesContextMenu";
-            this.NodesContextMenu.Size = new System.Drawing.Size(172, 120);
+            this.NodesContextMenu.Size = new System.Drawing.Size(172, 148);
             // 
             // NodeContextSETXY
             // 
@@ -619,6 +630,26 @@
             this.NodeContextTARGET.Size = new System.Drawing.Size(171, 22);
             this.NodeContextTARGET.Text = "Status.Target";
             this.NodeContextTARGET.Click += new System.EventHandler(this.NodeContextTARGET_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(168, 6);
+            // 
+            // nodeContextDelete
+            // 
+            this.nodeContextDelete.Name = "nodeContextDelete";
+            this.nodeContextDelete.Size = new System.Drawing.Size(171, 22);
+            this.nodeContextDelete.Text = "Delete";
+            this.nodeContextDelete.Click += new System.EventHandler(this.nodeContextDelete_Click);
+            // 
+            // drillNodeBindingSource
+            // 
+            this.drillNodeBindingSource.DataSource = typeof(CNC_Drill_Controller1.DrillNode);
+            // 
+            // nodeBindingSource
+            // 
+            this.nodeBindingSource.DataSource = typeof(CNC_Drill_Controller1.Node);
             // 
             // OutputLabel
             // 
@@ -1086,11 +1117,33 @@
             this.AsyncStartFindXLengthButton.UseVisualStyleBackColor = true;
             this.AsyncStartFindXLengthButton.Click += new System.EventHandler(this.AsyncStartFindXLengthButton_Click);
             // 
+            // ClearNodesButton
+            // 
+            this.ClearNodesButton.Location = new System.Drawing.Point(409, 83);
+            this.ClearNodesButton.Name = "ClearNodesButton";
+            this.ClearNodesButton.Size = new System.Drawing.Size(75, 21);
+            this.ClearNodesButton.TabIndex = 84;
+            this.ClearNodesButton.Text = "Clear Nodes";
+            this.ClearNodesButton.UseVisualStyleBackColor = true;
+            this.ClearNodesButton.Click += new System.EventHandler(this.ClearNodesButton_Click);
+            // 
+            // AddNodeButton
+            // 
+            this.AddNodeButton.Location = new System.Drawing.Point(329, 83);
+            this.AddNodeButton.Name = "AddNodeButton";
+            this.AddNodeButton.Size = new System.Drawing.Size(75, 21);
+            this.AddNodeButton.TabIndex = 85;
+            this.AddNodeButton.Text = "Add Node";
+            this.AddNodeButton.UseVisualStyleBackColor = true;
+            this.AddNodeButton.Click += new System.EventHandler(this.AddNodeButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.AddNodeButton);
+            this.Controls.Add(this.ClearNodesButton);
             this.Controls.Add(this.SnapSizeTextBox);
             this.Controls.Add(this.AsyncStartFindYLengthButton);
             this.Controls.Add(this.AsyncStartFindXLengthButton);
@@ -1129,7 +1182,7 @@
             this.Controls.Add(this.YSetTranformButton);
             this.Controls.Add(this.XSetTranformButton);
             this.Controls.Add(this.OutputLabel);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.Nodes);
             this.Controls.Add(this.Ylabel);
             this.Controls.Add(this.Xlabel);
             this.Controls.Add(this.zeroAllbutton);
@@ -1165,6 +1218,8 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.NodesContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.drillNodeBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nodeBindingSource)).EndInit();
             this.ViewContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1211,7 +1266,7 @@
         private System.Windows.Forms.Button zeroAllbutton;
         private System.Windows.Forms.Label Xlabel;
         private System.Windows.Forms.Label Ylabel;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox Nodes;
         private System.Windows.Forms.Label OutputLabel;
         private System.Windows.Forms.Button XSetTranformButton;
         private System.Windows.Forms.Button YSetTranformButton;
@@ -1262,6 +1317,12 @@
         private System.Windows.Forms.Button AsyncStartFindYOriginButton;
         private System.Windows.Forms.Button AsyncStartFindYLengthButton;
         private System.Windows.Forms.Button AsyncStartFindXLengthButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem nodeContextDelete;
+        private System.Windows.Forms.Button ClearNodesButton;
+        private System.Windows.Forms.Button AddNodeButton;
+        private System.Windows.Forms.BindingSource nodeBindingSource;
+        private System.Windows.Forms.BindingSource drillNodeBindingSource;
     }
 }
 

@@ -203,6 +203,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>:: echo "D:\Prog\Visual Studio 2012\Solutions\AWSTests\S3_Packager\bin\Release\S3_Packager.exe" "$(ProjectName)" "$(TargetDir)"

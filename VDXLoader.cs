@@ -96,7 +96,7 @@ namespace CNC_Drill_Controller1
 
             for (var i = 0; i < Shapes.Count; i++)
             {
-                DrillNodes.Add(new DrillNode(new PointF(Shapes[i].x, Shapes[i].y), i));
+                DrillNodes.Add(new DrillNode(new PointF(Shapes[i].x, Shapes[i].y)));
             }
         }
 

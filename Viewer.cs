@@ -160,7 +160,7 @@ namespace CNC_Drill_Controller1
 
         private void OutputControlOnDoubleClick(object sender, EventArgs eventArgs)
         {
-            OnSelect?.Invoke(Elements.Where(viewerElements => viewerElements.Selected(ViewMousePosition)).ToList());
+            OnSelect?.Invoke(Elements.Where(viewerElements => viewerElements.TestSelection(ViewMousePosition)).ToList());
         }
 
         private void OutputControlOnMouseUp(object sender, MouseEventArgs mouseEventArgs)
@@ -323,8 +323,9 @@ namespace CNC_Drill_Controller1
         float size { get; }
 
         Color color { get; set; }
+        bool isSelected { get; set; }
         void Draw(Viewer.viewData data);
-        bool Selected(PointF SelectionLocation);
+        bool TestSelection(PointF SelectionLocation);
     }
 
     class CrossHair : IViewerElements
@@ -338,6 +339,7 @@ namespace CNC_Drill_Controller1
         private float _x, _y;
         public PointF position { get { return new PointF(_x, _y); } }
         public float size { get { return 0.0f; } }
+        public bool isSelected { get; set; }
 
         public CrossHair(float X, float Y, Color color)
         {
@@ -373,7 +375,7 @@ namespace CNC_Drill_Controller1
             _y = Y;
         }
 
-        public bool Selected(PointF SelectionLocation)
+        public bool TestSelection(PointF SelectionLocation)
         {
             return (Math.Abs(SelectionLocation.X - _x) < 0.010f) || (Math.Abs(SelectionLocation.Y - _y) < 0.010f);
         }
@@ -386,14 +388,16 @@ namespace CNC_Drill_Controller1
         public Color color
         {
             get { return _color.Color; }
-            set { _color = new Pen(value, 2.5f); }
+            set { _color = new Pen(value, 2.0f); }
         }
         private Pen _color;
+        private Pen _selectedPen = new Pen(DrillNode.nodeSelectedColor, 4.0f);
         private PointF _pos;
         public int ID { get; set; }
 
         public PointF position { get { return new PointF(_pos.X, _pos.Y); } }
         public float size { get { return _diameter; } }
+        public bool isSelected { get; set; }
 
         public Node(PointF position, float diameter, Color color)
         {
@@ -415,10 +419,11 @@ namespace CNC_Drill_Controller1
         public void Draw(Viewer.viewData data)
         {
             var out_pos = ViewerHelper.ScaleRectangle(_pos.X - _radius, _pos.Y - _radius, _diameter, _diameter, data);
+            if (isSelected) data.OutputGraphic.DrawEllipse(_selectedPen, out_pos);
             data.OutputGraphic.DrawEllipse(_color, out_pos);
         }
 
-        public bool Selected(PointF SelectionLocation)
+        public bool TestSelection(PointF SelectionLocation)
         {
             return (Math.Abs(_pos.X - SelectionLocation.X) < _diameter) &&
                    (Math.Abs(_pos.Y - SelectionLocation.Y) < _diameter);
@@ -439,6 +444,7 @@ namespace CNC_Drill_Controller1
 
         public PointF position { get { return new PointF(_fx, _fy); } }
         public float size { get { return 0.0f; } }
+        public bool isSelected { get; set; }
 
         public Line(float fromX, float fromY, float toX, float toY, Color color)
         {
@@ -466,7 +472,7 @@ namespace CNC_Drill_Controller1
             data.OutputGraphic.DrawLine(_color, out_from, out_to);
         }
 
-        public bool Selected(PointF SelectionLocation)
+        public bool TestSelection(PointF SelectionLocation)
         {
             if (Math.Abs(_fx - _tx) < float.Epsilon) return (Math.Abs(SelectionLocation.X - _fx) < 0.010f);
             if (Math.Abs(_fy - _ty) < float.Epsilon) return (Math.Abs(SelectionLocation.Y - _fy) < 0.010f);
@@ -503,6 +509,7 @@ namespace CNC_Drill_Controller1
         public PointF position { get { return new PointF(_x + _w/2.0f, _y + _h/2.0f); } }
         //public float size { get { return Math.Max(_w, _h); } }
         public float size { get { return 0.0f; } }
+        public bool isSelected { get; set; }
 
         public int ID { get; set; }
 
@@ -542,7 +549,7 @@ namespace CNC_Drill_Controller1
             data.OutputGraphic.FillRectangle(_fill, out_rectangle);
         }
 
-        public bool Selected(PointF SelectionLocation)
+        public bool TestSelection(PointF SelectionLocation)
         {
             return ((SelectionLocation.X > _x) && (SelectionLocation.Y > _y) && (SelectionLocation.X < (_x + _w)) &&
                     (SelectionLocation.Y < (_y + _h)));
@@ -570,6 +577,7 @@ namespace CNC_Drill_Controller1
 
         public PointF position { get { return new PointF(_x, _y); } }
         public float size { get { return 0.0f; } }
+        public bool isSelected { get; set; }
 
         public Cross(float X, float Y, Color color)
         {
@@ -609,7 +617,7 @@ namespace CNC_Drill_Controller1
             _y = Y;
         }
 
-        public bool Selected(PointF SelectionLocation)
+        public bool TestSelection(PointF SelectionLocation)
         {
             return false;
         }
