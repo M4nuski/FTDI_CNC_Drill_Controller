@@ -95,6 +95,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddNodesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddNodesDialog.Designer.cs">
+      <DependentUpon>AddNodesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Delegates.cs" />
     <Compile Include="DrawingTypeDialog.cs">
       <SubType>Form</SubType>
@@ -136,6 +142,9 @@
     <Compile Include="USB_Control_Emulator.cs" />
     <Compile Include="VDXLoader.cs" />
     <Compile Include="Viewer.cs" />
+    <EmbeddedResource Include="AddNodesDialog.resx">
+      <DependentUpon>AddNodesDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DrawingTypeDialog.resx">
       <DependentUpon>DrawingTypeDialog.cs</DependentUpon>
     </EmbeddedResource>

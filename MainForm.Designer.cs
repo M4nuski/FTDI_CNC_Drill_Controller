@@ -78,8 +78,6 @@
             this.NodeContextTARGET = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.nodeContextDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.drillNodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.nodeBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.OutputLabel = new System.Windows.Forms.Label();
             this.XSetTranformButton = new System.Windows.Forms.Button();
             this.YSetTranformButton = new System.Windows.Forms.Button();
@@ -125,10 +123,9 @@
             this.AsyncStartFindXLengthButton = new System.Windows.Forms.Button();
             this.ClearNodesButton = new System.Windows.Forms.Button();
             this.AddNodeButton = new System.Windows.Forms.Button();
+            this.toolStripMenuItemAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.drillNodeBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nodeBindingSource)).BeginInit();
             this.ViewContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -643,14 +640,6 @@
             this.nodeContextDelete.Text = "Delete";
             this.nodeContextDelete.Click += new System.EventHandler(this.nodeContextDelete_Click);
             // 
-            // drillNodeBindingSource
-            // 
-            this.drillNodeBindingSource.DataSource = typeof(CNC_Drill_Controller1.DrillNode);
-            // 
-            // nodeBindingSource
-            // 
-            this.nodeBindingSource.DataSource = typeof(CNC_Drill_Controller1.Node);
-            // 
             // OutputLabel
             // 
             this.OutputLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -781,28 +770,29 @@
             this.ViewContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ViewSetXYContext,
             this.ViewSetDRGOrigin,
-            this.moveToToolStripMenuItem});
+            this.moveToToolStripMenuItem,
+            this.toolStripMenuItemAdd});
             this.ViewContextMenu.Name = "ViewContextMenu";
-            this.ViewContextMenu.Size = new System.Drawing.Size(190, 70);
+            this.ViewContextMenu.Size = new System.Drawing.Size(196, 114);
             // 
             // ViewSetXYContext
             // 
             this.ViewSetXYContext.Name = "ViewSetXYContext";
-            this.ViewSetXYContext.Size = new System.Drawing.Size(189, 22);
+            this.ViewSetXYContext.Size = new System.Drawing.Size(195, 22);
             this.ViewSetXYContext.Text = "Set As Current X-Y";
             this.ViewSetXYContext.Click += new System.EventHandler(this.ViewSetXYContext_Click);
             // 
             // ViewSetDRGOrigin
             // 
             this.ViewSetDRGOrigin.Name = "ViewSetDRGOrigin";
-            this.ViewSetDRGOrigin.Size = new System.Drawing.Size(189, 22);
+            this.ViewSetDRGOrigin.Size = new System.Drawing.Size(195, 22);
             this.ViewSetDRGOrigin.Text = "Set As Drawing Origin";
             this.ViewSetDRGOrigin.Click += new System.EventHandler(this.ViewSetDRGOrigin_Click);
             // 
             // moveToToolStripMenuItem
             // 
             this.moveToToolStripMenuItem.Name = "moveToToolStripMenuItem";
-            this.moveToToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.moveToToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.moveToToolStripMenuItem.Text = "Move To";
             this.moveToToolStripMenuItem.Click += new System.EventHandler(this.moveToToolStripMenuItem_Click);
             // 
@@ -1137,6 +1127,13 @@
             this.AddNodeButton.UseVisualStyleBackColor = true;
             this.AddNodeButton.Click += new System.EventHandler(this.AddNodeButton_Click);
             // 
+            // toolStripMenuItemAdd
+            // 
+            this.toolStripMenuItemAdd.Name = "toolStripMenuItemAdd";
+            this.toolStripMenuItemAdd.Size = new System.Drawing.Size(195, 22);
+            this.toolStripMenuItemAdd.Text = "Add Nodes at Location";
+            this.toolStripMenuItemAdd.Click += new System.EventHandler(this.toolStripMenuItemAdd_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1218,8 +1215,6 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.NodesContextMenu.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.drillNodeBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nodeBindingSource)).EndInit();
             this.ViewContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1321,8 +1316,7 @@
         private System.Windows.Forms.ToolStripMenuItem nodeContextDelete;
         private System.Windows.Forms.Button ClearNodesButton;
         private System.Windows.Forms.Button AddNodeButton;
-        private System.Windows.Forms.BindingSource nodeBindingSource;
-        private System.Windows.Forms.BindingSource drillNodeBindingSource;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAdd;
     }
 }
 

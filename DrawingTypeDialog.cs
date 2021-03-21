@@ -78,8 +78,8 @@ namespace CNC_Drill_Controller1
                     DrawingConfig.vdx_vertical_flip = flipvdx.Checked;
 
                     DrawingConfig.reset_origin = resetorigin.Checked;
-                    DrawingConfig.origin_x = SafeFloatParse(xreset.Text, 0.200f);
-                    DrawingConfig.origin_y = SafeFloatParse(yreset.Text, 0.200f);
+                    DrawingConfig.origin_x = TextConverter.SafeTextToFloat(xreset.Text, 0.200f);
+                    DrawingConfig.origin_y = TextConverter.SafeTextToFloat(yreset.Text, 0.200f);
 
                 }
                 DialogResult = btn.DialogResult;                
@@ -87,11 +87,6 @@ namespace CNC_Drill_Controller1
 
         }
 
-        private static float SafeFloatParse(string s, float fallback)
-        {
-            float result;
-            return float.TryParse(s, out result) ? result : fallback;
-        }
 
     }
 }

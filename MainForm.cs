@@ -30,6 +30,7 @@ namespace CNC_Drill_Controller1
         #region View Properties
 
         private DrawingTypeDialog dtypeDialog = new DrawingTypeDialog();
+        private AddNodesDialog daddNodesDialog = new AddNodesDialog();
         private const float NodeDiameter = 0.05f;
         private Viewer nodeViewer;
         private CrossHair cursorCrossHair;
@@ -942,7 +943,7 @@ namespace CNC_Drill_Controller1
 
         private void AddNodeButton_Click(object sender, EventArgs e)
         {
-            // add node
+            if (daddNodesDialog.ShowDialog() == DialogResult.OK) AddNodesFromDialog();
         }
 
         private void ClearNodesButton_Click(object sender, EventArgs e)
@@ -950,5 +951,68 @@ namespace CNC_Drill_Controller1
             Nodes.Items.Clear();
             RebuildListBoxAndViewerFromNodes();
         }
+
+        private void toolStripMenuItemAdd_Click(object sender, EventArgs e)
+        {
+            var snapLocation = GetViewCursorLocation();
+            if (daddNodesDialog.ShowDialog(snapLocation.X, snapLocation.Y) == DialogResult.OK) AddNodesFromDialog();
+        }
+
+        private void AddNodesFromDialog()
+        {
+            var x = daddNodesDialog.DialogData.x;
+            var y = daddNodesDialog.DialogData.y;
+
+            // create nodes from dialog data
+            if (daddNodesDialog.DialogData.type == "DIP")
+            {
+                var s = TextConverter.SafeTextToFloat(daddNodesDialog.DialogData.spacing, 0.300f);
+                // DIP
+                if (daddNodesDialog.DialogData.direction == "Horizontal")
+                {
+                    // horizontal
+                    for (var i = 0; i < daddNodesDialog.DialogData.pins / 2; ++i)
+                    {
+                        Nodes.Items.Add(new DrillNode(new PointF(x, y)));
+                        Nodes.Items.Add(new DrillNode(new PointF(x, y + s)));
+                        x += 0.100f;
+                    }
+                }
+                else
+                {
+                    // vertical
+                    for (var i = 0; i < daddNodesDialog.DialogData.pins / 2; ++i)
+                    {
+                        Nodes.Items.Add(new DrillNode(new PointF(x, y)));
+                        Nodes.Items.Add(new DrillNode(new PointF(x + s, y)));
+                        y += 0.100f;
+                    }
+                }
+            } else
+            {
+                // SIP
+                if (daddNodesDialog.DialogData.direction == "Horizontal")
+                {
+                    // horizontal
+                    for (var i = 0; i < daddNodesDialog.DialogData.pins; ++i)
+                    {
+                        Nodes.Items.Add(new DrillNode(new PointF(x, y)));
+                        x += 0.100f;
+                    }
+                } else
+                {
+                    // vertical
+                    for (var i = 0; i < daddNodesDialog.DialogData.pins; ++i)
+                    {
+                        Nodes.Items.Add(new DrillNode(new PointF(x, y)));
+                        y += 0.100f;
+                    }
+                }
+            }
+            RebuildListBoxAndViewerFromNodes();
+        }
+
+
+
     }
 }
