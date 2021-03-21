@@ -36,6 +36,8 @@ namespace CNC_Drill_Controller1
 
         static public Color nodeSelectedColor = Color.Blue;
 
+        public int _originalIndex = -1;
+
         public DrillNode()
         {
             location = new PointF(0, 0);

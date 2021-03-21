@@ -193,7 +193,7 @@ namespace CNC_Drill_Controller1
             Invoke(UpdateNodeCallback, new object[] { nodeIndex, newStatus });
         }
         private void updateNodeCallback(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
-        {
+        {            
             (Nodes.Items[nodeIndex] as DrillNode).status = newStatus;
             UpdateNodeColors();
         }
@@ -816,7 +816,12 @@ namespace CNC_Drill_Controller1
             if (Nodes.Items.Count > 0)
             {
                 var nodeArray = new List<DrillNode>();
-                foreach(DrillNode node in Nodes.Items) nodeArray.Add(node);
+                for (var index = 0; index < Nodes.Items.Count; ++index)
+                {
+                    var node = (Nodes.Items[index] as DrillNode);
+                    node._originalIndex = index;
+                    nodeArray.Add(node);
+                }
                 nodeViewer.FitContentToControl();
                 TaskRunner.startAsyncWorkerWithTask(
                     "Drill All Nodes (Async)...",
@@ -835,7 +840,12 @@ namespace CNC_Drill_Controller1
             if (Nodes.SelectedIndices.Count > 0)
             {
                 var nodeArray = new List<DrillNode>();
-                foreach (int index in Nodes.SelectedIndices) nodeArray.Add(Nodes.Items[index] as DrillNode);
+                foreach (int index in Nodes.SelectedIndices)
+                {
+                    var node = (Nodes.Items[index] as DrillNode);
+                    node._originalIndex = index;
+                    nodeArray.Add(node);
+                }
                 nodeViewer.FitContentToControl();
                 TaskRunner.startAsyncWorkerWithTask(
                     "Drill Selected Nodes (Async)...",

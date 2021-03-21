@@ -311,7 +311,7 @@ namespace CNC_Drill_Controller1
                             if (nodes[i].status != DrillNode.DrillNodeStatus.Drilled)
                             {
 
-                                UpdateNodes(i, DrillNode.DrillNodeStatus.Next);
+                                UpdateNodes(nodes[i]._originalIndex, DrillNode.DrillNodeStatus.Next);
 
                                 if ((nodes[i].location.X <= GlobalProperties.X_Length) && (nodes[i].location.Y <= GlobalProperties.Y_Length))
                                 {
@@ -332,7 +332,7 @@ namespace CNC_Drill_Controller1
                                         success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
                                     }
 
-                                    UpdateNodes(i, DrillNode.DrillNodeStatus.Drilled);
+                                    UpdateNodes(nodes[i]._originalIndex, DrillNode.DrillNodeStatus.Drilled);
                                 } else
                                 {
                                     ExtLog.AddLine($"Skipping Node [{(i + 1)}/{nodes.Count}]: {nodes[i]} -> Out Of Range");
