@@ -24,6 +24,7 @@ namespace CNC_Drill_Controller1
         private char[] trimChars = { ' ' };
         private RawUSBForm RawUsbForm = new RawUSBForm {Visible = false};
         private TaskDialog taskDialog = new TaskDialog();
+        private bool globalCtrl = false;
 
         #endregion
 
@@ -500,6 +501,7 @@ namespace CNC_Drill_Controller1
 
         private void OnSelect(List<IViewerElements> selection)
         {
+            if (!globalCtrl) Nodes.SelectedIndices.Clear();
             for (var i = 0; i < Nodes.Items.Count; ++i)
             {
                 if (selection.Exists( (val) => { return val.ID == i; } )) Nodes.SelectedIndices.Add(i);
@@ -1022,7 +1024,14 @@ namespace CNC_Drill_Controller1
             RebuildListBoxAndViewerFromNodes();
         }
 
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey) globalCtrl = true;
+        }
 
-
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey) globalCtrl = false;
+        }
     }
 }

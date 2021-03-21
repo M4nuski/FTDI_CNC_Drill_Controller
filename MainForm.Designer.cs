@@ -773,7 +773,7 @@
             this.moveToToolStripMenuItem,
             this.toolStripMenuItemAdd});
             this.ViewContextMenu.Name = "ViewContextMenu";
-            this.ViewContextMenu.Size = new System.Drawing.Size(196, 114);
+            this.ViewContextMenu.Size = new System.Drawing.Size(196, 92);
             // 
             // ViewSetXYContext
             // 
@@ -1206,12 +1206,15 @@
             this.Controls.Add(this.bevel1);
             this.Controls.Add(this.SnapViewBox);
             this.DoubleBuffered = true;
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.NodesContextMenu.ResumeLayout(false);
