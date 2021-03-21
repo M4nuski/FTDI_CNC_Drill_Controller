@@ -93,6 +93,7 @@
             this.ViewSetXYContext = new System.Windows.Forms.ToolStripMenuItem();
             this.ViewSetDRGOrigin = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.SnapSizeTextBox = new System.Windows.Forms.TextBox();
             this.SnapViewBox = new System.Windows.Forms.CheckBox();
             this.SetAllButton = new System.Windows.Forms.Button();
@@ -123,7 +124,6 @@
             this.AsyncStartFindXLengthButton = new System.Windows.Forms.Button();
             this.ClearNodesButton = new System.Windows.Forms.Button();
             this.AddNodeButton = new System.Windows.Forms.Button();
-            this.toolStripMenuItemAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -428,14 +428,14 @@
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(156, 21);
             this.loadFileButton.TabIndex = 15;
-            this.loadFileButton.Text = "Load VDX/SVG File";
+            this.loadFileButton.Text = "Load VDX/SVG/TXT File";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.LoadFileButton_Click);
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "All Supported Types|*.vdx;*.svg|MS Visio Files|*.vdx|Scalable Vertor Graphic|*.sv" +
-    "g";
+            this.openFileDialog1.Filter = "All Supported Types|*.vdx;*.svg;*.txt|MS Visio Files|*.vdx|Scalable Vertor Graphi" +
+    "c|*.svg|Gerber drill.txt|*.txt";
             // 
             // XScaleTextBox
             // 
@@ -730,7 +730,7 @@
             this.OffsetOriginBtton.Name = "OffsetOriginBtton";
             this.OffsetOriginBtton.Size = new System.Drawing.Size(139, 21);
             this.OffsetOriginBtton.TabIndex = 52;
-            this.OffsetOriginBtton.Text = "Offset Drawing Origin by:";
+            this.OffsetOriginBtton.Text = "Offset Drawing by:";
             this.OffsetOriginBtton.UseVisualStyleBackColor = true;
             this.OffsetOriginBtton.Click += new System.EventHandler(this.OffsetOriginBtton_Click);
             // 
@@ -795,6 +795,13 @@
             this.moveToToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.moveToToolStripMenuItem.Text = "Move To";
             this.moveToToolStripMenuItem.Click += new System.EventHandler(this.moveToToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItemAdd
+            // 
+            this.toolStripMenuItemAdd.Name = "toolStripMenuItemAdd";
+            this.toolStripMenuItemAdd.Size = new System.Drawing.Size(195, 22);
+            this.toolStripMenuItemAdd.Text = "Add Nodes at Location";
+            this.toolStripMenuItemAdd.Click += new System.EventHandler(this.toolStripMenuItemAdd_Click);
             // 
             // SnapSizeTextBox
             // 
@@ -944,7 +951,6 @@
             // 
             // AbortMoveButton
             // 
-            this.AbortMoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
             this.AbortMoveButton.Location = new System.Drawing.Point(151, 232);
@@ -1127,13 +1133,6 @@
             this.AddNodeButton.UseVisualStyleBackColor = true;
             this.AddNodeButton.Click += new System.EventHandler(this.AddNodeButton_Click);
             // 
-            // toolStripMenuItemAdd
-            // 
-            this.toolStripMenuItemAdd.Name = "toolStripMenuItemAdd";
-            this.toolStripMenuItemAdd.Size = new System.Drawing.Size(195, 22);
-            this.toolStripMenuItemAdd.Text = "Add Nodes at Location";
-            this.toolStripMenuItemAdd.Click += new System.EventHandler(this.toolStripMenuItemAdd_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1208,6 +1207,7 @@
             this.DoubleBuffered = true;
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MinimumSize = new System.Drawing.Size(0, 741);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";

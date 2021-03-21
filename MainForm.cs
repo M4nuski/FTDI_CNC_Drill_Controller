@@ -182,12 +182,12 @@ namespace CNC_Drill_Controller1
 
         private void showBox()
         {
-            Nodes.Show();
+         //   Nodes.Show();
         }
 
         private void hideBox()
         {
-            Nodes.Hide();
+         //   Nodes.Hide();
         }
         public void OnUpdateNode(int nodeIndex, DrillNode.DrillNodeStatus newStatus)
         {
@@ -521,6 +521,7 @@ namespace CNC_Drill_Controller1
                         var loader = (INodeLoader) null;
                         if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".VDX")) loader = new VDXLoader();
                         else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".SVG")) loader = new SVGLoader();
+                        else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".TXT")) loader = new GerberTXTLoader();
                         else ExtLog.AddLine("File Type not supported.");
 
                         if (loader != null)
@@ -540,15 +541,14 @@ namespace CNC_Drill_Controller1
                                 var leftmost = loader.PageWidth;
                                 var topmost = loader.PageHeight;
 
-                                for (var i = 0; i < Nodes.Items.Count; i++)
+                                foreach (DrillNode node in Nodes.Items)
                                 {
-                                    var node = Nodes.Items[i] as DrillNode;
                                     if (node.location.X < leftmost) leftmost = node.location.X;
                                     if (node.location.Y < topmost) topmost = node.location.Y;
                                 }
 
-                                XoriginTextbox.Text = (leftmost - dresult.origin_x).ToString("F4");
-                                YoriginTextbox.Text = (topmost - dresult.origin_y).ToString("F4");
+                                XoriginTextbox.Text = (-leftmost + dresult.origin_x).ToString("F4");
+                                YoriginTextbox.Text = (-topmost + dresult.origin_y).ToString("F4");
                                 OffsetOriginBtton_Click(sender, e);
                             }
 
@@ -649,11 +649,13 @@ namespace CNC_Drill_Controller1
 
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
-            var origOffset = new SizeF(TextConverter.SafeTextToFloat(XoriginTextbox.Text), TextConverter.SafeTextToFloat(YoriginTextbox.Text));
-            for (var i = 0; i < Nodes.Items.Count; i++)
+            var offsetX = TextConverter.SafeTextToFloat(XoriginTextbox.Text);
+            var offsetY = TextConverter.SafeTextToFloat(YoriginTextbox.Text);
+
+            foreach (DrillNode node in Nodes.Items)
             {
-                var node = Nodes.Items[i] as DrillNode;
-                node.location = new PointF(node.location.X - origOffset.Width, node.location.Y - origOffset.Height);
+                node.location.X += offsetX;
+                node.location.Y += offsetY;
             }
             RebuildListBoxAndViewerFromNodes();
             XoriginTextbox.Text = "0.000";

@@ -22,6 +22,8 @@ namespace CNC_Drill_Controller1
             public bool reset_origin;
             public float origin_x;
             public float origin_y;
+            public int gerber_intLen;
+            public int gerber_fractLen;
         }
 
         public DrawingConfigStruct DrawingConfig = new DrawingConfigStruct //output struct and default;
@@ -31,7 +33,9 @@ namespace CNC_Drill_Controller1
             vdx_vertical_flip = true,
             reset_origin = true, 
             origin_x = 0.200f,
-            origin_y = 0.200f 
+            origin_y = 0.200f,
+            gerber_intLen = 2,
+            gerber_fractLen = 4
         }; 
         
         public DrawingTypeDialog()
@@ -52,6 +56,9 @@ namespace CNC_Drill_Controller1
             resetorigin.Checked = DrawingConfig.reset_origin;
             xreset.Text = DrawingConfig.origin_x.ToString("F3");
             yreset.Text = DrawingConfig.origin_y.ToString("F3");
+
+            gerberInt.Value = DrawingConfig.gerber_intLen;
+            gerberFract.Value = DrawingConfig.gerber_fractLen;
 
             return base.ShowDialog();
         }
@@ -78,9 +85,12 @@ namespace CNC_Drill_Controller1
                     DrawingConfig.vdx_vertical_flip = flipvdx.Checked;
 
                     DrawingConfig.reset_origin = resetorigin.Checked;
+
                     DrawingConfig.origin_x = TextConverter.SafeTextToFloat(xreset.Text, 0.200f);
                     DrawingConfig.origin_y = TextConverter.SafeTextToFloat(yreset.Text, 0.200f);
 
+                    DrawingConfig.gerber_intLen = (int)gerberInt.Value; 
+                    DrawingConfig.gerber_fractLen = (int)gerberFract.Value;
                 }
                 DialogResult = btn.DialogResult;                
             }

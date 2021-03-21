@@ -81,9 +81,9 @@ namespace CNC_Drill_Controller1
 
         public void Load(string Filename, DrawingTypeDialog.DrawingConfigStruct DrawingConfig)
         {
-            PageWidth = 11.0f;
-            PageHeight = 11.0f;
-            DrillNodes = new List<DrillNode>();
+           // PageWidth = 11.0f;
+           // PageHeight = 11.0f;
+           // DrillNodes = new List<DrillNode>();
 
             ReadNodes(Filename);
 

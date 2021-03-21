@@ -23,7 +23,7 @@ namespace CNC_Drill_Controller1
         {
             var svgReader = SvgDocument.Open(filename);
 
-            PageHeight = svgReader.Width.Value;
+            PageWidth = svgReader.Width.Value;
             PageHeight = svgReader.Height.Value;
 
             var circlesEnum = svgReader.Children.FindSvgElementsOf<SvgCircle>();
