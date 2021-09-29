@@ -218,7 +218,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>:: echo "D:\Prog\Visual Studio 2012\Solutions\AWSTests\S3_Packager\bin\Release\S3_Packager.exe" "$(ProjectName)" "$(TargetDir)"
-xcopy /Y "$(TargetPath)" "\\OPTIPLEX\Downloads\CNCv2\$(TargetFileName)"</PostBuildEvent>
+::xcopy /Y "$(TargetPath)" "\\OPTIPLEX\Downloads\CNCv2\$(TargetFileName)"
+::xcopy /Y "$(TargetPath)" "\\OPTIPLEX\Prog\VisualStudio\FTDI USB Controller\CNC_Drill_Controller1\Bin\Debug"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

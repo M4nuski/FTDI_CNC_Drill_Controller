@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace CNC_Drill_Controller1
@@ -13,7 +14,19 @@ namespace CNC_Drill_Controller1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+                //throw new Exception("message dans l'exception");
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                var f =  File.CreateText("error.txt");
+                f.WriteLine(ex.Message);
+                f.WriteLine(ex.StackTrace);
+                f.Flush();
+                f.Close();
+            }
         }
     }
 }
