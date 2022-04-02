@@ -54,8 +54,8 @@ namespace CNC_Drill_Controller1
             flipvdx.Checked = DrawingConfig.vdx_vertical_flip;
 
             resetorigin.Checked = DrawingConfig.reset_origin;
-            xreset.Text = DrawingConfig.origin_x.ToString("F3");
-            yreset.Text = DrawingConfig.origin_y.ToString("F3");
+            xreset.Text = DrawingConfig.origin_x.ToString("F3", GlobalProperties.culture);
+            yreset.Text = DrawingConfig.origin_y.ToString("F3", GlobalProperties.culture);
 
             gerberInt.Value = DrawingConfig.gerber_intLen;
             gerberFract.Value = DrawingConfig.gerber_fractLen;

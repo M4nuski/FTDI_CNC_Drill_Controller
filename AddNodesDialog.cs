@@ -37,8 +37,8 @@ namespace CNC_Drill_Controller1
 
         public DialogResult ShowDialog(float x, float y)
         {
-            box_x.Text = x.ToString("F3");
-            box_y.Text = y.ToString("F3");
+            box_x.Text = x.ToString("F3", GlobalProperties.culture);
+            box_y.Text = y.ToString("F3", GlobalProperties.culture);
 
             return ShowDialog();
         }

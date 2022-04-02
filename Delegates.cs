@@ -7,11 +7,13 @@
     // void OnThing(interface) (method that request Invoke(ThingCallback))
 
 
-    delegate void ProgressDelegate(int Progress, bool Done);
-    delegate void CleanupDelegate(bool Success);
-    delegate void UpdateNodeDelegate(int nodeIndex, DrillNode.DrillNodeStatus newStatus);
-    delegate void AddLineDelegate(string text);
-    delegate void MoveDelegate(float X, float Y);
-    delegate void VoidDelgetate();
+    public delegate void ProgressDelegate(int Progress, bool Done);
+    public delegate void CleanupDelegate(bool Success);
+    public delegate void UpdateNodeDelegate(int nodeIndex, DrillNode.DrillNodeStatus newStatus);
+    public delegate void AddLineDelegate(string text);
+    public delegate bool MoveDelegate(float X, float Y);
+    public delegate bool MoveByStepDelegate(int X, int Y);
+    public delegate void VoidDelgetate();
+    public delegate bool BoolVoidDelgetate();
 
 }

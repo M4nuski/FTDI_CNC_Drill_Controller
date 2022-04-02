@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace CNC_Drill_Controller1
 {
-    interface IUSB_Controller
+    public interface IUSB_Controller
     {
         //Useful internals exposure
         byte[] InputBuffer { get; set; }

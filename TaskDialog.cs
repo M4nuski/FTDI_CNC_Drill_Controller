@@ -28,6 +28,12 @@ namespace CNC_Drill_Controller1
             progressBar1.Value = progress;
         }
 
+        public void update(int progress, string state)
+        {
+            progressBar1.Value = progress;
+            StateLabel.Text = state;
+        }
+
         private void undone()
         {
             progressBar1.Value = 0;
@@ -49,11 +55,13 @@ namespace CNC_Drill_Controller1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            StateLabel.Text = "";
             DialogResult = DialogResult.Abort;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            StateLabel.Text = "";
             DialogResult = DialogResult.OK;
         }
 

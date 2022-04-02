@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace CNC_Drill_Controller1
 {
     static class GlobalProperties
     {
+        public static CultureInfo culture = CultureInfo.InvariantCulture;
+
         //Hardware config 
         public static int numSeekMin = 50; // about an inch
         public static int fastSeekSteps = -5;
@@ -70,7 +73,7 @@ namespace CNC_Drill_Controller1
         //UI refresh throttler
         public static int USB_Refresh_Period = 100;
         public static int GlobalProperties_Refresh_Period = 10000;
-        public static int Label_Refresh_Period = 100;
+        public static int Label_Refresh_Period = 50;
 
         //USB state
         public static int X_Dir = 0;

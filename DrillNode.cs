@@ -18,7 +18,7 @@ namespace CNC_Drill_Controller1
 
         public override string ToString()
         {
-            return string.Format("{0,6:F3} {1,6:F3}", location.X, location.Y);
+            return string.Format(GlobalProperties.culture, "{0,6:F3} {1,6:F3}", location.X, location.Y);
         }
 
         public PointF location;
@@ -160,7 +160,7 @@ namespace CNC_Drill_Controller1
                     {
                         newNodes.ForEach(ResetNodeStatus_Predicate);
 
-                        ExtLog.AddLine("Path of " + newPathLength.ToString("F4") + " / " + oldPathLength.ToString("F4"));
+                        ExtLog.AddLine("Path of " + newPathLength.ToString("F4", GlobalProperties.culture) + " / " + oldPathLength.ToString("F4", GlobalProperties.culture));
                         return newNodes;
                     }
                     ExtLog.AddLine("Optimize Failed (nodes count mismatch)");
@@ -208,7 +208,7 @@ namespace CNC_Drill_Controller1
                     if (Y_Length < oldPathLength)
                     {
                         outputNodes.ForEach(ResetNodeStatus_Predicate);
-                        ExtLog.AddLine("Path of " + Y_Length.ToString("F4") + " / " + oldPathLength.ToString("F4"));
+                        ExtLog.AddLine("Path of " + Y_Length.ToString("F4", GlobalProperties.culture) + " / " + oldPathLength.ToString("F4", GlobalProperties.culture));
                         return outputNodes;
                     }
                     ExtLog.AddLine("Optimize Failed (new path length is longer)");
@@ -257,7 +257,7 @@ namespace CNC_Drill_Controller1
                     if (X_Length < oldPathLength)
                     {
                         outputNodes.ForEach(ResetNodeStatus_Predicate);
-                        ExtLog.AddLine("Path of " + X_Length.ToString("F4") + " / " + oldPathLength.ToString("F4"));
+                        ExtLog.AddLine("Path of " + X_Length.ToString("F4", GlobalProperties.culture) + " / " + oldPathLength.ToString("F4", GlobalProperties.culture));
                         return outputNodes;
                     }
                     ExtLog.AddLine("Optimize Failed (new path length is longer)");

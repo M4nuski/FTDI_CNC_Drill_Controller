@@ -4,16 +4,21 @@ using System.Deployment.Application;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
+using System.Globalization;
 
-[assembly: AssemblyVersion("2.1.*")]
+[assembly: AssemblyVersion("2.2.*")]
 namespace CNC_Drill_Controller1
-{
+
+
+{    
+
     public partial class MainForm : Form
     {
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
-        private IUSB_Controller USB = new USB_Control();
+        public IUSB_Controller USB = new USB_Control();
         private DateTime lastUIupdate;
 
         #endregion
@@ -79,7 +84,8 @@ namespace CNC_Drill_Controller1
             {
                 Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
-
+            //Thread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
+            //Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator = ".";
             #region View initialization
 
             cursorCrossHair = new CrossHair(0, 0, Color.Blue);
@@ -96,10 +102,10 @@ namespace CNC_Drill_Controller1
             #region UI Initialization
 
             AxisOffsetComboBox.SelectedIndex = 0;
-            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("F3");
-            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("F3");
-            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F3");
-            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F3");
+            XScaleTextBox.Text = GlobalProperties.X_Scale.ToString("F3", GlobalProperties.culture);
+            YScaleTextBox.Text = GlobalProperties.Y_Scale.ToString("F3", GlobalProperties.culture);
+            XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F3", GlobalProperties.culture);
+            YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F3", GlobalProperties.culture);
 
             #endregion
 
@@ -133,7 +139,7 @@ namespace CNC_Drill_Controller1
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
 
-            TaskRunner = new TaskContainer(this, USB, taskDialog) { UpdateNodes = OnUpdateNode };
+            TaskRunner = new TaskContainer(this, taskDialog) { UpdateNodes = OnUpdateNode };
 
             #endregion
 
@@ -326,7 +332,7 @@ namespace CNC_Drill_Controller1
         {
 
             var logfile = (File.Exists(GlobalProperties.Logfile_Filename)) ? File.AppendText(GlobalProperties.Logfile_Filename) : File.CreateText(GlobalProperties.Logfile_Filename);
-            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F") + "]");
+            logfile.WriteLine("Saving Log [" + DateTime.Now.ToString("F", GlobalProperties.culture) + "]");
             logfile.Write(logger1.Text);
             logfile.WriteLine("");
             logfile.Close();
@@ -352,7 +358,7 @@ namespace CNC_Drill_Controller1
             return snapLocation;
         }
 
-        private void onMove(float X, float Y)
+        private bool onMove(float X, float Y)
         {
             moveTarget.UpdatePosition(X, Y);
             if (InvokeRequired)
@@ -362,6 +368,7 @@ namespace CNC_Drill_Controller1
             {
                 Nodes.Hide();
             }
+            return true;
         }
 
         private void OnMoveCompleted()
@@ -437,13 +444,13 @@ namespace CNC_Drill_Controller1
             YStatusLabel.Text = USB.Y_Rel_Location.ToString("D5");
 
             var curLoc = USB.CurrentLocation();
-            Xlabel.Text = string.Format("X: {0,8:F3}", curLoc.X);
-            Ylabel.Text = string.Format("Y: {0,8:F3}", curLoc.Y);
+            Xlabel.Text = string.Format(GlobalProperties.culture, "X: {0,8:F3}", curLoc.X);
+            Ylabel.Text = string.Format(GlobalProperties.culture, "Y: {0,8:F3}", curLoc.Y);
 
             var snapLocation = GetViewCursorLocation();
             cursorCrossHair.UpdatePosition(snapLocation);
-            ViewXLabel.Text = snapLocation.X.ToString("F3");
-            ViewYLabel.Text = snapLocation.Y.ToString("F3");
+            ViewXLabel.Text = snapLocation.X.ToString("F3", GlobalProperties.culture);
+            ViewYLabel.Text = snapLocation.Y.ToString("F3", GlobalProperties.culture);
             ViewZoomLabel.Text = (int)Math.Round(nodeViewer.ZoomLevel * 100) + "%";
 
             drillCrossHair.UpdatePosition(curLoc.X, curLoc.Y);
@@ -547,14 +554,14 @@ namespace CNC_Drill_Controller1
                                     if (node.location.Y < topmost) topmost = node.location.Y;
                                 }
 
-                                XoriginTextbox.Text = (-leftmost + dresult.origin_x).ToString("F4");
-                                YoriginTextbox.Text = (-topmost + dresult.origin_y).ToString("F4");
+                                XoriginTextbox.Text = (-leftmost + dresult.origin_x).ToString("F4", GlobalProperties.culture);
+                                YoriginTextbox.Text = (-topmost + dresult.origin_y).ToString("F4", GlobalProperties.culture);
                                 OffsetOriginBtton_Click(sender, e);
                             }
 
                             ExtLog.AddLine(Nodes.Items.Count.ToString("D") + " Nodes loaded.");
-                            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1"));
-                            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1"));
+                            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1", GlobalProperties.culture));
+                            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1", GlobalProperties.culture));
 
                             drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
                             RebuildListBoxAndViewerFromNodes();
@@ -573,7 +580,7 @@ namespace CNC_Drill_Controller1
             {
                 var mx = TextConverter.SafeTextToFloat(axisdata[0].Trim(trimChars));
                 var my = TextConverter.SafeTextToFloat(axisdata[1].Trim(trimChars));
-                logger1.AddLine("Moving to: " + mx.ToString("F3") + ", " + my.ToString("F3"));
+                logger1.AddLine("Moving to: " + mx.ToString("F3", GlobalProperties.culture) + ", " + my.ToString("F3", GlobalProperties.culture));
                 USB.MoveToPosition(mx, my);
             }
         }
@@ -699,15 +706,15 @@ namespace CNC_Drill_Controller1
         private void ViewSetXYContext_Click(object sender, EventArgs e)
         {
             var newLocation = GetViewCursorLocation();
-            XCurrentPosTextBox.Text = newLocation.X.ToString("F3");
+            XCurrentPosTextBox.Text = newLocation.X.ToString("F3", GlobalProperties.culture);
             setXButton_Click(sender, e);
-            YCurrentPosTextBox.Text = newLocation.Y.ToString("F3");
+            YCurrentPosTextBox.Text = newLocation.Y.ToString("F3", GlobalProperties.culture);
             SetYButton_Click(sender, e);
         }
         private void moveToToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var targetLocation = GetViewCursorLocation();
-            logger1.AddLine("Moving to: " + targetLocation.X.ToString("F3") + ", " + targetLocation.Y.ToString("F3"));
+            logger1.AddLine("Moving to: " + targetLocation.X.ToString("F3", GlobalProperties.culture) + ", " + targetLocation.Y.ToString("F3", GlobalProperties.culture));
             USB.MoveToPosition(targetLocation.X, targetLocation.Y);
         }
         #endregion
@@ -897,9 +904,9 @@ namespace CNC_Drill_Controller1
                 var loc = USB.CurrentLocation();
                 ExtLog.AddLine($"Lengths found as X={loc.X:F3} Y={loc.Y:F3}");
                 GlobalProperties.X_Length = loc.X;
-                XLengthTextBox.Text = loc.X.ToString("F3");
+                XLengthTextBox.Text = loc.X.ToString("F3", GlobalProperties.culture);
                 GlobalProperties.Y_Length = loc.Y;
-                YLengthTextBox.Text = loc.Y.ToString("F3");
+                YLengthTextBox.Text = loc.Y.ToString("F3", GlobalProperties.culture);
 
             }
             else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
@@ -912,7 +919,7 @@ namespace CNC_Drill_Controller1
                 var loc = USB.CurrentLocation();
                 ExtLog.AddLine($"Length found as X={loc.X:F3}");
                 GlobalProperties.X_Length = loc.X;
-                XLengthTextBox.Text = loc.X.ToString("F3");
+                XLengthTextBox.Text = loc.X.ToString("F3", GlobalProperties.culture);
             }
             else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
         }
@@ -925,7 +932,7 @@ namespace CNC_Drill_Controller1
                 var loc = USB.CurrentLocation();
                 ExtLog.AddLine($"Length found as Y={loc.Y:F3}");
                 GlobalProperties.Y_Length = loc.Y;
-                YLengthTextBox.Text = loc.Y.ToString("F3");
+                YLengthTextBox.Text = loc.Y.ToString("F3", GlobalProperties.culture);
             }
             else ExtLog.AddLine("Length not found (out of reach / farther than 10 inch from initial location)");
         }
