@@ -12,8 +12,8 @@ namespace CNC_Drill_Controller1
         DateTime LastUpdate { get; set; }
 
         //Callback
-        ProgressDelegate OnProgress { get; set; }
-        MoveDelegate OnMove { get; set; }
+        Void_IntBoolDelegate OnProgress { get; set; }
+        Bool_FloatFloatDelegate OnMove { get; set; }
         Action OnMoveCompleted { get; set; }
 
         //Input from CNC

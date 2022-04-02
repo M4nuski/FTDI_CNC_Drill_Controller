@@ -41,8 +41,8 @@ namespace CNC_Drill_Controller1
         public int X_Rel_Location { get { return X_Abs_Location - X_Delta; } }
         public int Y_Rel_Location { get { return Y_Abs_Location - Y_Delta; } }
         
-        public ProgressDelegate OnProgress { get; set; }
-        public MoveDelegate OnMove { get; set; }
+        public Void_IntBoolDelegate OnProgress { get; set; }
+        public Bool_FloatFloatDelegate OnMove { get; set; }
         public Action OnMoveCompleted { get; set; }
             
         private void UpdateProgress(int Progress, bool Done)

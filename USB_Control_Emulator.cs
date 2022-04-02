@@ -41,8 +41,8 @@ namespace CNC_Drill_Controller1
 
         private int drilldelay;
 
-        public ProgressDelegate OnProgress { get; set; }
-        public MoveDelegate OnMove { get; set; }
+        public Void_IntBoolDelegate OnProgress { get; set; }
+        public Bool_FloatFloatDelegate OnMove { get; set; }
         public Action OnMoveCompleted { get; set; }
 
         public USB_Control_Emulator() 

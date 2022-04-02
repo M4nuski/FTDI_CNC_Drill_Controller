@@ -13,7 +13,7 @@ namespace CNC_Drill_Controller1
 
         //for BackgroundWorker
         private DoWorkEventHandler lastTask;
-        private CleanupDelegate CleanupCallback;
+        private Void_BoolDelegate CleanupCallback;
 
         private MainForm HostControl;
         private TaskDialog taskDialog;
@@ -67,7 +67,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)HostControl.USB.Check_Limit_Switches);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)HostControl.USB.Check_Limit_Switches);
             }
             return HostControl.USB.Check_Limit_Switches();
         }
@@ -76,7 +76,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_IsOpen);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_IsOpen);
             }
             return HostControl.USB.IsOpen;
         }
@@ -85,7 +85,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                HostControl.Invoke((CleanupDelegate)USB_Inhibit_LimitSwitches_Warning, new object[] { val });
+                HostControl.Invoke((Void_BoolDelegate)USB_Inhibit_LimitSwitches_Warning, new object[] { val });
                 return;
             }
             HostControl.USB.Inhibit_LimitSwitches_Warning = val;
@@ -94,7 +94,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                HostControl.Invoke((VoidDelgetate)USB_CancelMove);
+                HostControl.Invoke((Void_VoidDelgetate)USB_CancelMove);
                 return;
             }
             HostControl.USB.CancelMove();
@@ -104,7 +104,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_TopSwitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_TopSwitch);
             }
             return HostControl.USB.TopSwitch;
         }
@@ -112,7 +112,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_BottomSwitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_BottomSwitch);
             }
             return HostControl.USB.BottomSwitch;
         }
@@ -121,7 +121,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((MoveDelegate)HostControl.USB.MoveToPosition, new object[] { X, Y });
+                return (bool)HostControl.Invoke((Bool_FloatFloatDelegate)HostControl.USB.MoveToPosition, new object[] { X, Y });
             }
             return HostControl.USB.MoveToPosition(X, Y);
         }
@@ -129,7 +129,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_MinXswitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_MinXswitch);
             }
             return HostControl.USB.MinXswitch;
         }
@@ -137,7 +137,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_MinYswitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_MinYswitch);
             }
             return HostControl.USB.MinYswitch;
         }
@@ -145,7 +145,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_MaxXswitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_MaxXswitch);
             }
             return HostControl.USB.MaxXswitch;
         }
@@ -153,7 +153,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((BoolVoidDelgetate)USB_MaxYswitch);
+                return (bool)HostControl.Invoke((Bool_VoidDelgetate)USB_MaxYswitch);
             }
             return HostControl.USB.MaxYswitch;
         }
@@ -161,7 +161,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                HostControl.Invoke((VoidDelgetate)USB_Transfer);
+                HostControl.Invoke((Void_VoidDelgetate)USB_Transfer);
                 return;
             }
             HostControl.USB.Transfer();
@@ -170,7 +170,7 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                return (bool)HostControl.Invoke((MoveByStepDelegate)HostControl.USB.MoveByStep, new object[] { byX, byY });
+                return (bool)HostControl.Invoke((Bool_IntIntDelegate)HostControl.USB.MoveByStep, new object[] { byX, byY });
             }
             return HostControl.USB.MoveByStep(byX, byY);
         }
@@ -178,14 +178,14 @@ namespace CNC_Drill_Controller1
         {
             if (HostControl.InvokeRequired)
             {
-                HostControl.Invoke((CleanupDelegate)USB_Cycle_Drill, new object[] { val });
+                HostControl.Invoke((Void_BoolDelegate)USB_Cycle_Drill, new object[] { val });
                 return;
             }
             HostControl.USB.Cycle_Drill = val;
         }
         #endregion
 
-        public void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, CleanupDelegate asyncCleanup, object argument)
+        public void startAsyncWorkerWithTask(string desc, DoWorkEventHandler asyncWork, Void_BoolDelegate asyncCleanup, object argument)
         {
             if (!asyncWorker.IsBusy)
             {

@@ -12,7 +12,7 @@ namespace CNC_Drill_Controller1
             {
                 if (Logger.InvokeRequired)
                 {
-                    Logger.Invoke((AddLineDelegate) AddLine, new object[] {Text});
+                    Logger.Invoke((Void_StringDelegate) AddLine, new object[] {Text});
                 }
                 else
                 {

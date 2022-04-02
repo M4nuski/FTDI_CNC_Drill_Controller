@@ -52,10 +52,10 @@ namespace CNC_Drill_Controller1
         private TaskContainer TaskRunner;
 
         //for UI
-        private ProgressDelegate ProgressCallback;
+        private Void_IntBoolDelegate ProgressCallback;
         private UpdateNodeDelegate UpdateNodeCallback;
-        private VoidDelgetate HideBox;
-        private VoidDelgetate ShowBox;
+        private Void_VoidDelgetate HideBox;
+        private Void_VoidDelgetate ShowBox;
 
         #endregion
 
