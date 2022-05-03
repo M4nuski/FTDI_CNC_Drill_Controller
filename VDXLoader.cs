@@ -218,7 +218,7 @@ namespace CNC_Drill_Controller1
         private static float SafeFloatParse(string s, float fallback)
         {
             float result;
-            return float.TryParse(s, out result) ? result : fallback;
+            return float.TryParse(s, System.Globalization.NumberStyles.Float, GlobalProperties.culture, out result) ? result : fallback;
         }
     }
 }
