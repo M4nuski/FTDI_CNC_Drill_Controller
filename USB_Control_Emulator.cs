@@ -87,7 +87,7 @@ namespace CNC_Drill_Controller1
 
             SignalGenerator.Serialize(ref obuf);
             InputBuffer = obuf;
-            Thread.Sleep(GlobalProperties.latency);
+            Thread.Sleep(1);// GlobalProperties.latency);
             LastUpdate = DateTime.Now;
 
             if (Cycle_Drill && !MotorActive && !Drill_Bottom_Stop_Enable)
@@ -111,7 +111,7 @@ namespace CNC_Drill_Controller1
             if (Drill_Bottom_Stop_Enable && (drilldelay == 5)) MotorActive = false;
 
             if (drilldelay == 0) MotorActive = false;
-            if (MotorActive && (drilldelay != 0)) ExtLog.AddLine(drilldelay + ", t:" + TopSwitch + ", b:" + BottomSwitch);
+         //   if (MotorActive && (drilldelay != 0)) ExtLog.AddLine(drilldelay + ", t:" + TopSwitch + ", b:" + BottomSwitch);
 
             var pos = CurrentLocation();
             MinXswitch = (pos.X < 0.0f);
