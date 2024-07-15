@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="SignalGenerator.cs" />
     <Compile Include="SVGLoader.cs" />
+    <Compile Include="SVGPathLoader.cs" />
     <Compile Include="TaskContainer.cs" />
     <Compile Include="TaskDialog.cs">
       <SubType>Form</SubType>

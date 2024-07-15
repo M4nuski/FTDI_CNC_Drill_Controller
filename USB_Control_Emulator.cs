@@ -26,6 +26,8 @@ namespace CNC_Drill_Controller1
         public bool Y_StepMotor_Driver_Enable { get; set; }
         public bool TQA_Driver_Enable { get; set; }
         public bool Cycle_Drill { get; set; }
+        private bool MotorActive = false;
+        public bool Drill_Bottom_Stop_Enable { get; set; }
 
         public bool Inhibit_Backlash_Compensation { get; set; }
         public bool Inhibit_LimitSwitches_Warning { get; set; }
@@ -88,19 +90,28 @@ namespace CNC_Drill_Controller1
             Thread.Sleep(GlobalProperties.latency);
             LastUpdate = DateTime.Now;
 
-            if (drilldelay > 0)
+            if (Cycle_Drill && !MotorActive && !Drill_Bottom_Stop_Enable)
             {
-                drilldelay--;
-            }
-            if (drilldelay == 0)
-            {
-                TopSwitch = true;
-            }
-            if (Cycle_Drill)
-            {
-                TopSwitch = false;
+                MotorActive = true;
                 drilldelay = 10;
             }
+
+            if (Cycle_Drill && !MotorActive && Drill_Bottom_Stop_Enable)
+            {
+                MotorActive = true;
+                if (!BottomSwitch) drilldelay = 10;
+            }
+
+            TopSwitch = ((drilldelay <= 2) || (drilldelay >= 8));
+            BottomSwitch = ((drilldelay <= 6) && (drilldelay >= 4));
+
+           
+
+            if (MotorActive) drilldelay--;
+            if (Drill_Bottom_Stop_Enable && (drilldelay == 5)) MotorActive = false;
+
+            if (drilldelay == 0) MotorActive = false;
+            if (MotorActive && (drilldelay != 0)) ExtLog.AddLine(drilldelay + ", t:" + TopSwitch + ", b:" + BottomSwitch);
 
             var pos = CurrentLocation();
             MinXswitch = (pos.X < 0.0f);
@@ -138,6 +149,7 @@ namespace CNC_Drill_Controller1
         {
             var d = SignalGenerator.SetBit(0, GlobalProperties.Drill_Cycle_Enable_Bit, Cycle_Drill);
             //d = SignalGenerator.SetBit(0, GlobalProperties.StepMotor_Throttle_Bit, Axis_Driver_Throttle);
+            d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Bottom_Stop_Bit, Drill_Bottom_Stop_Enable);
             return d;
         }
 

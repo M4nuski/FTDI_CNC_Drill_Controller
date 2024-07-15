@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Globalization;
 
-[assembly: AssemblyVersion("2.2.*")]
+[assembly: AssemblyVersion("3.0.*")]
 namespace CNC_Drill_Controller1
 
 
@@ -18,7 +18,7 @@ namespace CNC_Drill_Controller1
     {
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
-        public IUSB_Controller USB = new USB_Control();
+        public IUSB_Controller USB = new USB_Control_Emulator();// USB_Control();
         private DateTime lastUIupdate;
 
         #endregion
@@ -58,6 +58,9 @@ namespace CNC_Drill_Controller1
         private Void_VoidDelgetate ShowBox;
 
         #endregion
+
+        // for path plotter
+        private List<SVGPathLoader.seg> paths = new List<SVGPathLoader.seg>();
 
         #region Form Initialization
 
@@ -654,6 +657,29 @@ namespace CNC_Drill_Controller1
 
         }
 
+        private void RebuildListBoxAndViewerFromPaths(List<SVGPathLoader.seg> plist)
+        {
+            nodeViewer.Elements = new List<IViewerElements>
+            {
+                drawingPageBox,
+                CNCTableBox,
+                moveTarget,
+                drillCrossHair,
+                cursorCrossHair
+            };
+
+            for (var i = 0; i < plist.Count; i++)
+            {
+                for (var j = 0; j < plist[i].pstart.Count; ++j)
+                {
+                    nodeViewer.Elements.Add(new Line(plist[i].pstart[j].X, plist[i].pstart[j].Y, plist[i].pend[j].X, plist[i].pend[j].Y, Color.Black));
+                }
+            }
+
+            Nodes.DrawMode = DrawMode.OwnerDrawFixed;
+            Nodes.DrawMode = DrawMode.Normal;
+        }
+
         private void OffsetOriginBtton_Click(object sender, EventArgs e)
         {
             var offsetX = TextConverter.SafeTextToFloat(XoriginTextbox.Text);
@@ -826,6 +852,7 @@ namespace CNC_Drill_Controller1
         {
             if (Nodes.Items.Count > 0)
             {
+                USB.Drill_Bottom_Stop_Enable = false;
                 var nodeArray = new List<DrillNode>();
                 for (var index = 0; index < Nodes.Items.Count; ++index)
                 {
@@ -850,6 +877,7 @@ namespace CNC_Drill_Controller1
         {
             if (Nodes.SelectedIndices.Count > 0)
             {
+                USB.Drill_Bottom_Stop_Enable = false;
                 var nodeArray = new List<DrillNode>();
                 foreach (int index in Nodes.SelectedIndices)
                 {
@@ -1041,6 +1069,84 @@ namespace CNC_Drill_Controller1
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.ControlKey) globalCtrl = false;
+        }
+
+        private void button_loadPlot_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                var ldr = new SVGPathLoader();
+                paths = ldr.loadSVGPaths(openFileDialog1.FileName);
+
+                float minX = float.PositiveInfinity;
+                float minY = float.PositiveInfinity;
+                float maxX = float.NegativeInfinity;
+                float maxY = float.NegativeInfinity;
+
+                foreach (var p in paths) {
+                    foreach (var s in p.pstart)
+                    {
+                        if (minX > s.X) minX = s.X;
+                        if (maxX < s.X) maxX = s.X;
+                        if (minY > s.Y) minY = s.Y;
+                        if (maxY < s.Y) maxY = s.Y;
+                    }
+                    foreach (var s in p.pend)
+                    {
+                        if (minX > s.X) minX = s.X;
+                        if (maxX < s.X) maxX = s.X;
+                        if (minY > s.Y) minY = s.Y;
+                        if (maxY < s.Y) maxY = s.Y;
+                    }
+                }
+                ExtLog.AddLine($"minX: {minX}, maxX: {maxX}, minY: {minY}, maxY: {maxY}");
+
+                var scale = 1.0f;
+                if ((maxX - minX) > (maxY - minY))
+                {
+                    scale = 5.0f / (maxX - minX);
+                } else
+                {
+                    scale = 5.0f / (maxY - minY);
+                }
+
+                var Xoffset = 0.5f - (minX * scale);
+                var Yoffset = 0.5f - (minY * scale);
+
+                ExtLog.AddLine($"scale: {scale}, Xoffset: {Xoffset}, Yoffset: {Yoffset}");
+
+                for (var pi = 0; pi < paths.Count; ++pi)
+                {
+                    for (var si = 0; si < paths[pi].pstart.Count; ++si)
+                    {
+                        paths[pi].pstart[si] = new PointF(paths[pi].pstart[si].X * scale + Xoffset, paths[pi].pstart[si].Y * scale + Yoffset);
+                        paths[pi].pend[si] = new PointF(paths[pi].pend[si].X * scale + Xoffset, paths[pi].pend[si].Y * scale + Yoffset);
+                    }
+                }
+
+                RebuildListBoxAndViewerFromPaths(paths);
+            }
+        }
+
+        private void button_drawPlot_Click(object sender, EventArgs e)
+        {
+            if (paths.Count > 0)
+            {
+                USB.Drill_Bottom_Stop_Enable = true;
+             //   nodeViewer.FitContentToControl();
+                TaskRunner.startAsyncWorkerWithTask(
+                    "Plot all Paths (Async)...",
+                    TaskRunner.asyncWorkerDoWork_PlotPath,
+                    asyncWorkerDoWork_Drill_Cleanup,
+                    paths);
+            }
+            else ExtLog.AddLine("No Path to Plot");
+        }
+
+        private void StopAtBottomcheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            USB.Drill_Bottom_Stop_Enable = StopAtBottomcheckBox.Checked;
+            if (!CheckBoxInhibit) USB.Transfer();
         }
     }
 }

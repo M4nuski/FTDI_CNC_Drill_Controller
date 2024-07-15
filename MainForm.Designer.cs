@@ -124,6 +124,9 @@
             this.AsyncStartFindXLengthButton = new System.Windows.Forms.Button();
             this.ClearNodesButton = new System.Windows.Forms.Button();
             this.AddNodeButton = new System.Windows.Forms.Button();
+            this.button_loadPlot = new System.Windows.Forms.Button();
+            this.button_drawPlot = new System.Windows.Forms.Button();
+            this.StopAtBottomcheckBox = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -345,7 +348,7 @@
             // checkBoxD
             // 
             this.checkBoxD.AutoSize = true;
-            this.checkBoxD.Location = new System.Drawing.Point(15, 128);
+            this.checkBoxD.Location = new System.Drawing.Point(15, 124);
             this.checkBoxD.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxD.Name = "checkBoxD";
             this.checkBoxD.Size = new System.Drawing.Size(72, 17);
@@ -884,7 +887,7 @@
             this.IgnoreBacklashBox.Checked = true;
             this.IgnoreBacklashBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IgnoreBacklashBox.Enabled = false;
-            this.IgnoreBacklashBox.Location = new System.Drawing.Point(15, 150);
+            this.IgnoreBacklashBox.Location = new System.Drawing.Point(15, 143);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(103, 17);
             this.IgnoreBacklashBox.TabIndex = 62;
@@ -896,7 +899,7 @@
             // 
             this.checkBoxT.AutoSize = true;
             this.checkBoxT.Enabled = false;
-            this.checkBoxT.Location = new System.Drawing.Point(158, 484);
+            this.checkBoxT.Location = new System.Drawing.Point(170, 348);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(121, 17);
             this.checkBoxT.TabIndex = 63;
@@ -908,7 +911,7 @@
             // showRawCheckbox
             // 
             this.showRawCheckbox.AutoSize = true;
-            this.showRawCheckbox.Location = new System.Drawing.Point(15, 173);
+            this.showRawCheckbox.Location = new System.Drawing.Point(15, 178);
             this.showRawCheckbox.Name = "showRawCheckbox";
             this.showRawCheckbox.Size = new System.Drawing.Size(104, 17);
             this.showRawCheckbox.TabIndex = 64;
@@ -1133,11 +1136,46 @@
             this.AddNodeButton.UseVisualStyleBackColor = true;
             this.AddNodeButton.Click += new System.EventHandler(this.AddNodeButton_Click);
             // 
+            // button_loadPlot
+            // 
+            this.button_loadPlot.Location = new System.Drawing.Point(192, 290);
+            this.button_loadPlot.Name = "button_loadPlot";
+            this.button_loadPlot.Size = new System.Drawing.Size(75, 23);
+            this.button_loadPlot.TabIndex = 86;
+            this.button_loadPlot.Text = "Load Plot";
+            this.button_loadPlot.UseVisualStyleBackColor = true;
+            this.button_loadPlot.Click += new System.EventHandler(this.button_loadPlot_Click);
+            // 
+            // button_drawPlot
+            // 
+            this.button_drawPlot.Location = new System.Drawing.Point(192, 319);
+            this.button_drawPlot.Name = "button_drawPlot";
+            this.button_drawPlot.Size = new System.Drawing.Size(75, 23);
+            this.button_drawPlot.TabIndex = 87;
+            this.button_drawPlot.Text = "Draw Plot";
+            this.button_drawPlot.UseVisualStyleBackColor = true;
+            this.button_drawPlot.Click += new System.EventHandler(this.button_drawPlot_Click);
+            // 
+            // StopAtBottomcheckBox
+            // 
+            this.StopAtBottomcheckBox.AutoSize = true;
+            this.StopAtBottomcheckBox.Location = new System.Drawing.Point(15, 160);
+            this.StopAtBottomcheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.StopAtBottomcheckBox.Name = "StopAtBottomcheckBox";
+            this.StopAtBottomcheckBox.Size = new System.Drawing.Size(116, 17);
+            this.StopAtBottomcheckBox.TabIndex = 88;
+            this.StopAtBottomcheckBox.Text = "Drill Stop at Bottom";
+            this.StopAtBottomcheckBox.UseVisualStyleBackColor = true;
+            this.StopAtBottomcheckBox.CheckedChanged += new System.EventHandler(this.StopAtBottomcheckBox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.StopAtBottomcheckBox);
+            this.Controls.Add(this.button_drawPlot);
+            this.Controls.Add(this.button_loadPlot);
             this.Controls.Add(this.AddNodeButton);
             this.Controls.Add(this.ClearNodesButton);
             this.Controls.Add(this.SnapSizeTextBox);
@@ -1207,7 +1245,7 @@
             this.DoubleBuffered = true;
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(0, 741);
+            this.MinimumSize = new System.Drawing.Size(16, 741);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CNC Drill Machine Controller (Software Interface)";
@@ -1320,6 +1358,9 @@
         private System.Windows.Forms.Button ClearNodesButton;
         private System.Windows.Forms.Button AddNodeButton;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAdd;
+        private System.Windows.Forms.Button button_loadPlot;
+        private System.Windows.Forms.Button button_drawPlot;
+        private System.Windows.Forms.CheckBox StopAtBottomcheckBox;
     }
 }
 

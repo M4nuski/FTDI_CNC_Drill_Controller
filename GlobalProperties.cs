@@ -57,6 +57,7 @@ namespace CNC_Drill_Controller1
         //Outputs control bits of OutputByte2
         public static int Drill_Cycle_Enable_Bit = 0;
         public static int StepMotor_Throttle_Bit = 4;
+        public static int Drill_Bottom_Stop_Bit = 5;
 
         //UI settings
         public static string Logfile_Filename = "CNC_Drill_CTRL.log";

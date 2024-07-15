@@ -30,6 +30,8 @@ namespace CNC_Drill_Controller1
         public bool Y_StepMotor_Driver_Enable { get; set; }
         private bool TQA_Driver_Bit;
         public bool TQA_Driver_Enable { get; set; }
+        public bool Drill_Bottom_Stop_Enable { get; set; }
+
         public bool Cycle_Drill { get; set; }
 
         public int X_Abs_Location{ get; set; }
@@ -215,6 +217,8 @@ namespace CNC_Drill_Controller1
             var d = SignalGenerator.SetBit(0, GlobalProperties.Drill_Cycle_Enable_Bit, Cycle_Drill);
             d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Cycle_Enable_Bit, false);
             //d = SignalGenerator.SetBit(d, GlobalProperties.StepMotor_Throttle_Bit, Axis_Driver_Throttle);
+            d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Bottom_Stop_Bit, Drill_Bottom_Stop_Enable);
+
             return d;
         }
 

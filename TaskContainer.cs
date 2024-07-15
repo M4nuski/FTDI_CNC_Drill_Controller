@@ -277,12 +277,43 @@ namespace CNC_Drill_Controller1
             while (!USB_TopSwitch() && success)
             {
                 USB_Transfer();
-                success = !USB_IsOpen() || (numTries >= 0);
+                success = USB_IsOpen() && (numTries >= 0);
                 numTries--;
                 Thread.Sleep(TriesDelay);
             }
             return success;
         }
+
+
+        private bool Initiate_Drill_From_Bottom(int numTries, int TriesDelay)
+        {
+            var success = true;
+            USB_Cycle_Drill(true);
+
+            while (USB_BottomSwitch() && success)
+            {
+                USB_Transfer();
+                success = USB_IsOpen() && (numTries >= 0);
+                numTries--;
+                Thread.Sleep(TriesDelay);
+            }
+            return success;
+        }
+        private bool Wait_For_Drill_To_Bottom(int numTries, int TriesDelay)
+        {
+            var success = true;
+            USB_Cycle_Drill(false);
+
+            while (!USB_BottomSwitch() && success)
+            {
+                USB_Transfer();
+                success = USB_IsOpen() && (numTries >= 0);
+                numTries--;
+                Thread.Sleep(TriesDelay);
+            }
+            return success;
+        }
+
 
         private bool SeekXminSwitch(bool ExpectedInitialSwitchState, int byX, int byY, int TriesDelay)
         {
@@ -471,6 +502,7 @@ namespace CNC_Drill_Controller1
                                     {
                                         asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, new taskReport(true, "DrillList.Initiate_Drill_From_Top"));
                                         success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
+                                        if (!success) ExtLog.AddLine("Failed at DrillList.Initiate_Drill_From_Top");
                                     }
 
                                     //wait for drill to reach back top
@@ -478,6 +510,7 @@ namespace CNC_Drill_Controller1
                                     {
                                         asyncWorker.ReportProgress(100 * (i + 1) / nodes.Count, new taskReport(true, "DrillList.Wait_For_Drill_To_Top"));
                                         success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
+                                        if (!success) ExtLog.AddLine("Failed at DrillList.Wait_For_Drill_To_Top");
                                     }
 
                                     UpdateNodes(nodes[i]._originalIndex, DrillNode.DrillNodeStatus.Drilled);
@@ -504,6 +537,103 @@ namespace CNC_Drill_Controller1
             e.Result = success;
         }
 
+        private bool segInside(SVGPathLoader.seg segment, int index)
+        {
+            return ((segment.pstart[index].X <= GlobalProperties.X_Length) &&
+                    (segment.pstart[index].Y <= GlobalProperties.Y_Length) &&
+                    (segment.pend[index].X <= GlobalProperties.X_Length) &&
+                    (segment.pend[index].Y <= GlobalProperties.Y_Length) &&
+                    (segment.pstart[index].X >= 0.0f) &&
+                    (segment.pstart[index].Y >= 0.0f) &&
+                    (segment.pend[index].X >= 0.0f) &&
+                    (segment.pend[index].Y >= 0.0f));
 
+        }
+
+        public void asyncWorkerDoWork_PlotPath(object sender, DoWorkEventArgs e)
+        {
+            var segments = e.Argument as List<SVGPathLoader.seg> ?? new List<SVGPathLoader.seg>();
+            var success = segments.Count > 0;
+            var total = 0;
+            var boute = 0;
+            foreach (var p in segments) total += p.pstart.Count;
+
+            if (success) for (var i = 0; i < segments.Count; i++)
+            {
+                if (!asyncWorker.CancellationPending)
+                {
+                    if (success && USB_Check_Limit_Switches() && USB_TopSwitch() && !USB_BottomSwitch())
+                    {
+                        ExtLog.AddLine($"Path {i + 1} / {segments.Count}");
+                        if (segInside(segments[i], 0))
+                        {
+                            // move to start point
+                            asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, $"PlotPath.Moving to {segments[i].pstart[0]}"));
+                            USB_MoveToPosition(segments[i].pstart[0].X, segments[i].pstart[0].Y);
+                                boute++;
+
+                            // drop pen down 
+                                ExtLog.AddLine("Pen down..");
+
+                            //start from top
+                            if (success && USB_IsOpen() && USB_Check_Limit_Switches())
+                            {
+                                asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, "PlotPath.Initiate_Drill_From_Top"));
+                                success = Initiate_Drill_From_Top(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
+                                if (!success) ExtLog.AddLine("Failed at PlotPath.Initiate_Drill_From_Top");
+                            }
+
+                            //wait for drill to reach bottom
+                            if (success && USB_IsOpen() && USB_Check_Limit_Switches())
+                            {
+                                asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, "PlotPath.Wait_For_Drill_To_Bottom"));
+                                success = Wait_For_Drill_To_Bottom(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
+                                if (!success) ExtLog.AddLine("Failed at PlotPath.Wait_For_Drill_To_Bottom");
+                            }
+
+                            if (success && USB_IsOpen()) for (var j = 0; j < segments[i].pstart.Count; ++j)
+                            {
+                                ExtLog.AddLine($"{segments[i].pstart[j]} -> {segments[i].pend[j]}");
+                                boute++;
+                                // move to next end point
+                                asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, $"PlotPath.Moving to {segments[i].pend[j]}"));
+                                USB_MoveToPosition(segments[i].pend[j].X, segments[i].pend[j].Y);
+                            }
+
+                            // raise pen up 
+                            ExtLog.AddLine("Pen up..");
+
+                            //start from top
+                            if (success && USB_IsOpen() && USB_Check_Limit_Switches())
+                            {
+                                asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, "PlotPath.Initiate_Drill_From_Bottom"));
+                                success = Initiate_Drill_From_Bottom(GlobalProperties.drillReleaseNumWait, GlobalProperties.drillReleaseWaitTime);
+                                if (!success) ExtLog.AddLine("Failed at PlotPath.Initiate_Drill_From_Bottom");
+                            }
+
+                            //wait for drill to reach top
+                            if (success && USB_IsOpen() && USB_Check_Limit_Switches())
+                            {
+                                asyncWorker.ReportProgress(100 * (boute + 1) / total, new taskReport(true, "PlotPath.Wait_For_Drill_To_Top"));
+                                success = Wait_For_Drill_To_Top(GlobalProperties.drillCycleNumWait, GlobalProperties.drillCycleWaitTime);
+                                if (!success) ExtLog.AddLine("Failed at PlotPath.Wait_For_Drill_To_Top");
+                            }
+                        }
+                        else
+                        {
+                            ExtLog.AddLine($"Skipping Segment [{(i + 1)}/{segments.Count}]: Out Of Range");
+                        }
+                        asyncWorker.ReportProgress(100 * (i + 1) / segments.Count, new taskReport(true, "PlotPath.Segment"));
+                    }
+                    else
+                    {
+                        success = false;
+                    }
+                }
+                else e.Cancel = true;
+            }
+            asyncWorker.ReportProgress(100);
+            e.Result = success;
+        }
     }
 }
