@@ -202,7 +202,7 @@ namespace CNC_Drill_Controller1
             float dsum = 0.0f;
             for (var i = 0; i < r.Count-1; ++i) dsum += dist(r[i].pend.Last(), r[i + 1].pstart.First());
             ExtLog.AddLine($"interpath travel distance: {dsum}");
-            /*
+            
             for (var i = 0; i < r.Count - 1; ++i)
             {
                 var bestindex = i + 1;
@@ -219,7 +219,7 @@ namespace CNC_Drill_Controller1
                 if (bestindex != (i+1))
                 {
                     r.Insert(i+1, r[bestindex]);
-                    r.RemoveAt(bestindex);
+                    r.RemoveAt(bestindex+1);
                 }
             }
 
@@ -227,7 +227,7 @@ namespace CNC_Drill_Controller1
             for (var i = 0; i < r.Count - 1; ++i) dsum += dist(r[i].pend.Last(), r[i + 1].pstart.First());
             ExtLog.AddLine($"interpath travel distance after opt: {dsum}");
             ExtLog.AddLine($"Optimized { r.Sum((s) => s.pstart.Count) } segments");
-            */
+            
             return r;
         }
           
