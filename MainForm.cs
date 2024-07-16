@@ -18,7 +18,7 @@ namespace CNC_Drill_Controller1
     {
         #region USB Interface Properties
         //oncomplete property : XCOPY "$(TargetDir)*.exe" "Z:\" /Y /I
-        public IUSB_Controller USB = new USB_Control_Emulator();// USB_Control();
+        public IUSB_Controller USB = new USB_Control();// _Emulator();// USB_Control();
         private DateTime lastUIupdate;
 
         #endregion
