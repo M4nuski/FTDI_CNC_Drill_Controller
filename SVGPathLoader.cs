@@ -32,7 +32,7 @@ namespace CNC_Drill_Controller1
             return (float)Math.Sqrt(((aX - bX) * (aX - bX)) + ((aY - bY) * (aY - bY)));
         }
 
-        public List<seg> loadSVGPaths(string filename)
+        public List<seg> loadSVGPaths(string filename, bool optimize = true, float minPathLength = 0.009f)
         {
 
             var svgReader = SvgDocument.Open(filename);
@@ -199,10 +199,15 @@ namespace CNC_Drill_Controller1
             }
             ExtLog.AddLine($"Loaded { r.Sum((s) => s.pstart.Count) } segments");
 
+            if (!optimize) return r;
+
             float dsum = 0.0f;
             for (var i = 0; i < r.Count-1; ++i) dsum += dist(r[i].pend.Last(), r[i + 1].pstart.First());
             ExtLog.AddLine($"interpath travel distance: {dsum}");
-            
+            dsum = 0.0f;
+            for (var i = 0; i < r.Count - 1; ++i) for (var j = 0; j < r[i].pstart.Count; ++j) dsum += dist(r[i].pstart[j], r[i].pend[j]);
+            ExtLog.AddLine($"total path distance: {dsum}");
+
             for (var i = 0; i < r.Count - 1; ++i)
             {
                 var bestindex = i + 1;
@@ -225,9 +230,42 @@ namespace CNC_Drill_Controller1
 
             dsum = 0.0f;
             for (var i = 0; i < r.Count - 1; ++i) dsum += dist(r[i].pend.Last(), r[i + 1].pstart.First());
-            ExtLog.AddLine($"interpath travel distance after opt: {dsum}");
+            ExtLog.AddLine($"interpath travel distance after overtravel op: {dsum}");
+            dsum = 0.0f;
+            for (var i = 0; i < r.Count - 1; ++i) for (var j = 0; j < r[i].pstart.Count; ++j) dsum += dist(r[i].pstart[j], r[i].pend[j]);
+            ExtLog.AddLine($"total path distance after overtravel op: {dsum}");
             ExtLog.AddLine($"Optimized { r.Sum((s) => s.pstart.Count) } segments");
-            
+
+            try
+            {
+                for (var i = 0; i < r.Count; ++i) for (var j = 0; j < r[i].pstart.Count - 1; ++j)
+                    {
+                        while ((r[i].pstart.Count > (j - 1)) && (dist(r[i].pstart[j], r[i].pend[j]) < minPathLength))
+                        {
+                            if (dist(r[i].pend[j], r[i].pstart[j + 1]) < minPathLength)
+                            {
+                                r[i].pend[j] = r[i].pend[j + 1];
+                                r[i].pstart.RemoveAt(j + 1);
+                                r[i].pend.RemoveAt(j + 1);
+                            }
+                            else break;
+                            if ((j + 1) > r[i].pstart.Count - 1) break;
+                        }
+                    }
+            } catch (Exception ex)
+            {
+                ExtLog.AddLine(ex.StackTrace);
+                return r;
+            }
+
+            dsum = 0.0f;
+            for (var i = 0; i < r.Count - 1; ++i) dsum += dist(r[i].pend.Last(), r[i + 1].pstart.First());
+            ExtLog.AddLine($"interpath travel distance after undertravel opt: {dsum}");
+            dsum = 0.0f;
+            for (var i = 0; i < r.Count - 1; ++i) for (var j = 0; j < r[i].pstart.Count; ++j) dsum += dist(r[i].pstart[j], r[i].pend[j]);
+            ExtLog.AddLine($"total path distance after undertravel op: {dsum}");
+            ExtLog.AddLine($"Optimized { r.Sum((s) => s.pstart.Count) } segments");
+
             return r;
         }
           

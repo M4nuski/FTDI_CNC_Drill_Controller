@@ -127,6 +127,7 @@
             this.button_loadPlot = new System.Windows.Forms.Button();
             this.button_drawPlot = new System.Windows.Forms.Button();
             this.StopAtBottomcheckBox = new System.Windows.Forms.CheckBox();
+            this.minPathLengthTextBox = new System.Windows.Forms.TextBox();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -899,7 +900,7 @@
             // 
             this.checkBoxT.AutoSize = true;
             this.checkBoxT.Enabled = false;
-            this.checkBoxT.Location = new System.Drawing.Point(170, 348);
+            this.checkBoxT.Location = new System.Drawing.Point(169, 458);
             this.checkBoxT.Name = "checkBoxT";
             this.checkBoxT.Size = new System.Drawing.Size(121, 17);
             this.checkBoxT.TabIndex = 63;
@@ -1138,7 +1139,7 @@
             // 
             // button_loadPlot
             // 
-            this.button_loadPlot.Location = new System.Drawing.Point(192, 290);
+            this.button_loadPlot.Location = new System.Drawing.Point(170, 283);
             this.button_loadPlot.Name = "button_loadPlot";
             this.button_loadPlot.Size = new System.Drawing.Size(75, 23);
             this.button_loadPlot.TabIndex = 86;
@@ -1148,7 +1149,7 @@
             // 
             // button_drawPlot
             // 
-            this.button_drawPlot.Location = new System.Drawing.Point(192, 319);
+            this.button_drawPlot.Location = new System.Drawing.Point(170, 312);
             this.button_drawPlot.Name = "button_drawPlot";
             this.button_drawPlot.Size = new System.Drawing.Size(75, 23);
             this.button_drawPlot.TabIndex = 87;
@@ -1168,11 +1169,22 @@
             this.StopAtBottomcheckBox.UseVisualStyleBackColor = true;
             this.StopAtBottomcheckBox.CheckedChanged += new System.EventHandler(this.StopAtBottomcheckBox_CheckedChanged);
             // 
+            // minPathLengthTextBox
+            // 
+            this.minPathLengthTextBox.Location = new System.Drawing.Point(250, 284);
+            this.minPathLengthTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.minPathLengthTextBox.Name = "minPathLengthTextBox";
+            this.minPathLengthTextBox.Size = new System.Drawing.Size(57, 20);
+            this.minPathLengthTextBox.TabIndex = 89;
+            this.minPathLengthTextBox.Text = "0.009";
+            this.minPathLengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1147, 702);
+            this.Controls.Add(this.minPathLengthTextBox);
             this.Controls.Add(this.StopAtBottomcheckBox);
             this.Controls.Add(this.button_drawPlot);
             this.Controls.Add(this.button_loadPlot);
@@ -1361,6 +1373,7 @@
         private System.Windows.Forms.Button button_loadPlot;
         private System.Windows.Forms.Button button_drawPlot;
         private System.Windows.Forms.CheckBox StopAtBottomcheckBox;
+        private System.Windows.Forms.TextBox minPathLengthTextBox;
     }
 }
 

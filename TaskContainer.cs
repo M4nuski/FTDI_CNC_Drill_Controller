@@ -257,6 +257,7 @@ namespace CNC_Drill_Controller1
 
         private bool Initiate_Drill_From_Top(int numTries, int TriesDelay)
         {
+            if (asyncWorker.CancellationPending) return false;
             var success = true;
             USB_Cycle_Drill(true);
 
@@ -271,6 +272,7 @@ namespace CNC_Drill_Controller1
         }
         private bool Wait_For_Drill_To_Top(int numTries, int TriesDelay)
         {
+            if (asyncWorker.CancellationPending) return false;
             var success = true;
             USB_Cycle_Drill(false);
 
@@ -287,6 +289,7 @@ namespace CNC_Drill_Controller1
 
         private bool Initiate_Drill_From_Bottom(int numTries, int TriesDelay)
         {
+            if (asyncWorker.CancellationPending) return false;
             var success = true;
             USB_Cycle_Drill(true);
 
@@ -301,6 +304,7 @@ namespace CNC_Drill_Controller1
         }
         private bool Wait_For_Drill_To_Bottom(int numTries, int TriesDelay)
         {
+            if (asyncWorker.CancellationPending) return false;
             var success = true;
             USB_Cycle_Drill(false);
 
@@ -551,7 +555,7 @@ namespace CNC_Drill_Controller1
         }
         private bool samePoint(PointF a, PointF b)
         {
-            return (Math.Abs(a.X - b.X) < 0.01f) && (Math.Abs(a.Y - b.Y) < 0.01f);
+            return (Math.Abs(a.X - b.X) < 0.009f) && (Math.Abs(a.Y - b.Y) < 0.009f);
         }
 
         public void asyncWorkerDoWork_PlotPath(object sender, DoWorkEventArgs e)

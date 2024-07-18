@@ -13,7 +13,6 @@ namespace CNC_Drill_Controller1
 
 
 {    
-
     public partial class MainForm : Form
     {
         #region USB Interface Properties
@@ -657,8 +656,9 @@ namespace CNC_Drill_Controller1
 
         }
 
-        private void RebuildListBoxAndViewerFromPaths(List<SVGPathLoader.seg> plist)
+        private void RebuildViewerFromPaths(List<SVGPathLoader.seg> plist, Color color)
         {
+            if (color == null) color = Color.Black;
             nodeViewer.Elements = new List<IViewerElements>
             {
                 drawingPageBox,
@@ -672,10 +672,20 @@ namespace CNC_Drill_Controller1
             {
                 for (var j = 0; j < plist[i].pstart.Count; ++j)
                 {
-                    nodeViewer.Elements.Add(new Line(plist[i].pstart[j].X, plist[i].pstart[j].Y, plist[i].pend[j].X, plist[i].pend[j].Y, Color.Black));
+                    nodeViewer.Elements.Add(new Line(plist[i].pstart[j].X, plist[i].pstart[j].Y, plist[i].pend[j].X, plist[i].pend[j].Y, color));
                 }
             }
 
+            Nodes.DrawMode = DrawMode.OwnerDrawFixed;
+            Nodes.DrawMode = DrawMode.Normal;
+        }
+        private void AddPathsToViewer(List<SVGPathLoader.seg> plist, Color c)
+        {
+            if (c == null) c = Color.White;
+            for (var i = 0; i < plist.Count; i++) for (var j = 0; j < plist[i].pstart.Count; ++j)
+                {
+                    nodeViewer.Elements.Add(new Line(plist[i].pstart[j].X, plist[i].pstart[j].Y, plist[i].pend[j].X, plist[i].pend[j].Y, c));
+                }
             Nodes.DrawMode = DrawMode.OwnerDrawFixed;
             Nodes.DrawMode = DrawMode.Normal;
         }
@@ -1076,7 +1086,9 @@ namespace CNC_Drill_Controller1
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 var ldr = new SVGPathLoader();
-                paths = ldr.loadSVGPaths(openFileDialog1.FileName);
+                var mpl = TextConverter.SafeTextToFloat(minPathLengthTextBox.Text);
+
+                paths = ldr.loadSVGPaths(openFileDialog1.FileName, true, mpl);
 
                 float minX = float.PositiveInfinity;
                 float minY = float.PositiveInfinity;
@@ -1115,6 +1127,18 @@ namespace CNC_Drill_Controller1
 
                 ExtLog.AddLine($"scale: {scale}, Xoffset: {Xoffset}, Yoffset: {Yoffset}");
 
+                var paths2 = ldr.loadSVGPaths(openFileDialog1.FileName, false);
+                for (var pi = 0; pi < paths2.Count; ++pi)
+                {
+                    for (var si = 0; si < paths2[pi].pstart.Count; ++si)
+                    {
+                        paths2[pi].pstart[si] = new PointF(paths2[pi].pstart[si].X * scale + Xoffset, paths2[pi].pstart[si].Y * scale + Yoffset);
+                        paths2[pi].pend[si] = new PointF(paths2[pi].pend[si].X * scale + Xoffset, paths2[pi].pend[si].Y * scale + Yoffset);
+                    }
+                }
+                
+
+
                 for (var pi = 0; pi < paths.Count; ++pi)
                 {
                     for (var si = 0; si < paths[pi].pstart.Count; ++si)
@@ -1123,8 +1147,9 @@ namespace CNC_Drill_Controller1
                         paths[pi].pend[si] = new PointF(paths[pi].pend[si].X * scale + Xoffset, paths[pi].pend[si].Y * scale + Yoffset);
                     }
                 }
+                RebuildViewerFromPaths(paths2, Color.Red);
+                AddPathsToViewer(paths, Color.Black);
 
-                RebuildListBoxAndViewerFromPaths(paths);
             }
         }
 

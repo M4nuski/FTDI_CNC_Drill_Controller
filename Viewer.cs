@@ -443,7 +443,7 @@ namespace CNC_Drill_Controller1
         }
 
         public PointF position { get { return new PointF(_fx, _fy); } }
-        public float size { get { return 0.0f; } }
+        public float size { get { return (float)Math.Sqrt(Math.Pow(_fx-_tx,2)+Math.Pow(_fy-_ty,2)); } }
         public bool isSelected { get; set; }
 
         public Line(float fromX, float fromY, float toX, float toY, Color color)
