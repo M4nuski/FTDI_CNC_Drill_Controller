@@ -274,22 +274,23 @@ namespace CNC_Drill_Controller1
 
         public void FitContentToControl()
         {
+            if (Elements.Sum(e => e.size) < float.Epsilon) return;
+
             var Xmax = float.MinValue;
             var Xmin = float.MaxValue;
             var Ymax = float.MinValue;
             var Ymin = float.MaxValue;
 
             if (Elements != null) foreach (var viewerElement in Elements)
+            {
+                if (Math.Abs(viewerElement.size) > float.Epsilon)
                 {
-                  if (Math.Abs(viewerElement.size) > float.Epsilon)
-                    {
-                        Xmax = Math.Max(Xmax, viewerElement.position.X + viewerElement.size);
-                        Xmin = Math.Min(Xmin, viewerElement.position.X - viewerElement.size);
-                        Ymax = Math.Max(Ymax, viewerElement.position.Y + viewerElement.size);
-                        Ymin = Math.Min(Ymin, viewerElement.position.Y - viewerElement.size);
-                    }
-
+                    Xmax = Math.Max(Xmax, viewerElement.position.X + viewerElement.size);
+                    Xmin = Math.Min(Xmin, viewerElement.position.X - viewerElement.size);
+                    Ymax = Math.Max(Ymax, viewerElement.position.Y + viewerElement.size);
+                    Ymin = Math.Min(Ymin, viewerElement.position.Y - viewerElement.size);
                 }
+            }
 
             var w = Xmax - Xmin;
             var h = Ymax - Ymin;
