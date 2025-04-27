@@ -50,9 +50,9 @@ namespace CNC_Drill_Controller1
 
         //Outputs control bits of OutputByte0 and OutputByte1
         public static int StepMotor_Enable_Bit = 4;
-        public static int Torque_Pos_Bit = 5;
-        public static int Torque_Neg_Bit = 6;
-        public static int Torque_Enable_Bit = 7;
+        //public static int Torque_Pos_Bit = 5;
+        //public static int Torque_Neg_Bit = 6;
+        //public static int Torque_Enable_Bit = 7;
 
         //Outputs control bits of OutputByte2
         public static int Drill_Cycle_Enable_Bit = 0;

@@ -27,7 +27,7 @@ namespace CNC_Drill_Controller1
         //Output to CNC
         bool X_StepMotor_Driver_Enable { get; set; }
         bool Y_StepMotor_Driver_Enable { get; set; }
-        bool TQA_Driver_Enable { get; set; }
+        //bool TQA_Driver_Enable { get; set; }
         bool Cycle_Drill { get; set; }
         bool Drill_Bottom_Stop_Enable { get; set; }
 

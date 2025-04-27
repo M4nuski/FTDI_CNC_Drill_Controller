@@ -136,7 +136,6 @@ namespace CNC_Drill_Controller1
 
             USB.X_StepMotor_Driver_Enable = radioButtonAxisX.Checked || radioButtonAxisAll.Checked;
             USB.Y_StepMotor_Driver_Enable = radioButtonAxisY.Checked || radioButtonAxisAll.Checked;
-            USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             USB.Inhibit_Backlash_Compensation = IgnoreBacklashBox.Checked;
@@ -231,7 +230,6 @@ namespace CNC_Drill_Controller1
         {
             USB.X_StepMotor_Driver_Enable = radioButtonAxisX.Checked || radioButtonAxisAll.Checked;
             USB.Y_StepMotor_Driver_Enable = radioButtonAxisY.Checked || radioButtonAxisAll.Checked;
-            USB.TQA_Driver_Enable = checkBoxT.Checked;
             USB.Cycle_Drill = checkBoxD.Checked;
 
             if (!CheckBoxInhibit) USB.Transfer();
