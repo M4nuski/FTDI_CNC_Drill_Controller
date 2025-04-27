@@ -28,8 +28,10 @@ namespace CNC_Drill_Controller1
 
         public bool X_StepMotor_Driver_Enable { get; set; }
         public bool Y_StepMotor_Driver_Enable { get; set; }
-        private bool TQA_Driver_Bit;
-        public bool TQA_Driver_Enable { get; set; }
+        //private bool TQA_Driver_Bit;
+        //public bool TQA_Driver_Enable { get; set; }
+        public bool Drill_Bottom_Stop_Enable { get; set; }
+
         public bool Cycle_Drill { get; set; }
 
         public int X_Abs_Location{ get; set; }
@@ -192,9 +194,9 @@ namespace CNC_Drill_Controller1
             x = GlobalProperties.stepBytes[x]; //bits 0-3
             x = SignalGenerator.SetBit(x, GlobalProperties.StepMotor_Enable_Bit, X_StepMotor_Driver_Enable); //bit4
 
-            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Pos_Bit, (X_Last_Direction == 1)); //bit5
-            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Neg_Bit, (X_Last_Direction == -1)); //bit6
-            x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Bit); //bit7
+            //x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Pos_Bit, (X_Last_Direction == 1)); //bit5
+            //x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Neg_Bit, (X_Last_Direction == -1)); //bit6
+            //x = SignalGenerator.SetBit(x, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Bit); //bit7
             return x;
         }
 
@@ -204,9 +206,9 @@ namespace CNC_Drill_Controller1
             y = GlobalProperties.stepBytes[y]; //bits 0-3
             y = SignalGenerator.SetBit(y, GlobalProperties.StepMotor_Enable_Bit, Y_StepMotor_Driver_Enable); //bit4
 
-            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Pos_Bit, (Y_Last_Direction == 1)); //bit5
-            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Neg_Bit, (Y_Last_Direction == -1)); //bit6
-            y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Bit); //bit7
+            //y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Pos_Bit, (Y_Last_Direction == 1)); //bit5
+            //y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Neg_Bit, (Y_Last_Direction == -1)); //bit6
+            //y = SignalGenerator.SetBit(y, GlobalProperties.Torque_Enable_Bit, TQA_Driver_Bit); //bit7
             return y;
         }
 
@@ -215,6 +217,8 @@ namespace CNC_Drill_Controller1
             var d = SignalGenerator.SetBit(0, GlobalProperties.Drill_Cycle_Enable_Bit, Cycle_Drill);
             d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Cycle_Enable_Bit, false);
             //d = SignalGenerator.SetBit(d, GlobalProperties.StepMotor_Throttle_Bit, Axis_Driver_Throttle);
+            d = SignalGenerator.SetBit(d, GlobalProperties.Drill_Bottom_Stop_Bit, Drill_Bottom_Stop_Enable);
+
             return d;
         }
 
@@ -287,7 +291,7 @@ namespace CNC_Drill_Controller1
             }
 
             //Enable TQA Driver if requested
-            TQA_Driver_Bit = TQA_Driver_Enable;
+            //TQA_Driver_Bit = TQA_Driver_Enable;
             Transfer();
             //process moves
             var numMoves = (absDX >= absDY) ? absDX : absDY;
@@ -347,7 +351,7 @@ namespace CNC_Drill_Controller1
 
             UpdateProgress(100, true);
 
-            TQA_Driver_Bit = false; //Disable TQA Driver
+            //TQA_Driver_Bit = false; //Disable TQA Driver
             Transfer();
             return success;
         }
