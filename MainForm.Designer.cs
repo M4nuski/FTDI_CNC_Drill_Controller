@@ -601,57 +601,57 @@
             this.toolStripSeparator2,
             this.nodeContextDelete});
             this.NodesContextMenu.Name = "NodesContextMenu";
-            this.NodesContextMenu.Size = new System.Drawing.Size(199, 160);
+            this.NodesContextMenu.Size = new System.Drawing.Size(211, 188);
             // 
             // NodeContextSETXY
             // 
             this.NodeContextSETXY.Name = "NodeContextSETXY";
-            this.NodeContextSETXY.Size = new System.Drawing.Size(198, 24);
+            this.NodeContextSETXY.Size = new System.Drawing.Size(210, 24);
             this.NodeContextSETXY.Text = "Set As Current X-Y";
             this.NodeContextSETXY.Click += new System.EventHandler(this.SetAsXYbutton_Click);
             // 
             // NodeContextMOVETO
             // 
             this.NodeContextMOVETO.Name = "NodeContextMOVETO";
-            this.NodeContextMOVETO.Size = new System.Drawing.Size(198, 24);
+            this.NodeContextMOVETO.Size = new System.Drawing.Size(210, 24);
             this.NodeContextMOVETO.Text = "Move To";
             this.NodeContextMOVETO.Click += new System.EventHandler(this.MoveTobutton_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(195, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
             // 
             // NodeContextIDLE
             // 
             this.NodeContextIDLE.Name = "NodeContextIDLE";
-            this.NodeContextIDLE.Size = new System.Drawing.Size(198, 24);
+            this.NodeContextIDLE.Size = new System.Drawing.Size(210, 24);
             this.NodeContextIDLE.Text = "Status.Idle";
             this.NodeContextIDLE.Click += new System.EventHandler(this.NodeContextIDLE_Click);
             // 
             // NodeContextDRILED
             // 
             this.NodeContextDRILED.Name = "NodeContextDRILED";
-            this.NodeContextDRILED.Size = new System.Drawing.Size(198, 24);
+            this.NodeContextDRILED.Size = new System.Drawing.Size(210, 24);
             this.NodeContextDRILED.Text = "Status.Drilled";
             this.NodeContextDRILED.Click += new System.EventHandler(this.NodeContextDRILED_Click);
             // 
             // NodeContextTARGET
             // 
             this.NodeContextTARGET.Name = "NodeContextTARGET";
-            this.NodeContextTARGET.Size = new System.Drawing.Size(198, 24);
+            this.NodeContextTARGET.Size = new System.Drawing.Size(210, 24);
             this.NodeContextTARGET.Text = "Status.Target";
             this.NodeContextTARGET.Click += new System.EventHandler(this.NodeContextTARGET_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(195, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(207, 6);
             // 
             // nodeContextDelete
             // 
             this.nodeContextDelete.Name = "nodeContextDelete";
-            this.nodeContextDelete.Size = new System.Drawing.Size(198, 24);
+            this.nodeContextDelete.Size = new System.Drawing.Size(210, 24);
             this.nodeContextDelete.Text = "Delete";
             this.nodeContextDelete.Click += new System.EventHandler(this.nodeContextDelete_Click);
             // 

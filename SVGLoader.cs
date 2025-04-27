@@ -15,6 +15,7 @@ namespace CNC_Drill_Controller1
 
         private static void applyParentsTransforms(PointF[] pt, SvgElement node)
         {
+            if (node.Transforms == null) return;
             node.Transforms.GetMatrix().TransformPoints(pt);
             if (node.Parent != null) applyParentsTransforms(pt, node.Parent);
         }

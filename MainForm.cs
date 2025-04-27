@@ -623,7 +623,8 @@ namespace CNC_Drill_Controller1
         }
         private void nodeContextDelete_Click(object sender, EventArgs e)
         {
-            foreach (int index in Nodes.SelectedIndices) Nodes.Items.Remove(Nodes.Items[index]);
+            var selection = Nodes.SelectedIndices;
+            for (int index = selection.Count-1; index >=0; index--) Nodes.Items.Remove(Nodes.Items[selection[index]]);
             RebuildListBoxAndViewerFromNodes();
         }
 
