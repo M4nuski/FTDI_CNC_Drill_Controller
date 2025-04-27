@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace CNC_Drill_Controller1
 {
@@ -20,23 +21,52 @@ namespace CNC_Drill_Controller1
 
         public static int drillCycleNumWait = 50; // 5sec per 0.1 sec test
         public static int drillCycleWaitTime = 100;
-        //public static byte[] stepBytes = { 0x03, 0x06, 0x0C, 0x09 };// single phase
-        // 0011 0110 1100 1001 
-        public static byte[] stepBytes = { 0b1001, 0b1010, 0b0110, 0b0101 };// dual phase
-        // 1001 1010 0110 0101
-        // P N  P P  N P  N N
-      //  public static byte[] stepBytes = { 0b1001, 0b1000, 0b1010, 0b0010, 0b0110, 0b0100, 0b0101, 0b0001 };// dual phase double step
-        // 1001 1000 1010 0010  0110 0100 0101 0001
-        // P N  P X  P P  X P   N P  N X  N N  X N
-        public static int numStepBytes = 4;
-        public static byte numStepMask = 0x03;//b'0000 0011' //(stepByte.length-1)
-        //public static int numStepBytes = 8;
-        //public static byte numStepMask = 0x07;//b'0000 0111' //(stepByte.length-1)// should be auto computed
+
+        // 00 off
+        // 10 Positive
+        // 01 Negative
+        // 11 illegal
+
+        // 0bAABB
+        //
+        //      APos
+        //
+        // BNeg   .   BPos
+        //
+        //      ANeg
+
+        public static byte[][] stepBytes = {
+           new byte[]{ 0b1000, 0b0010, 0b0100, 0b0001 }, // 4 step 1 phase
+           new byte[]{ 0b1010, 0b0110, 0b0101, 0b1001 }, // 4 step 2 phases
+           new byte[]{ 0b1000, 0b1010, 0b0010, 0b0110, 0b0100, 0b0101, 0b0001, 0b1001 }, // 8 steps 1/2 phases
+           new byte[]{ 0, 1, 2, 3 },
+           new byte[]{ 0, 1, 2, 3, 4, 5, 6, 7 },
+           new byte[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ,12 ,13 ,14 ,15 }
+        };
+        public static int stepMode = 2;
+        public static string[] stepModeStrings =
+        {
+            "4 Steps 1 Phase",
+            "4 Steps 2 Phases",
+            "8 Steps 1/2 Phases",
+            "4 Steps Binary",
+            "8 Steps Binary",
+            "16 Steps Binary"
+        };
+        public static byte[] stepBytesMask =
+        {
+            4 - 1,
+            4 - 1,
+            8 - 1,
+            4 - 1,
+            8 - 1,
+            16 - 1
+        };
 
         //Interface config
         public static uint baudRate = 3000000;
         public static byte portDirectionMask = 250;//250 = 0xFA = b'11111010' = out out out out  out in out in
-        public static byte latency = 24;
+        public static byte latency = 10;
 
         //Switches bits of InputByte0
         public static int X_MinSwitch_Bit = 0;

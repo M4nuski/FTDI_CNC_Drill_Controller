@@ -157,7 +157,7 @@ namespace CNC_Drill_Controller1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public byte usbTransferLatency {
             get {
                 return ((byte)(this["usbTransferLatency"]));
@@ -188,6 +188,18 @@ namespace CNC_Drill_Controller1.Properties {
             }
             set {
                 this["Y_Length"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public byte StepMode {
+            get {
+                return ((byte)(this["StepMode"]));
+            }
+            set {
+                this["StepMode"] = value;
             }
         }
     }

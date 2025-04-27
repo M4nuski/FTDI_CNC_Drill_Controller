@@ -128,6 +128,8 @@
             this.StopAtBottomcheckBox = new System.Windows.Forms.CheckBox();
             this.minPathLengthTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.StepModeComboBox = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.NodesContextMenu.SuspendLayout();
             this.ViewContextMenu.SuspendLayout();
@@ -166,7 +168,7 @@
             this.logger1.DateStamp = false;
             this.logger1.DateStampFormat = "yyyy-MM-dd";
             this.logger1.Font = new System.Drawing.Font("Lucida Console", 9F);
-            this.logger1.Location = new System.Drawing.Point(5, 716);
+            this.logger1.Location = new System.Drawing.Point(5, 781);
             this.logger1.Margin = new System.Windows.Forms.Padding(2);
             this.logger1.Multiline = true;
             this.logger1.Name = "logger1";
@@ -239,7 +241,7 @@
             this.XStatusLabel,
             this.YStatusLabel,
             this.toolStripDropDownButton1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 849);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 914);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 12, 0);
             this.statusStrip1.Size = new System.Drawing.Size(1434, 29);
@@ -451,7 +453,7 @@
             // XScaleTextBox
             // 
             this.XScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XScaleTextBox.Location = new System.Drawing.Point(91, 652);
+            this.XScaleTextBox.Location = new System.Drawing.Point(91, 717);
             this.XScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XScaleTextBox.Name = "XScaleTextBox";
             this.XScaleTextBox.Size = new System.Drawing.Size(70, 22);
@@ -462,7 +464,7 @@
             // YScaleTextBox
             // 
             this.YScaleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YScaleTextBox.Location = new System.Drawing.Point(91, 681);
+            this.YScaleTextBox.Location = new System.Drawing.Point(91, 746);
             this.YScaleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YScaleTextBox.Name = "YScaleTextBox";
             this.YScaleTextBox.Size = new System.Drawing.Size(70, 22);
@@ -581,7 +583,7 @@
             this.Nodes.Name = "Nodes";
             this.Nodes.ScrollAlwaysVisible = true;
             this.Nodes.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.Nodes.Size = new System.Drawing.Size(194, 564);
+            this.Nodes.Size = new System.Drawing.Size(194, 628);
             this.Nodes.TabIndex = 37;
             this.Nodes.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.Nodes.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
@@ -663,7 +665,7 @@
             this.OutputLabel.Location = new System.Drawing.Point(621, 79);
             this.OutputLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.OutputLabel.Name = "OutputLabel";
-            this.OutputLabel.Size = new System.Drawing.Size(799, 625);
+            this.OutputLabel.Size = new System.Drawing.Size(799, 690);
             this.OutputLabel.TabIndex = 40;
             this.OutputLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutputLabel_MouseDown);
             this.OutputLabel.MouseEnter += new System.EventHandler(this.OutputLabel_MouseEnter);
@@ -672,7 +674,7 @@
             // XSetTranformButton
             // 
             this.XSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XSetTranformButton.Location = new System.Drawing.Point(15, 654);
+            this.XSetTranformButton.Location = new System.Drawing.Point(15, 719);
             this.XSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
             this.XSetTranformButton.Name = "XSetTranformButton";
             this.XSetTranformButton.Size = new System.Drawing.Size(70, 24);
@@ -684,7 +686,7 @@
             // YSetTranformButton
             // 
             this.YSetTranformButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YSetTranformButton.Location = new System.Drawing.Point(15, 682);
+            this.YSetTranformButton.Location = new System.Drawing.Point(15, 747);
             this.YSetTranformButton.Margin = new System.Windows.Forms.Padding(2);
             this.YSetTranformButton.Name = "YSetTranformButton";
             this.YSetTranformButton.Size = new System.Drawing.Size(70, 24);
@@ -833,7 +835,7 @@
             this.SnapViewBox.Checked = true;
             this.SnapViewBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SnapViewBox.Location = new System.Drawing.Point(762, 42);
-            this.SnapViewBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SnapViewBox.Margin = new System.Windows.Forms.Padding(4);
             this.SnapViewBox.Name = "SnapViewBox";
             this.SnapViewBox.Size = new System.Drawing.Size(84, 20);
             this.SnapViewBox.TabIndex = 56;
@@ -854,7 +856,7 @@
             // YBacklastTextbox
             // 
             this.YBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YBacklastTextbox.Location = new System.Drawing.Point(168, 681);
+            this.YBacklastTextbox.Location = new System.Drawing.Point(168, 746);
             this.YBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.YBacklastTextbox.Name = "YBacklastTextbox";
             this.YBacklastTextbox.Size = new System.Drawing.Size(70, 22);
@@ -865,7 +867,7 @@
             // XBacklastTextbox
             // 
             this.XBacklastTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XBacklastTextbox.Location = new System.Drawing.Point(168, 652);
+            this.XBacklastTextbox.Location = new System.Drawing.Point(168, 717);
             this.XBacklastTextbox.Margin = new System.Windows.Forms.Padding(2);
             this.XBacklastTextbox.Name = "XBacklastTextbox";
             this.XBacklastTextbox.Size = new System.Drawing.Size(70, 22);
@@ -877,7 +879,7 @@
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(91, 634);
+            this.label2.Location = new System.Drawing.Point(91, 699);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 16);
@@ -888,7 +890,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(164, 634);
+            this.label3.Location = new System.Drawing.Point(164, 699);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 16);
@@ -902,7 +904,7 @@
             this.IgnoreBacklashBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IgnoreBacklashBox.Enabled = false;
             this.IgnoreBacklashBox.Location = new System.Drawing.Point(19, 179);
-            this.IgnoreBacklashBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.IgnoreBacklashBox.Margin = new System.Windows.Forms.Padding(4);
             this.IgnoreBacklashBox.Name = "IgnoreBacklashBox";
             this.IgnoreBacklashBox.Size = new System.Drawing.Size(126, 20);
             this.IgnoreBacklashBox.TabIndex = 62;
@@ -914,7 +916,7 @@
             // 
             this.showRawCheckbox.AutoSize = true;
             this.showRawCheckbox.Location = new System.Drawing.Point(19, 222);
-            this.showRawCheckbox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.showRawCheckbox.Margin = new System.Windows.Forms.Padding(4);
             this.showRawCheckbox.Name = "showRawCheckbox";
             this.showRawCheckbox.Size = new System.Drawing.Size(124, 20);
             this.showRawCheckbox.TabIndex = 64;
@@ -926,7 +928,7 @@
             // 
             this.AsyncStartFindOriginsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindOriginsButton.Location = new System.Drawing.Point(189, 39);
-            this.AsyncStartFindOriginsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindOriginsButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindOriginsButton.Name = "AsyncStartFindOriginsButton";
             this.AsyncStartFindOriginsButton.Size = new System.Drawing.Size(215, 26);
             this.AsyncStartFindOriginsButton.TabIndex = 66;
@@ -938,7 +940,7 @@
             // 
             this.AsyncDrillSelectedButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncDrillSelectedButton.Location = new System.Drawing.Point(189, 200);
-            this.AsyncDrillSelectedButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncDrillSelectedButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncDrillSelectedButton.Name = "AsyncDrillSelectedButton";
             this.AsyncDrillSelectedButton.Size = new System.Drawing.Size(215, 26);
             this.AsyncDrillSelectedButton.TabIndex = 67;
@@ -950,7 +952,7 @@
             // 
             this.DrillAllNodebutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DrillAllNodebutton.Location = new System.Drawing.Point(189, 234);
-            this.DrillAllNodebutton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.DrillAllNodebutton.Margin = new System.Windows.Forms.Padding(4);
             this.DrillAllNodebutton.Name = "DrillAllNodebutton";
             this.DrillAllNodebutton.Size = new System.Drawing.Size(215, 26);
             this.DrillAllNodebutton.TabIndex = 68;
@@ -963,7 +965,7 @@
             this.AbortMoveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AbortMoveButton.ForeColor = System.Drawing.Color.Red;
             this.AbortMoveButton.Location = new System.Drawing.Point(189, 290);
-            this.AbortMoveButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AbortMoveButton.Margin = new System.Windows.Forms.Padding(4);
             this.AbortMoveButton.Name = "AbortMoveButton";
             this.AbortMoveButton.Size = new System.Drawing.Size(215, 29);
             this.AbortMoveButton.TabIndex = 69;
@@ -974,7 +976,7 @@
             // ArrowCaptureTextbox
             // 
             this.ArrowCaptureTextbox.Location = new System.Drawing.Point(74, 296);
-            this.ArrowCaptureTextbox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ArrowCaptureTextbox.Margin = new System.Windows.Forms.Padding(4);
             this.ArrowCaptureTextbox.Name = "ArrowCaptureTextbox";
             this.ArrowCaptureTextbox.Size = new System.Drawing.Size(33, 22);
             this.ArrowCaptureTextbox.TabIndex = 70;
@@ -984,7 +986,7 @@
             // YLengthTextBox
             // 
             this.YLengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.YLengthTextBox.Location = new System.Drawing.Point(244, 681);
+            this.YLengthTextBox.Location = new System.Drawing.Point(244, 746);
             this.YLengthTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.YLengthTextBox.Name = "YLengthTextBox";
             this.YLengthTextBox.Size = new System.Drawing.Size(70, 22);
@@ -995,7 +997,7 @@
             // XLengthTextBox
             // 
             this.XLengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.XLengthTextBox.Location = new System.Drawing.Point(244, 652);
+            this.XLengthTextBox.Location = new System.Drawing.Point(244, 717);
             this.XLengthTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.XLengthTextBox.Name = "XLengthTextBox";
             this.XLengthTextBox.Size = new System.Drawing.Size(70, 22);
@@ -1007,7 +1009,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(239, 634);
+            this.label4.Location = new System.Drawing.Point(239, 699);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(47, 16);
@@ -1018,7 +1020,7 @@
             // 
             this.AsyncStartFindLengthsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindLengthsButton.Location = new System.Drawing.Point(189, 104);
-            this.AsyncStartFindLengthsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindLengthsButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindLengthsButton.Name = "AsyncStartFindLengthsButton";
             this.AsyncStartFindLengthsButton.Size = new System.Drawing.Size(215, 26);
             this.AsyncStartFindLengthsButton.TabIndex = 74;
@@ -1029,7 +1031,7 @@
             // FitContentButton
             // 
             this.FitContentButton.Location = new System.Drawing.Point(1248, 39);
-            this.FitContentButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FitContentButton.Margin = new System.Windows.Forms.Padding(4);
             this.FitContentButton.Name = "FitContentButton";
             this.FitContentButton.Size = new System.Drawing.Size(174, 29);
             this.FitContentButton.TabIndex = 75;
@@ -1042,7 +1044,7 @@
             this.radioButtonAxisAll.AutoSize = true;
             this.radioButtonAxisAll.Checked = true;
             this.radioButtonAxisAll.Location = new System.Drawing.Point(19, 46);
-            this.radioButtonAxisAll.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonAxisAll.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonAxisAll.Name = "radioButtonAxisAll";
             this.radioButtonAxisAll.Size = new System.Drawing.Size(163, 20);
             this.radioButtonAxisAll.TabIndex = 76;
@@ -1055,7 +1057,7 @@
             // 
             this.radioButtonAxisX.AutoSize = true;
             this.radioButtonAxisX.Location = new System.Drawing.Point(19, 71);
-            this.radioButtonAxisX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonAxisX.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonAxisX.Name = "radioButtonAxisX";
             this.radioButtonAxisX.Size = new System.Drawing.Size(149, 20);
             this.radioButtonAxisX.TabIndex = 77;
@@ -1067,7 +1069,7 @@
             // 
             this.radioButtonAxisY.AutoSize = true;
             this.radioButtonAxisY.Location = new System.Drawing.Point(19, 96);
-            this.radioButtonAxisY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonAxisY.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonAxisY.Name = "radioButtonAxisY";
             this.radioButtonAxisY.Size = new System.Drawing.Size(150, 20);
             this.radioButtonAxisY.TabIndex = 78;
@@ -1079,7 +1081,7 @@
             // 
             this.radioButtonAxisNone.AutoSize = true;
             this.radioButtonAxisNone.Location = new System.Drawing.Point(19, 121);
-            this.radioButtonAxisNone.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButtonAxisNone.Margin = new System.Windows.Forms.Padding(4);
             this.radioButtonAxisNone.Name = "radioButtonAxisNone";
             this.radioButtonAxisNone.Size = new System.Drawing.Size(149, 20);
             this.radioButtonAxisNone.TabIndex = 79;
@@ -1091,7 +1093,7 @@
             // 
             this.AsyncStartFindXOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindXOriginButton.Location = new System.Drawing.Point(189, 71);
-            this.AsyncStartFindXOriginButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindXOriginButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindXOriginButton.Name = "AsyncStartFindXOriginButton";
             this.AsyncStartFindXOriginButton.Size = new System.Drawing.Size(105, 26);
             this.AsyncStartFindXOriginButton.TabIndex = 80;
@@ -1103,7 +1105,7 @@
             // 
             this.AsyncStartFindYOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindYOriginButton.Location = new System.Drawing.Point(299, 71);
-            this.AsyncStartFindYOriginButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindYOriginButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindYOriginButton.Name = "AsyncStartFindYOriginButton";
             this.AsyncStartFindYOriginButton.Size = new System.Drawing.Size(105, 26);
             this.AsyncStartFindYOriginButton.TabIndex = 81;
@@ -1115,7 +1117,7 @@
             // 
             this.AsyncStartFindYLengthButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindYLengthButton.Location = new System.Drawing.Point(299, 138);
-            this.AsyncStartFindYLengthButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindYLengthButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindYLengthButton.Name = "AsyncStartFindYLengthButton";
             this.AsyncStartFindYLengthButton.Size = new System.Drawing.Size(105, 26);
             this.AsyncStartFindYLengthButton.TabIndex = 83;
@@ -1127,7 +1129,7 @@
             // 
             this.AsyncStartFindXLengthButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AsyncStartFindXLengthButton.Location = new System.Drawing.Point(189, 138);
-            this.AsyncStartFindXLengthButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AsyncStartFindXLengthButton.Margin = new System.Windows.Forms.Padding(4);
             this.AsyncStartFindXLengthButton.Name = "AsyncStartFindXLengthButton";
             this.AsyncStartFindXLengthButton.Size = new System.Drawing.Size(105, 26);
             this.AsyncStartFindXLengthButton.TabIndex = 82;
@@ -1138,7 +1140,7 @@
             // ClearNodesButton
             // 
             this.ClearNodesButton.Location = new System.Drawing.Point(511, 104);
-            this.ClearNodesButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ClearNodesButton.Margin = new System.Windows.Forms.Padding(4);
             this.ClearNodesButton.Name = "ClearNodesButton";
             this.ClearNodesButton.Size = new System.Drawing.Size(94, 26);
             this.ClearNodesButton.TabIndex = 84;
@@ -1149,7 +1151,7 @@
             // AddNodeButton
             // 
             this.AddNodeButton.Location = new System.Drawing.Point(411, 104);
-            this.AddNodeButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AddNodeButton.Margin = new System.Windows.Forms.Padding(4);
             this.AddNodeButton.Name = "AddNodeButton";
             this.AddNodeButton.Size = new System.Drawing.Size(94, 26);
             this.AddNodeButton.TabIndex = 85;
@@ -1160,7 +1162,7 @@
             // button_loadPlot
             // 
             this.button_loadPlot.Location = new System.Drawing.Point(189, 344);
-            this.button_loadPlot.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_loadPlot.Margin = new System.Windows.Forms.Padding(4);
             this.button_loadPlot.Name = "button_loadPlot";
             this.button_loadPlot.Size = new System.Drawing.Size(94, 29);
             this.button_loadPlot.TabIndex = 86;
@@ -1172,7 +1174,7 @@
             // 
             this.button_drawPlot.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button_drawPlot.Location = new System.Drawing.Point(310, 344);
-            this.button_drawPlot.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_drawPlot.Margin = new System.Windows.Forms.Padding(4);
             this.button_drawPlot.Name = "button_drawPlot";
             this.button_drawPlot.Size = new System.Drawing.Size(94, 29);
             this.button_drawPlot.TabIndex = 87;
@@ -1211,11 +1213,31 @@
             this.label5.Text = "Minimum Path Length:";
             this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // StepModeComboBox
+            // 
+            this.StepModeComboBox.FormattingEnabled = true;
+            this.StepModeComboBox.Location = new System.Drawing.Point(24, 651);
+            this.StepModeComboBox.Name = "StepModeComboBox";
+            this.StepModeComboBox.Size = new System.Drawing.Size(142, 24);
+            this.StepModeComboBox.TabIndex = 91;
+            this.StepModeComboBox.SelectedIndexChanged += new System.EventHandler(this.StepModeComboBox_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(19, 632);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(102, 16);
+            this.label6.TabIndex = 92;
+            this.label6.Text = "Stepping Mode:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1434, 878);
+            this.ClientSize = new System.Drawing.Size(1434, 943);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.StepModeComboBox);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.minPathLengthTextBox);
             this.Controls.Add(this.StopAtBottomcheckBox);
@@ -1406,6 +1428,8 @@
         private System.Windows.Forms.CheckBox StopAtBottomcheckBox;
         private System.Windows.Forms.TextBox minPathLengthTextBox;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox StepModeComboBox;
+        private System.Windows.Forms.Label label6;
     }
 }
 

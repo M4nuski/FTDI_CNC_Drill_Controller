@@ -36,13 +36,16 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="usbTransferLatency" Type="System.Byte" Scope="User">
-      <Value Profile="(Default)">20</Value>
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="X_Length" Type="System.Single" Scope="User">
       <Value Profile="(Default)">5.8</Value>
     </Setting>
     <Setting Name="Y_Length" Type="System.Single" Scope="User">
       <Value Profile="(Default)">5.8</Value>
+    </Setting>
+    <Setting Name="StepMode" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

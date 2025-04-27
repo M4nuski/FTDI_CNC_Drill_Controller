@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Globalization;
 
-[assembly: AssemblyVersion("3.0.*")]
+[assembly: AssemblyVersion("3.1.*")]
 namespace CNC_Drill_Controller1
 
 
@@ -109,6 +109,12 @@ namespace CNC_Drill_Controller1
             XBacklastTextbox.Text = GlobalProperties.X_Backlash.ToString("F3", GlobalProperties.culture);
             YBacklastTextbox.Text = GlobalProperties.Y_Backlash.ToString("F3", GlobalProperties.culture);
 
+            StepModeComboBox.Items.Clear();
+            foreach (var item in GlobalProperties.stepModeStrings)
+            {
+                StepModeComboBox.Items.Add(item);
+            }
+            StepModeComboBox.SelectedIndex = GlobalProperties.stepMode;
             #endregion
 
             #region USB interface initialization
@@ -1170,6 +1176,11 @@ namespace CNC_Drill_Controller1
         {
             USB.Drill_Bottom_Stop_Enable = StopAtBottomcheckBox.Checked;
             if (!CheckBoxInhibit) USB.Transfer();
+        }
+
+        private void StepModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GlobalProperties.stepMode = StepModeComboBox.SelectedIndex;
         }
     }
 }
