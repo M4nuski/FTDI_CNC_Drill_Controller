@@ -523,65 +523,62 @@ namespace CNC_Drill_Controller1
 
         private void LoadFileButton_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (dtypeDialog.ShowDialog() != DialogResult.OK) return;
+            if (!File.Exists(openFileDialog1.FileName)) return;
+
+            ExtLog.AddLine("Opening File: " + openFileDialog1.FileName);
+
+            var loader = (INodeLoader) null;
+            if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".VDX")) loader = new VDXLoader();
+            else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".SVG")) loader = new SVGLoader();
+            else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".TXT")) loader = new GerberTXTLoader();
+            else ExtLog.AddLine("File Type not supported.");
+
+            if (loader == null) return;
+
+            loader.PageWidth = 12.0f;
+            loader.PageHeight = 12.0f;
+            loader.DrillNodes = new List<DrillNode>();
+
+            var dresult = dtypeDialog.DrawingConfig;
+            loader.Load(openFileDialog1.FileName, dresult);
+
+            if (dresult.reset_origin)
             {
-                if (dtypeDialog.ShowDialog() == DialogResult.OK)
+                var minHorz = loader.DrillNodes[0].location.X;
+                var minVert = loader.DrillNodes[0].location.Y;
+
+                foreach (DrillNode node in loader.DrillNodes)
                 {
-                    if (File.Exists(openFileDialog1.FileName))
-                    {
-                        ExtLog.AddLine("Opening File: " + openFileDialog1.FileName);
+                    if (node.location.X < minHorz) minHorz = node.location.X;
+                    if (node.location.Y < minVert) minVert = node.location.Y;
+                }
 
-                        var loader = (INodeLoader) null;
-                        if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".VDX")) loader = new VDXLoader();
-                        else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".SVG")) loader = new SVGLoader();
-                        else if (openFileDialog1.FileName.ToUpperInvariant().EndsWith(".TXT")) loader = new GerberTXTLoader();
-                        else ExtLog.AddLine("File Type not supported.");
 
-                        if (loader != null)
-                        {
-                            loader.PageWidth = 11.0f;
-                            loader.PageHeight = 11.0f;
-                            loader.DrillNodes = new List<DrillNode>();
-
-                            var dresult = dtypeDialog.DrawingConfig;
-                            loader.Load(openFileDialog1.FileName, dresult);
-
-                            Nodes.Items.Clear();
-                            Nodes.Items.AddRange(loader.DrillNodes.ToArray());
-
-                            if (dresult.reset_origin)
-                            {
-                                var leftmost = loader.PageWidth;
-                                var topmost = loader.PageHeight;
-
-                                foreach (DrillNode node in Nodes.Items)
-                                {
-                                    if (node.location.X < leftmost) leftmost = node.location.X;
-                                    if (node.location.Y < topmost) topmost = node.location.Y;
-                                }
-
-                                XoriginTextbox.Text = (-leftmost + dresult.origin_x).ToString("F4", GlobalProperties.culture);
-                                YoriginTextbox.Text = (-topmost + dresult.origin_y).ToString("F4", GlobalProperties.culture);
-                                OffsetOriginBtton_Click(sender, e);
-                            }
-
-                            ExtLog.AddLine(Nodes.Items.Count.ToString("D") + " Nodes loaded.");
-                            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1", GlobalProperties.culture));
-                            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1", GlobalProperties.culture));
-
-                            drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
-                            RebuildListBoxAndViewerFromNodes();
-                        }
-                    }
+                for (int i = 0; i < loader.DrillNodes.Count; i++)
+                {
+                    loader.DrillNodes[i].location.X -= minHorz - dresult.origin_x;
+                    loader.DrillNodes[i].location.Y -= minVert - dresult.origin_y;
                 }
             }
+
+            Nodes.Items.Clear();
+            Nodes.Items.AddRange(loader.DrillNodes.ToArray());
+
+            ExtLog.AddLine(Nodes.Items.Count.ToString("D") + " Nodes loaded.");
+            ExtLog.AddLine("Page Width: " + loader.PageWidth.ToString("F1", GlobalProperties.culture));
+            ExtLog.AddLine("Page Height: " + loader.PageHeight.ToString("F1", GlobalProperties.culture));
+
+            drawingPageBox = new Box(0, 0, loader.PageWidth, loader.PageHeight, Color.GhostWhite);
+            RebuildListBoxAndViewerFromNodes();
         }
 
         private void MoveTobutton_Click(object sender, EventArgs e)
         {
-            var movedata = (string)Nodes.SelectedItem;
+            var movedata = (Nodes.SelectedItem).ToString().Trim();
+            var axisdata = movedata.Split(trimChars, StringSplitOptions.RemoveEmptyEntries);
 
-            var axisdata = movedata.Split(trimChars);
             if (axisdata.Length == 2)
             {
                 var mx = TextConverter.SafeTextToFloat(axisdata[0].Trim(trimChars));
@@ -592,8 +589,9 @@ namespace CNC_Drill_Controller1
         }
         private void SetAsXYbutton_Click(object sender, EventArgs e)
         {
-            var movedata = (string)Nodes.SelectedItem;
-            var axisdata = movedata.Split(trimChars);
+            var movedata = (Nodes.SelectedItem).ToString().Trim();
+            var axisdata = movedata.Split(trimChars, StringSplitOptions.RemoveEmptyEntries);
+
             if (axisdata.Length == 2)
             {
                 XCurrentPosTextBox.Text = axisdata[0].Trim(trimChars);

@@ -72,31 +72,30 @@ namespace CNC_Drill_Controller1
         private void button2_Click(object sender, EventArgs e)
         {
             var btn = (sender as Button);
-            if (btn != null)
-            {
-                if (btn.DialogResult == DialogResult.OK)
-                {
-                    DrawingConfig.Inverted = invert.Checked;
+            if (btn == null) return;
+            if (btn.DialogResult != DialogResult.OK) return;
 
-                    if (drill.Checked) DrawingConfig.Type = DrawingType.Drill;
-                    if (trace.Checked) DrawingConfig.Type = DrawingType.Trace;
-                    if (machine.Checked) DrawingConfig.Type = DrawingType.Machine;
+            DrawingConfig.Inverted = invert.Checked;
 
-                    DrawingConfig.vdx_vertical_flip = flipvdx.Checked;
+            if (drill.Checked) DrawingConfig.Type = DrawingType.Drill;
+            if (trace.Checked) DrawingConfig.Type = DrawingType.Trace;
+            if (machine.Checked) DrawingConfig.Type = DrawingType.Machine;
 
-                    DrawingConfig.reset_origin = resetorigin.Checked;
+            DrawingConfig.vdx_vertical_flip = flipvdx.Checked;
 
-                    DrawingConfig.origin_x = TextConverter.SafeTextToFloat(xreset.Text, 0.200f);
-                    DrawingConfig.origin_y = TextConverter.SafeTextToFloat(yreset.Text, 0.200f);
+            DrawingConfig.reset_origin = resetorigin.Checked;
 
-                    DrawingConfig.gerber_intLen = (int)gerberInt.Value; 
-                    DrawingConfig.gerber_fractLen = (int)gerberFract.Value;
-                }
-                DialogResult = btn.DialogResult;                
-            }
+            DrawingConfig.origin_x = TextConverter.SafeTextToFloat(xreset.Text, 0.200f);
+            DrawingConfig.origin_y = TextConverter.SafeTextToFloat(yreset.Text, 0.200f);
 
+            DrawingConfig.gerber_intLen = (int)gerberInt.Value;
+            DrawingConfig.gerber_fractLen = (int)gerberFract.Value;
+
+            if (radioButton_DPI_orig.Checked) DrawingConfig.svg_PPI = -1;
+            if (radioButton_DPI_72.Checked) DrawingConfig.svg_PPI = 72;
+            if (radioButton_DPI_Custom.Checked) DrawingConfig.svg_PPI = int.Parse(textBox_DPI.Text);
+
+            DialogResult = btn.DialogResult;
         }
-
-
     }
 }

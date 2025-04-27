@@ -15,31 +15,46 @@ namespace CNC_Drill_Controller1
 
         private static void applyParentsTransforms(PointF[] pt, SvgElement node)
         {
-            if (node.Transforms == null) return;
-            node.Transforms.GetMatrix().TransformPoints(pt);
+            if (node.Transforms != null) node.Transforms.GetMatrix().TransformPoints(pt);
             if (node.Parent != null) applyParentsTransforms(pt, node.Parent);
         }
 
-        private void readCircles(string filename)
+        private void readCircles(string filename, int PPI)
         {
+           
             var svgReader = SvgDocument.Open(filename);
 
+            var isMetric = svgReader.Width.Type == SvgUnitType.Millimeter;
             PageWidth = svgReader.Width.Value;
             PageHeight = svgReader.Height.Value;
-
+           
+            if (isMetric)
+            {
+                PageWidth /= 25.4f;
+                PageHeight /= 25.4f;
+                ExtLog.AddLine("Warning: Metric SVG");
+            } 
+            ExtLog.AddLine(svgReader.Ppi + " PPI in file, selected: " + ( (PPI == -1) ? "original": PPI.ToString()));
+           
             var circlesEnum = svgReader.Children.FindSvgElementsOf<SvgCircle>();
             var circlesList = circlesEnum as IList<SvgCircle> ?? circlesEnum.ToList();
 
             for (var i = 0; i < circlesList.Count; i++)
             {
                 var pt = new[] { new PointF(circlesList[i].CenterX.Value, circlesList[i].CenterY.Value) };
-
                 applyParentsTransforms(pt, circlesList[i].Parent);
 
-                pt[0].X /= 72;//svgReader.Ppi;
-                pt[0].Y /= 72;//svgReader.Ppi;
+                if (PPI == -1)
+                {
+                    pt[0].X /= svgReader.Ppi;
+                    pt[0].Y /= svgReader.Ppi;
+                } else
+                {
+                    pt[0].X /= PPI;
+                    pt[0].Y /= PPI;
 
-                DrillNodes.Add(new DrillNode(pt[0]));
+                }
+                    DrillNodes.Add(new DrillNode(pt[0]));
             }
 
             ExtLog.AddLine(DrillNodes.Count.ToString("D") + " Shapes");
@@ -48,7 +63,7 @@ namespace CNC_Drill_Controller1
 
         public void Load(string Filename, DrawingTypeDialog.DrawingConfigStruct DrawingConfig)
         {
-            readCircles(Filename);
+            readCircles(Filename, DrawingConfig.svg_PPI);
             removeZeros();
             removeDuplicates();
             if (DrawingConfig.Inverted) flipNodes();
